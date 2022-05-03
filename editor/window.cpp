@@ -1,14 +1,19 @@
 #include "window.hpp"
-#include "SDL.h"
 
 Window::Window()
 {
     RunWindow();
+    PollingProcess();
 }
 
 Window::~Window()
 {
-
+    // destroy renderer
+    SDL_DestroyRenderer(_renderer);
+    // destroy window
+    SDL_DestroyWindow(_window);
+    // close SDL
+    SDL_Quit();
 }
 
 void Window::PollingProcess()
@@ -30,7 +35,7 @@ void Window::PollingProcess()
 void Window::RunWindow()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_Window * window = SDL_CreateWindow(
+    _window = SDL_CreateWindow(
         "feditor",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
@@ -38,16 +43,7 @@ void Window::RunWindow()
         600,
         SDL_WINDOW_SHOWN
     );
-    SDL_Renderer * render = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED );
+    _renderer = SDL_CreateRenderer(_window,-1,SDL_RENDERER_ACCELERATED );
 
-    PollingProcess();
 
-    // destroy renderer
-    SDL_DestroyRenderer(render);
- 
-    // destroy window
-    SDL_DestroyWindow(window);
-     
-    // close SDL
-    SDL_Quit();
 }

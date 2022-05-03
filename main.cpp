@@ -1,5 +1,6 @@
 #include <iostream>
 #include "editor/window.hpp"
+#include "SDL_main.h"
 
 int main()
 {
