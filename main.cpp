@@ -1,11 +1,11 @@
 #include <iostream>
-#include "editor/window.hpp"
-#include "SDL_main.h"
+#include "editor/editor.hpp"
+
 
 int main()
 {
     std::cout<< "Start feditor" << std::endl;
-    Window feditor = Window();
+    Editor feditor = Editor();
 
     return 0;
 }

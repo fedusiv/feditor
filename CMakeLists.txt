@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 INCLUDE(FindPkgConfig)
 
 # set the project name
@@ -23,5 +23,5 @@ set(SOURCES main.cpp ${EDITOR_FILES})
 include_directories(feditor ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 
 add_executable(feditor ${SOURCES})
-
-target_link_libraries(feditor ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES})
+target_link_libraries(feditor ${SDL2_LIBRARIES})
+target_link_libraries(feditor ${SDL2_TTF_LIBRARIES})
