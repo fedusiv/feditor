@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 #include "SDL.h"
 #include "SDL_ttf.h"
@@ -19,7 +20,7 @@ void GlyphHandler::GlyphBuilder(int fontSize, std::string fontFileName)
     char c[2];
     SDL_Rect * glyphRect;
     SDL_Color whiteDefautSdlColor;  // default color
-
+    
     whiteDefautSdlColor = { .r = 255, .g = 255, .b = 255, .a = 255};
 
     memset(&_glyphs, 0, sizeof(SDL_Rect) * 128);

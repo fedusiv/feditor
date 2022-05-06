@@ -16,8 +16,6 @@ class Window
 
     private:
         void RunWindow(void);
-        void DrawTextTest(void);
-        void DrawTestRect(void);
 
         SDL_Window * _window;
         SDL_Renderer * _renderer;
