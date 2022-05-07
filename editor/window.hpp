@@ -13,6 +13,7 @@ class Window
         ~Window();
         void Render();  // main function to render whole window
         void DrawText(std::string text, int x, int y, SDL_Color color);
+        void DrawCursor(int x, int y, SDL_Color color); // draw cursor at required position
 
     private:
         void RunWindow(void);

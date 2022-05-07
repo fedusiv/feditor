@@ -21,13 +21,13 @@ Window::~Window()
 
 void Window::Render()
 {
-    SDL_Color color = {.r = 100, .g = 100, .b = 150};
+    SDL_Color color = { .r = 100, .g = 255, .b = 150};
     SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255); // Make window bg black.
     SDL_RenderClear(_renderer);
+    DrawText("Hello~", 100, 100, color);
+    DrawCursor(0,0, color);
 
-    DrawText("Hello world", 0, 0, color);
-    //DrawTextTest();
-    //DrawTestRect();
+
     SDL_RenderPresent(_renderer);
     SDL_Delay(10);
 }
@@ -50,7 +50,7 @@ void Window::RunWindow()
     _renderer = SDL_CreateRenderer(_window,-1,SDL_RENDERER_ACCELERATED );
 
     glyphHandler = new GlyphHandler(_renderer);
-    glyphHandler->GlyphBuilder(12, "/Users/ilafedusiv/prj/cplus/feditor/res/FiraCode-Retina.ttf");
+    glyphHandler->GlyphBuilder(14, "./assets/FiraCode-Retina.ttf");
 
 }
 
@@ -79,4 +79,18 @@ void Window::DrawText(std::string text, int x, int y, SDL_Color color)
 
         character = text.c_str()[i++];
     }
+}
+
+void Window::DrawCursor(int x, int y, SDL_Color color)
+{
+    SDL_Rect cursor;
+
+    cursor = {
+        .h = glyphHandler->ElementSize().y,
+        .w = glyphHandler->ElementSize().x,
+        .x = x,
+        .y = y
+    };
+    SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a );
+    SDL_RenderFillRect(_renderer, &cursor);
 }

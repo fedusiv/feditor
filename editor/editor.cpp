@@ -41,7 +41,7 @@ bool Editor::PollingProcess()
         }
         if (e.type == SDL_KEYDOWN)
         {
-            quit = true;
+            
         }
     }
 
