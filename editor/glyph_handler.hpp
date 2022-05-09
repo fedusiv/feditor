@@ -24,7 +24,7 @@ class GlyphHandler
 
         TTF_Font * _font;
 
-        Vector2 * _elementSize;
+        Vector2 _elementSize;
 
         const int _sizeOfCharacterSprite = 512;
 };

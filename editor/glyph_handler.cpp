@@ -21,7 +21,8 @@ void GlyphHandler::GlyphBuilder(int fontSize, std::string fontFileName)
     SDL_Rect * glyphRect;
     SDL_Color whiteDefautSdlColor;  // default color
 
-    _elementSize = new Vector2(0,0); // here we will fill maximum size of one character to be used
+    _elementSize.x = 0;
+    _elementSize.y = 0;
 
     whiteDefautSdlColor = { .r = 255, .g = 255, .b = 255, .a = 255};
 
@@ -75,13 +76,13 @@ void GlyphHandler::GlyphBuilder(int fontSize, std::string fontFileName)
         glyphRect->h = dest.h;
 
         // fill size of one character to be used
-        if(glyphRect->w > _elementSize->x)
+        if(glyphRect->w > _elementSize.x)
         {
-            _elementSize->x = glyphRect->w;
+            _elementSize.x = glyphRect->w;
         }
-        if(glyphRect->h > _elementSize->y)
+        if(glyphRect->h > _elementSize.y)
         {
-            _elementSize->y = glyphRect->h;
+            _elementSize.y = glyphRect->h;
         }
 
         SDL_FreeSurface(text);
@@ -96,5 +97,5 @@ void GlyphHandler::GlyphBuilder(int fontSize, std::string fontFileName)
 
 Vector2 GlyphHandler::ElementSize()
 {
-    return *_elementSize;
+    return _elementSize;
 }
