@@ -10,26 +10,42 @@
 
 class Window
 {
+    enum ColoringTypes
+    {
+        Text,
+        Cursor,
+        Lines,
+        Backgroud,
+        ColoringTypesSize
+    };
+
     public:
         Window();
         ~Window();
         void Render();  // main function to render whole window
-        void DrawText(std::string text, int x, int y, SDL_Color color);
         void DrawCharacter(int character, Vector2 pos, SDL_Color color);
-        void DrawCursor(int x, int y, SDL_Color color); // draw cursor at required position
+        void DrawCursor(Vector2 pos); // draw cursor at required position
 
     private:
-        void RunWindow(void);
-        void ProcessBorders(void);
-        void CalculateLinesAmount(void);
+        void RunWindow(void);   // staring point
+
+        void ProcessLayouts(void);
+        void ConfigureLayout(void);
+        void ConfigureColors(void);
+        void CalculateLayoutArea(LayoutArea * area);
+
         void DrawEmptyLines(void);
+        void DrawLinesNumber(void);
 
         SDL_Window * _window;
         Vector2  _currentWindowSize;
         SDL_Renderer * _renderer;
 
-        GlyphHandler * _glyphHandler;
+        GlyphHandler * _glyphHandler;   // local instance to glyph handler
         Layout _layout;  // stores information about current layout
+
+        SDL_Color _coloringValues[ColoringTypes::ColoringTypesSize]; // array storing color data for each type of text
+
 };
 
 #endif //__WINDOW_HPP__
