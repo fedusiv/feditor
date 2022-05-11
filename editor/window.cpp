@@ -29,7 +29,6 @@ void Window::Render()
     SDL_RenderClear(_renderer);
 
     ProcessLayouts();
-    DrawCursor(_layout.cursorPosition);
 
 
     SDL_RenderPresent(_renderer);
@@ -64,6 +63,13 @@ void Window::RunWindow()
     // Configuration of layouts
     ConfigureLayout();
 
+
+}
+
+void Window::SetCurrentBuffer(Buffer* buffer)
+{
+    _buffer = buffer;
+    // here should happen redrawn operation of buffer
 }
 
 /*
@@ -98,9 +104,50 @@ void Window::ConfigureLayout()
     _layout.textArea.startPoint.y = _layout.mainOffset.y;
     _layout.textArea.size.x = _layout.size.x - _layout.linesArea.size.x - _layout.mainOffset.x * 2;
     _layout.textArea.size.y = _layout.size.y - _layout.mainOffset.y * 2;
+    _layout.textArea.upperLine = 0;
     CalculateLayoutArea(&(_layout.textArea));
 
 }
+
+void Window::DrawTextEditorLayout()
+{
+    int upperLine, endLine;
+    std::vector<int> * characters;
+    Vector2 netPos;    // logic postion to place glyph
+    Vector2 realPos;    // real position in coordinates
+
+    upperLine = _layout.textArea.upperLine;
+    endLine = upperLine + _layout.textArea.sizeNet.y;
+    
+    // draw all required glyphs ( text basically)
+    netPos.x = 0; netPos.y = 0;
+    while (upperLine <= endLine)
+    {
+
+        characters = _buffer->GetLineFromBuffer(upperLine);
+        if(characters == nullptr)
+        {
+            DrawEmptyLines(upperLine);
+            break;
+        }
+        for(int character : *characters)
+        {
+            realPos = _layout.textArea.layoutPositions[netPos.y][netPos.x];
+            DrawCharacter(character, realPos, _coloringValues[ColoringTypes::Text]);
+            netPos.x += 1;
+        }
+        netPos.x = 0;
+        netPos.y += 1;
+        upperLine++; // increase counter
+    }
+
+    // time to draw cursor
+    netPos = _buffer->CursorPosition();
+    realPos = _layout.textArea.layoutPositions[netPos.y][netPos.x];
+    DrawCursor(realPos);
+
+}
+
 
 /*
 *   x and y are real pixel place
@@ -120,6 +167,9 @@ void Window::DrawCharacter(int character, Vector2 pos, SDL_Color color)
     SDL_RenderCopy(_renderer, _glyphHandler->_fontTexture, glyph, &dest);
 }
 
+/*
+* Draw in x and y pos in real coordinates
+*/
 void Window::DrawCursor(Vector2 pos)
 {
     SDL_Rect cursor;
@@ -153,15 +203,17 @@ void Window::ProcessLayouts()
         ConfigureLayout();
     }
 
-    DrawEmptyLines();
     DrawLinesNumber();
+    DrawTextEditorLayout();
 }
 
-
-void Window::DrawEmptyLines()
+/*
+* Draw empty lines from specific line number where we already do not have any data
+*/
+void Window::DrawEmptyLines(int startLine)
 {
     SDL_Color color = _coloringValues[ColoringTypes::Text];
-    for(int y = 0; y < _layout.textArea.sizeNet.y; y++ )
+    for(int y = startLine; y < _layout.textArea.sizeNet.y; y++ )
     {
         DrawCharacter('~', _layout.textArea.layoutPositions[y][0], color);
     }
@@ -174,7 +226,7 @@ void Window::DrawLinesNumber()
     SDL_Color color = _coloringValues[ColoringTypes::Lines];
     color.a = 80;
 
-    lineNumber = 100;
+    lineNumber = 1;
     for(int y = 0; y < _layout.linesArea.sizeNet.y; y++)
     {
         auto s = std::to_string(lineNumber);

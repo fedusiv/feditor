@@ -7,6 +7,7 @@
 
 #include "glyph_handler.hpp"
 #include "layout.hpp"
+#include "buffer.hpp"
 
 class Window
 {
@@ -23,8 +24,8 @@ class Window
         Window();
         ~Window();
         void Render();  // main function to render whole window
-        void DrawCharacter(int character, Vector2 pos, SDL_Color color);
-        void DrawCursor(Vector2 pos); // draw cursor at required position
+        void SetCurrentBuffer(Buffer* buffer);
+        void SetCursorPosition(Vector2 pos);
 
     private:
         void RunWindow(void);   // staring point
@@ -34,8 +35,12 @@ class Window
         void ConfigureColors(void);
         void CalculateLayoutArea(LayoutArea * area);
 
-        void DrawEmptyLines(void);
+        void DrawCharacter(int character, Vector2 pos, SDL_Color color);
+        void DrawCursor(Vector2 pos); // draw cursor at required position
+        void DrawEmptyLines(int startLine); // draw empty lines from specific line, where buffer does not have any data
         void DrawLinesNumber(void);
+        void DrawTextEditorLayout(void);
+
 
         SDL_Window * _window;
         Vector2  _currentWindowSize;
@@ -43,6 +48,7 @@ class Window
 
         GlyphHandler * _glyphHandler;   // local instance to glyph handler
         Layout _layout;  // stores information about current layout
+        Buffer* _buffer;    // pointer to current buffer which is represented (in the future with split it probably will be changed)
 
         SDL_Color _coloringValues[ColoringTypes::ColoringTypesSize]; // array storing color data for each type of text
 
