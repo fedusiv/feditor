@@ -31,6 +31,7 @@ class Editor
         bool PollingProcess(void);  // Polling process of sdl events. Basically input recognition
         void CommandProcess(Command * cmd); // parsing and making decision based on command, which user has entered
         void InsertText(char * text); // inserting text to somewhere
+        void CursorOperations(CommandCursor * cmd);  // process only cursor operations
 
 };
 

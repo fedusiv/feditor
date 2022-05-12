@@ -134,6 +134,12 @@ void Editor::CommandProcess(Command * cmd)
             }
             break;
         }
+        case CommandType::Cursor:
+        {
+            // cursor parsing
+            CursorOperations(static_cast<CommandCursor*>(cmd));
+            break;
+        }
 
         default:
             break;
@@ -166,5 +172,62 @@ void Editor::InsertText(char * text)
     }
 
     buffer->SetCursorPosition(cursorPos);   // this is logical (virtual cursor position of buffer)
+
+}
+
+void Editor::CursorOperations(CommandCursor * cmd)
+{
+    Vector2 cursorPos;
+    Buffer * buffer;
+    std::vector<int> * line;
+
+    buffer = _bufferArray.at(_bufferId);
+    cursorPos = buffer->CursorPosition();
+
+    switch (cmd->cursorType)
+    {
+        case CursorCommandType::CursorUp:
+        {
+            if(cursorPos.y == 0)
+            {   // can not go upper
+                break;
+            }
+            cursorPos.y -= 1;   // increase cursor position, increase in matter of geometric, go upper
+            line = buffer->GetLineFromBuffer(cursorPos.y);
+            // this is basically should not happen, but who knows why we should have data on line 2 and no on line 1. Next line symbol is data btw
+            if(line == nullptr)
+            {
+                // no next line, go to begin of line
+                cursorPos.x = 0;
+            }
+            else if(line->size() < cursorPos.x)
+            {
+                // if next line has less size need to go to latest position in line
+                cursorPos.x = line->size();
+            }
+            buffer->SetCursorPosition(cursorPos);
+            break;
+        }
+        case CursorCommandType::CursorDown:
+        {
+            cursorPos.y += 1;   // increase cursor position, increase line
+            line = buffer->GetLineFromBuffer(cursorPos.y);
+            if(line == nullptr)
+            {
+                // no next line, go to begin of line
+                cursorPos.x = 0;
+            }
+            else if(line->size() < cursorPos.x)
+            {
+                // if next line has less size need to go to latest position in line
+                cursorPos.x = line->size();
+            }
+            buffer->SetCursorPosition(cursorPos);
+            break;
+        }
+        
+        default:
+            break;
+    }
 
 }
