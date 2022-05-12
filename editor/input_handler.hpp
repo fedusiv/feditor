@@ -8,7 +8,7 @@ class InputHandler
     public:
         InputHandler();
 
-        Command* ProcessInput();
+        Command* ProcessInput(SDL_Keycode keyValue);
 
 };
 

@@ -48,8 +48,13 @@ void Editor::MainLoop()
 bool Editor::PollingProcess()
 {
     SDL_Event e;
+    SDL_Keycode keyValue;
     Command * cmd;
-    bool quit = false;
+    bool quit;
+
+    cmd = nullptr;
+    keyValue = 0;   // some unknown value
+    quit = false;
 
     while (SDL_PollEvent(&e))
     {
@@ -67,11 +72,26 @@ bool Editor::PollingProcess()
                 InsertText(e.text.text);
                 break;
             }
+            case SDL_KEYDOWN:
+            {
+                // in this key detect which get was pressed
+                // for now it's not implemented. but in future we should react on it
+                break;
+            }
+            case SDL_KEYUP:
+            {
+                // detect which key was pressed up
+                keyValue = e.key.keysym.sym;
+                break;
+            }
         }
     }
 
-    // catching key events which is not related to text input. text input events should be catched inside text input
-    cmd = _inputHandler->ProcessInput();
+    if(keyValue != 0)
+    {
+        // proccess key events
+        cmd = _inputHandler->ProcessInput(keyValue);
+    }
 
     if(cmd != nullptr)
     {

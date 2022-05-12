@@ -6,22 +6,21 @@
 
 InputHandler::InputHandler(){}
 
-Command* InputHandler::ProcessInput()
+Command* InputHandler::ProcessInput(SDL_Keycode keyValue)
 {
     Command * cmd = nullptr;
 
-    const Uint8 *keyState = SDL_GetKeyboardState(NULL);
-    if(keyState[SDL_SCANCODE_I])
+    if(keyValue == SDLK_i)
     {
         cmd  = new Command(CommandType::InputMode);
     }
     else
-    if(keyState[SDL_SCANCODE_ESCAPE])
+    if(keyValue == SDLK_ESCAPE)
     {
         cmd  = new Command(CommandType::EditMode);
     }
     else
-    if(keyState[SDL_SCANCODE_RETURN])
+    if(keyValue == SDLK_RETURN)
     {
         cmd = new Command(CommandType::EnterPressed);
     }

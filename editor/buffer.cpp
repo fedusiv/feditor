@@ -38,7 +38,6 @@ void Buffer::Append(int character, Vector2 pos)
         newline->push_back(character);
         _buffer.push_back(*newline);
         delete newline;
-
     }
     else
     {
