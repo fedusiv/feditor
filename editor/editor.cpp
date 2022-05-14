@@ -225,6 +225,42 @@ void Editor::CursorOperations(CommandCursor * cmd)
             buffer->SetCursorPosition(cursorPos);
             break;
         }
+        case CursorCommandType::CursorLeft:
+        {
+            if(cursorPos.x == 0)
+            {
+                break; // can not got to the left
+            }
+            line = buffer->GetLineFromBuffer(cursorPos.y);
+            if(line == nullptr)
+            {
+                // line does not exist. It can be. But should break upper in code, anyway let's add this verification
+                break;
+            }
+            cursorPos.x -= 1;
+            buffer->SetCursorPosition(cursorPos);
+            break;
+        }
+        case CursorCommandType::CursorRight:
+        {
+            line = buffer->GetLineFromBuffer(cursorPos.y);
+            if(line == nullptr)
+            {
+                // if no data can not move
+                break;
+            }
+            if( cursorPos.x < line->size())
+            {
+                // cursor can move to one symbol upper after maximum size of line
+                cursorPos.x += 1;
+                buffer->SetCursorPosition(cursorPos);
+            }
+            else
+            {
+                // if biffer can not move
+                break;
+            }
+        }
         
         default:
             break;
