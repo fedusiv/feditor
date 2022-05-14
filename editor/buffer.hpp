@@ -5,6 +5,8 @@
 
 #include "utils.hpp"
 
+typedef typename std::vector<int> BufferLineType;
+
 class Buffer
 {
     public:
@@ -13,10 +15,11 @@ class Buffer
         Vector2 CursorPosition(void);
         void SetCursorPosition(Vector2 pos);
         void Append(int character, Vector2 pos);
-        std::vector<int> * GetLineFromBuffer(int line);
+        void InsertNewLine(Vector2 pos);
+        BufferLineType * GetLineFromBuffer(int line);
 
     private:
-        std::vector<std::vector<int>> _buffer;
+        std::vector<BufferLineType> _buffer;
         Vector2 _cursorPosition;
 };
 

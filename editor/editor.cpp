@@ -20,6 +20,7 @@ void Editor::Init()
     Buffer * buf = new Buffer();
     _bufferArray.push_back(buf);    // init first empty buffer
     _bufferId = 0;
+    _bufferActive = _bufferArray.at(_bufferId); // set activve buffer
 }
 
 void Editor::MainLoop()
@@ -128,9 +129,8 @@ void Editor::CommandProcess(Command * cmd)
         {
             if(_state == FeditorState::InputTextState)
             {
-                // create text 
-                char tmpText[] = { '\n', '\0'};
-                InsertText(tmpText);
+                // need to insert new line
+                InsertNewLine();
             }
             break;
         }
@@ -149,40 +149,41 @@ void Editor::CommandProcess(Command * cmd)
 
 void Editor::InsertText(char * text)
 {
-    Buffer * buffer;
     Vector2 cursorPos;
 
-    buffer = _bufferArray.at(_bufferId);
-    cursorPos = buffer->CursorPosition();
+    cursorPos = _bufferActive->CursorPosition();
 
-    while (*text != '\0') 
+    while (*text != '\0')
     {
-        buffer->Append( static_cast<int>(*text), cursorPos);
-        if( *text == '\n')
-        {
-            cursorPos.y += 1;
-            cursorPos.x = 0;
-        }
-        else
-        {
-            cursorPos.x += 1;
-        }
+        _bufferActive->Append( static_cast<int>(*text), cursorPos);
+        cursorPos.x += 1;
 
         text++;
     }
 
-    buffer->SetCursorPosition(cursorPos);   // this is logical (virtual cursor position of buffer)
+    _bufferActive->SetCursorPosition(cursorPos);   // this is logical (virtual cursor position of buffer)
 
+}
+
+void Editor::InsertNewLine()
+{
+    Vector2 cursorPos;
+    
+    cursorPos = _bufferActive->CursorPosition();
+    // when we inserting new line, we need to move all other lines to one down
+    _bufferActive->InsertNewLine(cursorPos);    // call operations inside buffer
+    // change position of cursor
+    cursorPos.y += 1;
+    cursorPos.x = 0;
+    _bufferActive->SetCursorPosition(cursorPos);
 }
 
 void Editor::CursorOperations(CommandCursor * cmd)
 {
     Vector2 cursorPos;
-    Buffer * buffer;
-    std::vector<int> * line;
+    BufferLineType * line;
 
-    buffer = _bufferArray.at(_bufferId);
-    cursorPos = buffer->CursorPosition();
+    cursorPos = _bufferActive->CursorPosition();
 
     switch (cmd->cursorType)
     {
@@ -193,7 +194,7 @@ void Editor::CursorOperations(CommandCursor * cmd)
                 break;
             }
             cursorPos.y -= 1;   // increase cursor position, increase in matter of geometric, go upper
-            line = buffer->GetLineFromBuffer(cursorPos.y);
+            line = _bufferActive->GetLineFromBuffer(cursorPos.y);
             // this is basically should not happen, but who knows why we should have data on line 2 and no on line 1. Next line symbol is data btw
             if(line == nullptr)
             {
@@ -205,13 +206,13 @@ void Editor::CursorOperations(CommandCursor * cmd)
                 // if next line has less size need to go to latest position in line
                 cursorPos.x = line->size();
             }
-            buffer->SetCursorPosition(cursorPos);
+            _bufferActive->SetCursorPosition(cursorPos);
             break;
         }
         case CursorCommandType::CursorDown:
         {
             cursorPos.y += 1;   // increase cursor position, increase line
-            line = buffer->GetLineFromBuffer(cursorPos.y);
+            line = _bufferActive->GetLineFromBuffer(cursorPos.y);
             if(line == nullptr)
             {
                 // no next line, go to begin of line
@@ -222,7 +223,7 @@ void Editor::CursorOperations(CommandCursor * cmd)
                 // if next line has less size need to go to latest position in line
                 cursorPos.x = line->size();
             }
-            buffer->SetCursorPosition(cursorPos);
+            _bufferActive->SetCursorPosition(cursorPos);
             break;
         }
         case CursorCommandType::CursorLeft:
@@ -231,19 +232,19 @@ void Editor::CursorOperations(CommandCursor * cmd)
             {
                 break; // can not got to the left
             }
-            line = buffer->GetLineFromBuffer(cursorPos.y);
+            line = _bufferActive->GetLineFromBuffer(cursorPos.y);
             if(line == nullptr)
             {
                 // line does not exist. It can be. But should break upper in code, anyway let's add this verification
                 break;
             }
             cursorPos.x -= 1;
-            buffer->SetCursorPosition(cursorPos);
+            _bufferActive->SetCursorPosition(cursorPos);
             break;
         }
         case CursorCommandType::CursorRight:
         {
-            line = buffer->GetLineFromBuffer(cursorPos.y);
+            line = _bufferActive->GetLineFromBuffer(cursorPos.y);
             if(line == nullptr)
             {
                 // if no data can not move
@@ -253,7 +254,7 @@ void Editor::CursorOperations(CommandCursor * cmd)
             {
                 // cursor can move to one symbol upper after maximum size of line
                 cursorPos.x += 1;
-                buffer->SetCursorPosition(cursorPos);
+                _bufferActive->SetCursorPosition(cursorPos);
             }
             else
             {

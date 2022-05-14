@@ -112,7 +112,7 @@ void Window::ConfigureLayout()
 void Window::DrawTextEditorLayout()
 {
     int upperLine, endLine;
-    std::vector<int> * characters;
+    BufferLineType * characters;
     Vector2 netPos;    // logic postion to place glyph
     Vector2 realPos;    // real position in coordinates
 

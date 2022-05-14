@@ -46,3 +46,30 @@ void Buffer::Append(int character, Vector2 pos)
     }
 
 }
+
+
+/*
+*   Inserting new line to buffer.
+*   It means, that divide current line and move other line one line down
+*/
+void Buffer::InsertNewLine(Vector2 pos)
+{
+    BufferLineType * newLine;
+    BufferLineType::iterator it;
+
+    // first let's formulate new line
+    newLine = new BufferLineType();
+    it = _buffer.at(pos.y).begin() + pos.x;
+
+    // insert values from previous line
+    newLine->insert(newLine->begin(), it, _buffer.at(pos.y).end());
+
+    // remove values from previous line
+    _buffer.at(pos.y).erase(it, _buffer.at(pos.y).end());
+
+    // insert new line to whole buffer lines
+    _buffer.insert(_buffer.begin() + pos.y + 1, *newLine);
+
+    //remove allocated temp line
+    delete newLine;
+}
