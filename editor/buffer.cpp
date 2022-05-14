@@ -31,13 +31,25 @@ void Buffer::Append(int character, Vector2 pos)
 
 
     int currentLineAmount = _buffer.size() - 1; // no idea, but if do not calculate before it will not work correctly
+    // currentLineAmount says on which lates line we have data
     if( pos.y > currentLineAmount )
     {
-        // new line will be inserted
-        std::vector<int> * newline = new std::vector<int>();
-        newline->push_back(character);
-        _buffer.push_back(*newline);
-        delete newline;
+        std::vector<int> * newline;
+        // feditor allow to enter text after multiple empty lines
+        while(pos.y > currentLineAmount )
+        {
+            currentLineAmount++;    // increase counter to represent on which line we are going to insert data
+            // new line will be inserted
+            newline = new std::vector<int>();
+            if(currentLineAmount == pos.y)  // if positions are equal let's inset required element
+            {
+                // insert character only to last required line
+                newline->push_back(character);
+            }
+            _buffer.push_back(*newline);
+            delete newline;
+        }
+        
     }
     else
     {
