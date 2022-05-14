@@ -1,5 +1,6 @@
 #include "editor.hpp"
 #include "window.hpp"
+#include "configs.hpp"
 
 #include <iostream>
 
@@ -10,6 +11,10 @@ Editor::Editor()
     _inputHandler = new InputHandler();
     _window = new Window(); // it creates application. representt editor
     _window->SetCurrentBuffer(_bufferArray.at(_bufferId));  // set first buffer to be shown
+
+    // init keyboards events mechanism holder
+    _kEvents.amountOfPressed = new std::vector<int>();
+    _kEvents.events = new std::list<SDL_KeyboardEvent>();
 
     MainLoop(); // start main loop
 }
@@ -75,14 +80,14 @@ bool Editor::PollingProcess()
             }
             case SDL_KEYDOWN:
             {
-                // in this key detect which get was pressed
-                // for now it's not implemented. but in future we should react on it
+                keyValue = e.key.keysym.sym; // store value to know, do we need to call parser of inputs
+                _inputHandler->KeyPressed(e.key);
                 break;
             }
             case SDL_KEYUP:
             {
-                // detect which key was pressed up
-                keyValue = e.key.keysym.sym;
+                keyValue = e.key.keysym.sym;    // store value to know, do we need to call parser of inputs
+                _inputHandler->KeyReleased(e.key);
                 break;
             }
         }
@@ -91,7 +96,7 @@ bool Editor::PollingProcess()
     if(keyValue != 0)
     {
         // proccess key events
-        cmd = _inputHandler->ProcessInput(keyValue);
+        cmd = _inputHandler->ProcessInput();
     }
 
     if(cmd != nullptr)
@@ -165,6 +170,9 @@ void Editor::InsertText(char * text)
 
 }
 
+/*
+* Function just operates inserting new line to text editor area
+*/
 void Editor::InsertNewLine()
 {
     Vector2 cursorPos;
