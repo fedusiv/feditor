@@ -4,6 +4,11 @@ Buffer::Buffer()
 {
     _cursorPosition.x = 0;
     _cursorPosition.y = 0;
+
+    // create new line for empty buffer
+    auto newLine = new BufferLineType();
+    _buffer.push_back(*newLine);
+    delete newLine;
 }
 
 std::vector<int> * Buffer::GetLineFromBuffer(int line)
