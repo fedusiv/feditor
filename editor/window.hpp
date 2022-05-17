@@ -8,6 +8,7 @@
 #include "glyph_handler.hpp"
 #include "layout.hpp"
 #include "buffer.hpp"
+#include "command.hpp"
 
 class Window
 {
@@ -26,6 +27,8 @@ class Window
         void Render();  // main function to render whole window
         void SetCurrentBuffer(Buffer* buffer);
         void SetCursorPosition(Vector2 pos);
+        void ScrollActiveTextEditor(ScrollWindowType type); // scroll layout. not to draw just to move values of drawing
+        void ScrollActiveTextEditorDueCursor(void); // when cursor changes position in text editor, need to make required changes in window repesentation.
 
     private:
         void RunWindow(void);   // staring point

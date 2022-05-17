@@ -4,11 +4,22 @@ Buffer::Buffer()
 {
     _cursorPosition.x = 0;
     _cursorPosition.y = 0;
+    _maximumLineSize = 0;
 
     // create new line for empty buffer
     auto newLine = new BufferLineType();
     _buffer.push_back(*newLine);
     delete newLine;
+}
+
+int Buffer::LinesAmount()
+{
+    return _buffer.size();
+}
+
+int Buffer::MaximumLinesSize()
+{
+    return _maximumLineSize;
 }
 
 std::vector<int> * Buffer::GetLineFromBuffer(int line)
@@ -60,6 +71,10 @@ void Buffer::Append(int character, Vector2 pos)
     {
         // new character at existing line
         _buffer.at(pos.y).insert(_buffer.at(pos.y).begin() + pos.x, character);
+        if(_buffer.at(pos.y).size() > _maximumLineSize)
+        {
+            _maximumLineSize = _buffer.at(pos.y).size();
+        }
     }
 
 }

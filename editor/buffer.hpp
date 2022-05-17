@@ -12,6 +12,8 @@ class Buffer
     public:
         Buffer();
 
+        int LinesAmount(void);
+        int MaximumLinesSize(void); // get value of maximum characters in whole lines
         Vector2 CursorPosition(void);
         void SetCursorPosition(Vector2 pos);
         void Append(int character, Vector2 pos);
@@ -21,6 +23,7 @@ class Buffer
     private:
         std::vector<BufferLineType> _buffer;
         Vector2 _cursorPosition;
+        int _maximumLineSize;
 };
 
 

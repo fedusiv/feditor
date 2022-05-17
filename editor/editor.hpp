@@ -49,6 +49,8 @@ class Editor
         void InsertText(char * text); // inserting text to somewhere
         void InsertNewLine(void);   // insert new line
         void CursorOperations(CommandCursor * cmd);  // process only cursor operations
+        void UpdateBufferCursorPosition(Vector2 pos);   // changing position of buffer in text editor
+        void ScrollWindowOperations(CommandScroll * cmd);   // process commands to scroll window
 
 };
 

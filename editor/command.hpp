@@ -6,7 +6,8 @@ enum class CommandType
     EditMode,
     InputMode,
     EnterPressed,
-    Cursor
+    Cursor,
+    Scroll
 };
 
 class Command
@@ -17,6 +18,7 @@ class Command
         CommandType type;
 };
 
+/* *** Cursor movement *** */
 enum class CursorCommandType
 {
     CursorUp,
@@ -33,5 +35,21 @@ class CommandCursor: public Command
         CursorCommandType cursorType;
 };
 
+/* *** Scroll Area *** */
+enum class ScrollWindowType
+{
+    ScrollUp,
+    ScrollDown,
+    ScrollLeft,
+    ScrollRight
+};
+
+class CommandScroll: public Command
+{
+    public:
+        CommandScroll(CommandType type ,ScrollWindowType sType): Command(type) ,scrollType(sType){}
+
+        ScrollWindowType scrollType;
+};
 
 #endif  // __COMMAND_HPP__

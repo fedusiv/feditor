@@ -30,6 +30,7 @@ class InputHandler
         Command* ProcessInput();    // function to call parsing operation
         void KeyPressed(SDL_KeyboardEvent event);   // SDL_KEYDOWN
         void KeyReleased(SDL_KeyboardEvent event);  // SDL_KEYUP
+        void AddKeyToAct(SDL_Keycode key);  // add key to act list
 
 };
 

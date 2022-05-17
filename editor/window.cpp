@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "window.hpp"
+#include "configs.hpp"
 
 Window::Window()
 {
@@ -32,7 +33,7 @@ void Window::Render()
 
 
     SDL_RenderPresent(_renderer);
-    SDL_Delay(10);
+    SDL_Delay(30);
 }
 
 void Window::RunWindow()
@@ -104,38 +105,50 @@ void Window::ConfigureLayout()
     _layout.textArea.startPoint.y = _layout.mainOffset.y;
     _layout.textArea.size.x = _layout.size.x - _layout.linesArea.size.x - _layout.mainOffset.x * 2;
     _layout.textArea.size.y = _layout.size.y - _layout.mainOffset.y * 2;
-    _layout.textArea.upperLine = 0;
+    _layout.textArea.displayPoint.x = 0;
+    _layout.textArea.displayPoint.y = 0;
     CalculateLayoutArea(&(_layout.textArea));
 
 }
 
 void Window::DrawTextEditorLayout()
 {
-    int upperLine, endLine;
+    int upperLine, endLine, charactersToDraw;
     BufferLineType * characters;
+    BufferLineType::iterator charIt, endIt;
     Vector2 netPos;    // logic postion to place glyph
     Vector2 realPos;    // real position in coordinates
 
-    upperLine = _layout.textArea.upperLine;
+    upperLine = _layout.textArea.displayPoint.y;
     endLine = upperLine + _layout.textArea.sizeNet.y;
     
     // draw all required glyphs ( text basically)
-    netPos.x = 0; netPos.y = 0;
+    netPos.x = 0; netPos.y = 0; // starting position to draw. Logic positions of window. Not of buffer
     while (upperLine <= endLine)
     {
-
         characters = _buffer->GetLineFromBuffer(upperLine);
         if(characters == nullptr)
         {
-            DrawEmptyLines(upperLine);
+            DrawEmptyLines(netPos.y);
+            netPos.y += 1;
             break;
         }
-        for(int character : *characters)
+        charIt = characters->begin() + _layout.textArea.displayPoint.x;
+        charactersToDraw = characters->size() - _layout.textArea.displayPoint.x;    // amount of characters can be possible drawn
+        // calculate end point to draw
+        if( charactersToDraw > 0 )
         {
-            realPos = _layout.textArea.layoutPositions[netPos.y][netPos.x];
-            DrawCharacter(character, realPos, _coloringValues[ColoringTypes::Text]);
-            netPos.x += 1;
+            // if we have enough characters in line to draw after scroll
+            endIt = characters->begin() + _layout.textArea.displayPoint.x + (_layout.textArea.sizeNet.x <= charactersToDraw ? _layout.textArea.sizeNet.x : charactersToDraw);
+            while(charIt != endIt)
+            {
+                realPos = _layout.textArea.layoutPositions[netPos.y][netPos.x];
+                DrawCharacter(*charIt, realPos, _coloringValues[ColoringTypes::Text]);
+                netPos.x += 1;
+                charIt++;
+            }
         }
+
         netPos.x = 0;
         netPos.y += 1;
         upperLine++; // increase counter
@@ -143,8 +156,20 @@ void Window::DrawTextEditorLayout()
 
     // time to draw cursor
     netPos = _buffer->CursorPosition();
-    realPos = _layout.textArea.layoutPositions[netPos.y][netPos.x];
-    DrawCursor(realPos);
+    // check are cursor even need to be dispalyed
+    if(netPos.y >= _layout.textArea.displayPoint.y && netPos.y <= _layout.textArea.displayPoint.y + _layout.textArea.sizeNet.y)
+    {
+        if(netPos.x >= _layout.textArea.displayPoint.x && netPos.x <= _layout.textArea.displayPoint.x + _layout.textArea.sizeNet.x)
+        {
+            // netPos now is total logic position of cursor.
+            // We need to convert it to current logic position
+            netPos.y -= _layout.textArea.displayPoint.y;
+            netPos.x -= _layout.textArea.displayPoint.x;
+
+            realPos = _layout.textArea.layoutPositions[netPos.y][netPos.x];
+            DrawCursor(realPos);
+        }
+    }
 
 }
 
@@ -226,7 +251,7 @@ void Window::DrawLinesNumber()
     SDL_Color color = _coloringValues[ColoringTypes::Lines];
     color.a = 80;
 
-    lineNumber = 1;
+    lineNumber = _layout.textArea.displayPoint.y + 1;
     for(int y = 0; y < _layout.linesArea.sizeNet.y; y++)
     {
         auto s = std::to_string(lineNumber);
@@ -282,5 +307,103 @@ void Window::CalculateLayoutArea(LayoutArea * area)
             area->layoutPositions[y][x] = tmpVec2;
         }
     }
+}
 
+/*
+* Change values of representing scrolling of active buffer
+*/
+void Window::ScrollActiveTextEditor(ScrollWindowType type)
+{
+    LayoutArea * textArea;
+
+    textArea = &(_layout.textArea);
+
+    switch (type)
+    {
+        case ScrollWindowType::ScrollUp:
+        {
+            // trying to scroll window up
+            if(textArea->displayPoint.y == 0)
+            {
+                break; // can not scroll upper than 0
+            }
+            // but we can scroll up until we reached zero.
+            // cause we doing one step scrolling it will be okay
+            textArea->displayPoint.y -= 1;
+            break;
+        }
+        case ScrollWindowType::ScrollDown:
+        {
+            if(textArea->displayPoint.y + 1 >= _buffer->LinesAmount())
+            {
+                // we can not go further at least one line with data should be on the display
+                break;
+            }
+            textArea->displayPoint.y += 1;
+            break;
+        }
+        case ScrollWindowType::ScrollLeft:
+        {
+            if(textArea->displayPoint.x == 0)
+            {
+                // can not go more left
+                break;
+            }
+            textArea->displayPoint.x -= 1;
+            break;
+        }
+        case ScrollWindowType::ScrollRight:
+        {
+            // first need to get values of maximum size of buffer line
+            if(textArea->displayPoint.x + textArea->sizeNet.x + Configs::LinesCursorReachedBeforeScroll > _buffer->MaximumLinesSize())
+            {
+                // in this case can not move more right.
+                // we can go a little bit righter than maximum amount of characters in line from the whole buffer
+                // this a little bit is spicified in configs
+                break;
+            }
+            // otherwise go right
+            textArea->displayPoint.x += 1;
+            break;
+        }
+        
+        default:
+            break;
+    }
+}
+
+void Window::ScrollActiveTextEditorDueCursor()
+{
+    int tmp;
+    Vector2 cursorPos;  // position already was updated
+
+    cursorPos = _buffer->CursorPosition();
+
+    // cursor position is position in buffer not in layouts of text editor area. So first let's check in height
+    if(cursorPos.y - Configs::LinesCursorReachedBeforeScroll < _layout.textArea.displayPoint.y)
+    {
+        // in this case we moved cursor upper and need to move layout higher
+        tmp = cursorPos.y - Configs::LinesCursorReachedBeforeScroll;
+        _layout.textArea.displayPoint.y = tmp > 0 ? tmp : 0;
+    }
+    else
+    if( (cursorPos.y + Configs::LinesCursorReachedBeforeScroll) > (_layout.textArea.displayPoint.y + _layout.textArea.sizeNet.y) )
+    {
+        // in this case we moved below 
+        _layout.textArea.displayPoint.y = cursorPos.y + Configs::LinesCursorReachedBeforeScroll - _layout.textArea.sizeNet.y;
+    }
+
+    // next need to work with width scrolling
+    // basically it has same logic as above just for x coordinates
+    if(cursorPos.x - Configs::LinesCursorReachedBeforeScroll < _layout.textArea.displayPoint.x)
+    {
+        tmp = cursorPos.x - Configs::LinesCursorReachedBeforeScroll;
+        _layout.textArea.displayPoint.x = tmp > 0 ? tmp : 0;
+    }
+    else
+    if( (cursorPos.x + Configs::LinesCursorReachedBeforeScroll) > (_layout.textArea.displayPoint.x + _layout.textArea.sizeNet.x) )
+    {
+        _layout.textArea.displayPoint.x = cursorPos.x + Configs::LinesCursorReachedBeforeScroll - _layout.textArea.sizeNet.x;
+    }
+    
 }

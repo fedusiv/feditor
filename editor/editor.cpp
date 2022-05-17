@@ -145,6 +145,11 @@ void Editor::CommandProcess(Command * cmd)
             CursorOperations(static_cast<CommandCursor*>(cmd));
             break;
         }
+        case CommandType::Scroll:
+        {
+            ScrollWindowOperations(static_cast<CommandScroll*>(cmd));
+            break;
+        }
 
         default:
             break;
@@ -166,7 +171,7 @@ void Editor::InsertText(char * text)
         text++;
     }
 
-    _bufferActive->SetCursorPosition(cursorPos);   // this is logical (virtual cursor position of buffer)
+    UpdateBufferCursorPosition(cursorPos);   // this is logical (virtual cursor position of buffer)
 
 }
 
@@ -183,7 +188,7 @@ void Editor::InsertNewLine()
     // change position of cursor
     cursorPos.y += 1;
     cursorPos.x = 0;
-    _bufferActive->SetCursorPosition(cursorPos);
+    UpdateBufferCursorPosition(cursorPos);
 }
 
 void Editor::CursorOperations(CommandCursor * cmd)
@@ -214,7 +219,7 @@ void Editor::CursorOperations(CommandCursor * cmd)
                 // if next line has less size need to go to latest position in line
                 cursorPos.x = line->size();
             }
-            _bufferActive->SetCursorPosition(cursorPos);
+            UpdateBufferCursorPosition(cursorPos);
             break;
         }
         case CursorCommandType::CursorDown:
@@ -231,7 +236,7 @@ void Editor::CursorOperations(CommandCursor * cmd)
                 // if next line has less size need to go to latest position in line
                 cursorPos.x = line->size();
             }
-            _bufferActive->SetCursorPosition(cursorPos);
+            UpdateBufferCursorPosition(cursorPos);
             break;
         }
         case CursorCommandType::CursorLeft:
@@ -247,7 +252,7 @@ void Editor::CursorOperations(CommandCursor * cmd)
                 break;
             }
             cursorPos.x -= 1;
-            _bufferActive->SetCursorPosition(cursorPos);
+            UpdateBufferCursorPosition(cursorPos);
             break;
         }
         case CursorCommandType::CursorRight:
@@ -262,7 +267,7 @@ void Editor::CursorOperations(CommandCursor * cmd)
             {
                 // cursor can move to one symbol upper after maximum size of line
                 cursorPos.x += 1;
-                _bufferActive->SetCursorPosition(cursorPos);
+                UpdateBufferCursorPosition(cursorPos);
             }
             else
             {
@@ -274,5 +279,17 @@ void Editor::CursorOperations(CommandCursor * cmd)
         default:
             break;
     }
+}
 
+void Editor::UpdateBufferCursorPosition(Vector2 pos)
+{
+    _bufferActive->SetCursorPosition(pos);
+    // updated position of cursor
+    // now need to updated text editor window representation due to this changes
+    _window->ScrollActiveTextEditorDueCursor();
+}
+
+void Editor::ScrollWindowOperations(CommandScroll * cmd)
+{
+    _window->ScrollActiveTextEditor(cmd->scrollType);
 }

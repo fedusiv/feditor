@@ -41,7 +41,7 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
                 e.event.timestamp = event.timestamp;    // save previous timestamp time
                 e.pressedAmount += 1;
                 // put key to be acted
-                _keysToAct->push_back(event.keysym.sym);
+                AddKeyToAct(event.keysym.sym);
             }
 
             break; // exit searching loop
@@ -53,11 +53,21 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
         // insert new key
         auto ke = KeyEvent(event);
         _kEvents->push_back(ke);
-        _keysToAct->push_back(event.keysym.sym);
+        AddKeyToAct(event.keysym.sym);
 
     }
 }
 
+void InputHandler::AddKeyToAct(SDL_Keycode key)
+{
+    bool found;
+
+    found = (std::find(_keysToAct->begin(), _keysToAct->end(), key) != _keysToAct->end());
+    if(!found)
+    {
+        _keysToAct->push_back(key);
+    }
+}
 /*
 * Once key released it should be removed from all lists
 */
@@ -124,6 +134,41 @@ std::tuple<Command*, std::list<SDL_Keycode>::iterator> InputHandler::ParsingKeys
         cmd = new Command(CommandType::EnterPressed);
         break;
     }
+    case SDLK_s:
+    {
+        // scroll manipulation
+        endit++;
+        switch (*endit)
+        {
+        case SDLK_UP:
+        {
+            CommandScroll *scroll = new CommandScroll(CommandType::Scroll, ScrollWindowType::ScrollUp);
+            cmd = dynamic_cast<Command *>(scroll);
+            break;
+        }
+        case SDLK_DOWN:
+        {
+            CommandScroll *scroll = new CommandScroll(CommandType::Scroll, ScrollWindowType::ScrollDown);
+            cmd = dynamic_cast<Command *>(scroll);
+            break;
+        }
+        case SDLK_LEFT:
+        {
+            CommandScroll *scroll = new CommandScroll(CommandType::Scroll, ScrollWindowType::ScrollLeft);
+            cmd = dynamic_cast<Command *>(scroll);
+            break;
+        }
+        case SDLK_RIGHT:
+        {
+            CommandScroll *scroll = new CommandScroll(CommandType::Scroll, ScrollWindowType::ScrollRight);
+            cmd = dynamic_cast<Command *>(scroll);
+            break;
+        }
+        default:
+            break;
+        }
+        break;
+    }
     // Cursor manipulation zone
     case SDLK_UP:
     {
@@ -133,6 +178,7 @@ std::tuple<Command*, std::list<SDL_Keycode>::iterator> InputHandler::ParsingKeys
     }
     case SDLK_DOWN:
     {
+
         CommandCursor *cursor = new CommandCursor(CommandType::Cursor, CursorCommandType::CursorDown);
         cmd = dynamic_cast<Command *>(cursor);
         break;
@@ -171,7 +217,8 @@ Command* InputHandler::ProcessInput()
     if(cmd != nullptr)
     {
         // command was executed
-        _keysToAct->erase(it, std::get<1>(res));    // erase from act by iterators
+        // TODO: for now it works only with 2 keys size combinations, need to make for 3+
+        _keysToAct->erase(std::get<1>(res));    // erase from act by iterators
     }
 
     return cmd;    // return cmd pointer

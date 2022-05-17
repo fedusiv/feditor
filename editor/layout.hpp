@@ -11,7 +11,8 @@ class LayoutArea
         Vector2 sizeNet;    // size of layout in elements representation. rows and columns
         Vector2 ** layoutPositions = nullptr;  // postions in real coordinates for elements, each element here is related to sizeNet
                                                 // maybe not good to declare nullptr here, do not judge me and sugegst how to change it
-        int upperLine;
+        Vector2 displayPoint;   // from what point buffer will be shown. Basically used in scroll layout
+                                // this is position inside buffer, not related to layout
 
 };
 
