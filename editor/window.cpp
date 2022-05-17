@@ -81,7 +81,7 @@ void Window::ConfigureColors()
     _coloringValues[ColoringTypes::Backgroud] = SDL_Color{.r = 21, .g = 20, .b = 28, .a = 255};
     _coloringValues[ColoringTypes::Text] = SDL_Color{ .r = 100, .g = 255, .b = 150, .a = 255};
     _coloringValues[ColoringTypes::Cursor] = SDL_Color{ .r = 160, .g = 190, .b = 170, .a = 255};
-    _coloringValues[ColoringTypes::Lines] = SDL_Color{ .r = 130, .g = 140, .b = 135, .a = 255};
+    _coloringValues[ColoringTypes::Lines] = SDL_Color{ .r = 100, .g = 80, .b = 170, .a = 255};
 }
 
 void Window::ConfigureLayout()
@@ -113,11 +113,15 @@ void Window::ConfigureLayout()
 
 void Window::DrawTextEditorLayout()
 {
-    int upperLine, endLine, charactersToDraw;
+    int upperLine, endLine, charactersToDraw, charOnCursor;
     BufferLineType * characters;
     BufferLineType::iterator charIt, endIt;
     Vector2 netPos;    // logic postion to place glyph
     Vector2 realPos;    // real position in coordinates
+    Vector2 cursorPos;
+    bool needToDrawAboveCursor; // displays do we need to draw any character above cursor
+
+    needToDrawAboveCursor = true;   // by default it's true
 
     upperLine = _layout.textArea.displayPoint.y;
     endLine = upperLine + _layout.textArea.sizeNet.y;
@@ -168,6 +172,29 @@ void Window::DrawTextEditorLayout()
 
             realPos = _layout.textArea.layoutPositions[netPos.y][netPos.x];
             DrawCursor(realPos);
+            // if cursor is on character we need change color of this character
+            cursorPos = _buffer->CursorPosition();  // ask again for cursor position
+            characters = _buffer->GetLineFromBuffer(cursorPos.y);
+            if(characters != nullptr)
+            {
+                if(characters->size() <= cursorPos.x)
+                {
+                    needToDrawAboveCursor = false;
+                }
+                else
+                {
+                    charOnCursor = characters->at(cursorPos.x);
+                }
+            }
+            else
+            {
+                charOnCursor = '~';
+            }
+            if(needToDrawAboveCursor)
+            {
+                realPos = _layout.textArea.layoutPositions[netPos.y][netPos.x];
+                DrawCharacter(charOnCursor, realPos, _coloringValues[ColoringTypes::Backgroud]);
+            }
         }
     }
 
@@ -249,7 +276,7 @@ void Window::DrawLinesNumber()
     int characterPos;
     int lineNumber;
     SDL_Color color = _coloringValues[ColoringTypes::Lines];
-    color.a = 80;
+    color.a = 100;
 
     lineNumber = _layout.textArea.displayPoint.y + 1;
     for(int y = 0; y < _layout.linesArea.sizeNet.y; y++)
@@ -257,7 +284,7 @@ void Window::DrawLinesNumber()
         // for coloring active line
         if(lineNumber == _buffer->CursorPosition().y + 1)
         {
-            color.a = 220;
+            color.a = 255;
         }
 
         auto s = std::to_string(lineNumber);
@@ -272,7 +299,7 @@ void Window::DrawLinesNumber()
         // moving back alpha value
         if(lineNumber == _buffer->CursorPosition().y + 1)
         {
-            color.a = 80;
+            color.a = 100;
         }
 
         lineNumber++;
