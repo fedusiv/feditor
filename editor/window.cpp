@@ -254,6 +254,12 @@ void Window::DrawLinesNumber()
     lineNumber = _layout.textArea.displayPoint.y + 1;
     for(int y = 0; y < _layout.linesArea.sizeNet.y; y++)
     {
+        // for coloring active line
+        if(lineNumber == _buffer->CursorPosition().y + 1)
+        {
+            color.a = 220;
+        }
+
         auto s = std::to_string(lineNumber);
         characterPos = 0;
         for(char& c : s)
@@ -261,6 +267,14 @@ void Window::DrawLinesNumber()
             DrawCharacter((int)c, _layout.linesArea.layoutPositions[y][characterPos], color);
             characterPos++;
         }
+
+        // for coloring active line
+        // moving back alpha value
+        if(lineNumber == _buffer->CursorPosition().y + 1)
+        {
+            color.a = 80;
+        }
+
         lineNumber++;
     }
 }
