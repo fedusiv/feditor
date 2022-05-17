@@ -26,6 +26,7 @@ void Editor::Init()
     _bufferArray.push_back(buf);    // init first empty buffer
     _bufferId = 0;
     _bufferActive = _bufferArray.at(_bufferId); // set activve buffer
+    memset(&_frameRate,0, sizeof(_frameRate));
 }
 
 void Editor::MainLoop()
@@ -45,11 +46,43 @@ void Editor::MainLoop()
         }
         else
         {
-            _window->Render();
+            Render();
         }
     }
 }
 
+void Editor::Render()
+{
+    Uint64 currentTime, endTime, delta;
+    //float renderWaitingTime;    // time we need to wait until render will happen
+
+
+    currentTime = SDL_GetTicks64();
+    delta = currentTime - _frameRate.lastRenderTime;
+
+    // need to render not faster than required frame rate
+    // and also tyring to fit into required framerate
+    // TODO: implement this
+    if( delta >= (1000 / Configs::DefaultFrameRate) )
+    {
+        _window->Render();
+        endTime = SDL_GetTicks64();
+        _frameRate.lastRenderTime = endTime;
+
+        endTime -= currentTime;   // calculate current required time to render
+        if (_frameRate.averageRenderTime == 0)
+        {
+            // first render time
+            _frameRate.averageRenderTime = endTime;
+        }
+        else
+        {
+            _frameRate.averageFrameRate += ( ( 1000 / delta) - _frameRate.averageFrameRate) / Configs::SampleRateForFrameRate ;
+            _frameRate.averageRenderTime += ( (endTime - _frameRate.averageRenderTime) / Configs::SampleRateForFrameRate );
+        }
+    }
+
+}
 
 bool Editor::PollingProcess()
 {

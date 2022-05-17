@@ -28,13 +28,21 @@ class Editor
         // anyway this mechanism is to make controlls move smooth and nicer
     }_kEvents;
 
+    struct 
+    {
+        float averageRenderTime;  // average time required to render (after low pass filter)
+        Uint64 lastRenderTime;  // on what tick value was rendered window
+        float averageFrameRate;
+    }_frameRate;
+    
+
     public:
         Editor();
 
     private:
         Window * _window;
         InputHandler * _inputHandler;
-        FeditorState _state;
+        FeditorState _state;    // keeps current state of feditor at all. Is it in Insert mode or Edit mode or whatever mode
         std::vector<Buffer*> _bufferArray;   // array of all buffers
         
 
@@ -44,6 +52,7 @@ class Editor
 
         void Init(void);
         void MainLoop(void);    // Main loop of application
+        void Render(void);  // render function
         bool PollingProcess(void);  // Polling process of sdl events. Basically input recognition
         void CommandProcess(Command * cmd); // parsing and making decision based on command, which user has entered
         void InsertText(char * text); // inserting text to somewhere

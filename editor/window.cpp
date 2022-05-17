@@ -33,7 +33,6 @@ void Window::Render()
 
 
     SDL_RenderPresent(_renderer);
-    SDL_Delay(30);
 }
 
 void Window::RunWindow()
