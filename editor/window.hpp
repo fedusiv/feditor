@@ -29,12 +29,12 @@ class Window
         void SetCursorPosition(Vector2 pos);
         void ScrollActiveTextEditor(ScrollWindowType type); // scroll layout. not to draw just to move values of drawing
         void ScrollActiveTextEditorDueCursor(void); // when cursor changes position in text editor, need to make required changes in window repesentation.
+        void ConfigureLayout(void);
 
     private:
         void RunWindow(void);   // staring point
-
         void ProcessLayouts(void);
-        void ConfigureLayout(void);
+        void ConfigureLayoutLinesArea(void);
         void ConfigureColors(void);
         void CalculateLayoutArea(LayoutArea * area);
 

@@ -11,6 +11,7 @@ Editor::Editor()
     _inputHandler = new InputHandler();
     _window = new Window(); // it creates application. representt editor
     _window->SetCurrentBuffer(_bufferArray.at(_bufferId));  // set first buffer to be shown
+    _window->ConfigureLayout(); // need to call configure layout only after attaching buffer
 
     // init keyboards events mechanism holder
     _kEvents.amountOfPressed = new std::vector<int>();

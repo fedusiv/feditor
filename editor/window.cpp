@@ -59,11 +59,7 @@ void Window::RunWindow()
     _glyphHandler->GlyphBuilder(14, "./assets/FiraCode-Retina.ttf");
     // after this line we have size of one element
     // Colors configuration
-    ConfigureColors();
-    // Configuration of layouts
-    ConfigureLayout();
-
-
+    ConfigureColors();  // making preparation for all colors settings
 }
 
 void Window::SetCurrentBuffer(Buffer* buffer)
@@ -85,19 +81,15 @@ void Window::ConfigureColors()
 
 void Window::ConfigureLayout()
 {
-    Vector2  windowSize, currentGlyphSize;
+    Vector2  windowSize;
 
-    currentGlyphSize = _glyphHandler->ElementSize();
     SDL_GetWindowSize(_window, &windowSize.x, &windowSize.y);
 
     _layout.mainOffset = Vector2{.x = 3, .y = 3};   // some hardcoded
     _layout.size = windowSize;
 
     // lines area
-    _layout.linesArea.startPoint = _layout.mainOffset;
-    _layout.linesArea.size.x = currentGlyphSize.x * 3;
-    _layout.linesArea.size.y = _layout.size.y - _layout.mainOffset.y * 2;
-    CalculateLayoutArea(&(_layout.linesArea));
+    ConfigureLayoutLinesArea();
 
     // text editing area
     _layout.textArea.startPoint.x = _layout.mainOffset.x + _layout.linesArea.size.x + 1;
@@ -108,6 +100,28 @@ void Window::ConfigureLayout()
     _layout.textArea.displayPoint.y = 0;
     CalculateLayoutArea(&(_layout.textArea));
 
+}
+
+void Window::ConfigureLayoutLinesArea()
+{
+    int size;
+
+    auto currentGlyphSize = _glyphHandler->ElementSize();
+
+    _layout.linesArea.startPoint = _layout.mainOffset;
+
+    // to get size by x we need to know the size of buffer
+    size = _buffer->LinesAmount();
+    if(size < 100)
+    {
+        // minimal size is 2 characters + 1 
+        size = 99;
+    }
+    auto s = std::to_string(size);
+    // filed for lines is size always size of lines + 1 as white space offset
+    _layout.linesArea.size.x = currentGlyphSize.x * (s.length() + 2);
+    _layout.linesArea.size.y = _layout.size.y - _layout.mainOffset.y * 2;
+    CalculateLayoutArea(&(_layout.linesArea));
 }
 
 void Window::DrawTextEditorLayout()
@@ -287,11 +301,14 @@ void Window::DrawLinesNumber()
         }
 
         auto s = std::to_string(lineNumber);
-        characterPos = 0;
-        for(char& c : s)
+        characterPos = _layout.linesArea.sizeNet.x-2;   // -2 to have one space of glyph character size between line begin and line number
+        // _layout.linesArea.sizeNet.x-1 points to the closest cell near text editor line begin
+        auto itr = s.rbegin();
+        while(characterPos >= 0)
         {
-            DrawCharacter((int)c, _layout.linesArea.layoutPositions[y][characterPos], color);
-            characterPos++;
+            DrawCharacter((int)(*itr), _layout.linesArea.layoutPositions[y][characterPos], color);
+            characterPos--;
+            itr++;
         }
 
         // for coloring active line
