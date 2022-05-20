@@ -7,7 +7,8 @@ enum class CommandType
     InputMode,
     EnterPressed,
     Cursor,
-    Scroll
+    Scroll,
+    BackspacePressed
 };
 
 class Command

@@ -90,11 +90,14 @@ bool Editor::PollingProcess()
     SDL_Event e;
     SDL_Keycode keyValue;
     Command * cmd;
+    InputModes inputMode;
     bool quit;
 
     cmd = nullptr;
     keyValue = 0;   // some unknown value
     quit = false;
+
+    inputMode = InputModes::EditInputMode;  // by default we parsing as in edit
 
     while (SDL_PollEvent(&e))
     {
@@ -129,8 +132,12 @@ bool Editor::PollingProcess()
 
     if(keyValue != 0)
     {
+        if(_state == FeditorState::InputTextState)
+        {
+            inputMode = InputModes::InsertInputMode;
+        }
         // proccess key events
-        cmd = _inputHandler->ProcessInput();
+        cmd = _inputHandler->ProcessInput(inputMode);
     }
 
     if(cmd != nullptr)

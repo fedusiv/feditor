@@ -110,30 +110,53 @@ void InputHandler::KeyReleased(SDL_KeyboardEvent event)
     // remove everything from list
 }
 
-std::tuple<Command*, std::list<SDL_Keycode>::iterator> InputHandler::ParsingKeys(std::list<SDL_Keycode>::iterator &iterator)
+/*
+* Parsing commands only related to operations in edit mode
+*/
+KeyParseResult_t InputHandler::ParsingKeysEditor(KeyCodesList_t::iterator &iterator)
 {
     Command * cmd = nullptr;
-    std::list<SDL_Keycode>::iterator endit;
+    KeyCodesList_t::iterator endit;
 
     endit = iterator;
 
-    switch (*iterator)
+    switch(*iterator)
     {
+
+    // Moving to Insert Mode
     case SDLK_i:
     {
         cmd = new Command(CommandType::InputMode);
         break;
     }
-    case SDLK_ESCAPE:
+    // Cursor manipulation zone
+    // Alternative buttons to manipulate cursor movements
+    case SDLK_o:
     {
-        cmd = new Command(CommandType::EditMode);
+        CommandCursor *cursor = new CommandCursor(CommandType::Cursor, CursorCommandType::CursorUp);
+        cmd = dynamic_cast<Command *>(cursor);
         break;
     }
-    case SDLK_RETURN:
+    case SDLK_l:
     {
-        cmd = new Command(CommandType::EnterPressed);
+
+        CommandCursor *cursor = new CommandCursor(CommandType::Cursor, CursorCommandType::CursorDown);
+        cmd = dynamic_cast<Command *>(cursor);
         break;
     }
+    case SDLK_k:
+    {
+        CommandCursor *cursor = new CommandCursor(CommandType::Cursor, CursorCommandType::CursorLeft);
+        cmd = dynamic_cast<Command *>(cursor);
+        break;
+    }
+    case SDLK_SEMICOLON:
+    {
+        CommandCursor *cursor = new CommandCursor(CommandType::Cursor, CursorCommandType::CursorRight);
+        cmd = dynamic_cast<Command *>(cursor);
+        break;
+    }
+    // Scrolling text editor
     case SDLK_s:
     {
         // scroll manipulation
@@ -167,6 +190,58 @@ std::tuple<Command*, std::list<SDL_Keycode>::iterator> InputHandler::ParsingKeys
         default:
             break;
         }
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    return std::make_tuple(cmd, endit);
+}
+
+KeyParseResult_t InputHandler::ParsingKeysInsert(KeyCodesList_t::iterator &iterator)
+{
+    Command * cmd = nullptr;
+    KeyCodesList_t::iterator endit;
+
+    endit = iterator;
+
+    switch (*iterator)
+    {
+    // Backspace is for deleting characters
+    case SDLK_BACKSPACE:
+    {
+        cmd = new Command(CommandType::BackspacePressed);
+        break;
+    }
+    
+    default:
+        break;
+    }
+
+    return std::make_tuple(cmd, endit);
+}
+
+KeyParseResult_t InputHandler::ParsingKeysCommon(KeyCodesList_t::iterator &iterator)
+{
+    Command * cmd = nullptr;
+    KeyCodesList_t::iterator endit;
+
+    endit = iterator;
+
+    switch (*iterator)
+    {
+    // Moving to edit mode
+    case SDLK_ESCAPE:
+    {
+        cmd = new Command(CommandType::EditMode);
+        break;
+    }
+    // Pressing Enter
+    case SDLK_RETURN:
+    {
+        cmd = new Command(CommandType::EnterPressed);
         break;
     }
     // Cursor manipulation zone
@@ -203,17 +278,34 @@ std::tuple<Command*, std::list<SDL_Keycode>::iterator> InputHandler::ParsingKeys
     return std::make_tuple(cmd, endit);
 }
 
-Command* InputHandler::ProcessInput()
+Command* InputHandler::ProcessInput(InputModes mode)
 {
     Command * cmd = nullptr;
-    std::list<SDL_Keycode>::iterator it;
-    std::list<std::list<SDL_Keycode>::iterator> iteratorsToRemove;
+    KeyCodesList_t::iterator it;
+    std::list<KeyCodesList_t::iterator> iteratorsToRemove;
+    KeyParseResult_t res;
 
     // all combination starts with first pressed button, so it's important operate first pressed key event
     it = _keysToAct->begin();
-    auto res = ParsingKeys(it);
-
+    // first need to parse specific, then common
+    switch (mode)
+    {
+    case InputModes::InsertInputMode :
+        res = ParsingKeysInsert(it);
+        break;
+    case InputModes::EditInputMode:
+        res = ParsingKeysEditor(it);
+        break;
+    default:
+        break;
+    }
     cmd = std::get<0>(res);
+    if(cmd == nullptr)  // no specific cmd is found. parse from common
+    {
+        res = ParsingKeysCommon(it);
+        cmd = std::get<0>(res);
+    }
+
     if(cmd != nullptr)
     {
         // command was executed
