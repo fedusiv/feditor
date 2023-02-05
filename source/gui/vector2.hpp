@@ -1,7 +1,11 @@
-#ifndef __UTILS_HPP__
-#define __UTILS_HPP__
+#ifndef __VECTOR2_HPP__
+#define __VECTOR2_HPP__
 
-// basic data strucct to hold Vector2
+#include <utility>
+
+typedef std::pair<int,int> VectorPair;
+
+// basic data structure to hold Vector2
 class Vector2
 {
     public:
@@ -34,6 +38,14 @@ class Vector2
             return *this;
         }
 
+        Vector2& operator= (VectorPair pair)
+        {
+            x = pair.first;
+            y = pair.second;
+
+            return *this;
+        }
+
 };
 
-#endif // __UTILS_HPP__
+#endif // __VECTOR2_HPP__

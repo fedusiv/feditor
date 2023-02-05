@@ -14,11 +14,26 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
-file(GLOB EDITOR_FILES_INCLUDE "editor/*.hpp")
-file(GLOB EDITOR_FILES_SRC "editor/*.cpp")
-set(EDITOR_FILES ${EDITOR_FILES_INCLUDE} ${EDITOR_FILES_SRC})
+# This mess with adding src files need to be fixed
+file(GLOB CORE_FILES_INCLUDE "source/core/*.hpp")
+file(GLOB CORE_FILES_SRC "source/core/*.cpp")
+set(CORE_FILES ${CORE_FILES_INCLUDE} ${CORE_FILES_SRC})
 
-set(SOURCES main.cpp ${EDITOR_FILES})
+file(GLOB GUI_FILES_INCLUDE "source/gui/*.hpp")
+file(GLOB GUI_FILES_SRC "source/gui/*.cpp")
+set(GUI_FILES ${GUI_FILES_INCLUDE} ${GUI_FILES_SRC})
+
+file(GLOB INPUT_FILES_INCLUDE "source/input/*.hpp")
+file(GLOB INPUT_FILES_SRC "source/input/*.cpp")
+set(INPUT_FILES ${INPUT_FILES_INCLUDE} ${INPUT_FILES_SRC})
+
+file(GLOB COMMON_FILES_INCLUDE "source/common/*.hpp")
+file(GLOB COMMON_FILES_SRC "source/common/*.cpp")
+set(COMMON_FILES ${COMMON_FILES_INCLUDE} ${COMMON_FILES_SRC})
+
+set(SOURCE_FILES ${COMMON_FILES} ${GUI_FILES} ${INPUT_FILES} ${CORE_FILES})
+
+set(SOURCES "source/main.cpp" ${SOURCE_FILES})
 
 include_directories(feditor ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 

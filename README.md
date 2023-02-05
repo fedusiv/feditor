@@ -27,4 +27,4 @@ On mac:
 brew install sdl2
 brew install sdl2_ttf
 ```
-Project has cmake searching sdl files.
+Project has cmake scripts to search for sdl libs.
