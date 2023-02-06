@@ -27,4 +27,17 @@ On mac:
 brew install sdl2
 brew install sdl2_ttf
 ```
+
+On wsl2:
+```
+sudo apt-get install libsdl2-ttf-dev
+sudo apt-get install libsdl2-dev
+```
+To enable GUI from WSL2 use this
+https://aalonso.dev/blog/how-to-use-gui-apps-in-wsl2-forwarding-x-server-cdj
+
+WSL2 on some reasons of apt-get package manager has old SDL2 version.
+
+Newest SDL2 can be obtain via homebrew(brew), but after that it has issue with linking glibc and using pthread.
+
 Project has cmake scripts to search for sdl libs.

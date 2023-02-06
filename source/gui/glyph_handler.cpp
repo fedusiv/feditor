@@ -1,4 +1,4 @@
- #include <string>
+#include <string>
 #include <iostream>
 
 #include "SDL.h"
@@ -41,7 +41,11 @@ void GlyphHandler::GlyphBuilder(int fontSize, std::string fontFileName)
     // from 32 to 126.
     for (i = ' '; i <= '~'; i++)
     {
+#ifndef WSL2
         text = TTF_RenderGlyph32_Blended(_font, i, whiteDefautSdlColor);    // render glyph from font in argb32 format. This is highest quality of rendering text I made
+#else
+        text = TTF_RenderGlyph_Blended(_font, i, whiteDefautSdlColor); // wsl2 using old sdl2. For now did not find how to solve it properly.
+#endif
         _fontTexture[i] = SDL_CreateTextureFromSurface(_mainRenderer, text);    // create texture, which will be used
         SDL_QueryTexture(_fontTexture[i], &pixelFormat, nullptr, &text->w, &text->h); // double check, to make sure, that texture will use argb32 pixel format
         glyphRect.w = text->w;

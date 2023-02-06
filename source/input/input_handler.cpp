@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include "SDL.h"
 
@@ -6,19 +7,21 @@
 
 InputHandler::InputHandler()
 {
-    _kEvents = new std::list<KeyEvent>(); // initialize pointer
-    _keysToAct = new std::list<SDL_Keycode>();
+    _keysEvents = new std::list<KeyEvent *>(); // initialize pointer
+    _keysAct = new std::list<KeyAct *>();
+
+    SDL_StopTextInput();    // have no idea, but in the begging of app it starts to insert text already
 }
 
 bool InputHandler::Polling()
 {
     SDL_Event e;
-    SDL_Keycode keyValue;
     bool quit;
 
     quit = false;
-
+    
     SDL_Delay(1); // rest for other applications, waited for events
+
     while (SDL_PollEvent(&e))
     {
         switch (e.type)
@@ -28,15 +31,19 @@ bool InputHandler::Polling()
                 quit = true;
                 break;
             }
+            case SDL_TEXTINPUT:
+            {
+                _insertedString = std::string(e.text.text);
+                break;
+            }
             case SDL_KEYDOWN:
             {
-                keyValue = e.key.keysym.sym; // store value to know, do we need to call parser of inputs
+                std::cout << keyValue << std::endl;
                 KeyPressed(e.key);
                 break;
             }
             case SDL_KEYUP:
             {
-                keyValue = e.key.keysym.sym;    // store value to know, do we need to call parser of inputs
                 KeyReleased(e.key);
                 break;
             }
@@ -55,8 +62,8 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
 
 
     // Key was pressed or still om pressing state
-    // Check is it was pressed before
-    for(auto e: *_kEvents)
+    // Check is it was pressed before, this is mechanism for continues pressing
+    for(auto e: *_keysEvents)
     {
         if(e.event.keysym.sym == event.keysym.sym)
         {
@@ -64,7 +71,7 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
             // key was already pressed and still is pressing
             if(e.pressedAmount == 1)
             {
-                timeToCompare = 500;
+                timeToCompare = 300;
             }
             else
             {
@@ -86,25 +93,14 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
     if(!found)
     {
         // insert new key
-        auto ke = KeyEvent(event);
-        _kEvents->push_back(ke);
+        auto ke = new KeyEvent(event);
+        _keysEvents->push_back(ke);
         AddKeyToAct(event.keysym.sym);
-
     }
 }
 
-void InputHandler::AddKeyToAct(SDL_Keycode key)
-{
-    bool found;
-
-    found = (std::find(_keysToAct->begin(), _keysToAct->end(), key) != _keysToAct->end());
-    if(!found)
-    {
-        _keysToAct->push_back(key);
-    }
-}
 /*
-* Once key released it should be removed from all lists
+* Procedure of releasing key
 */
 void InputHandler::KeyReleased(SDL_KeyboardEvent event)
 {
@@ -126,7 +122,6 @@ void InputHandler::KeyReleased(SDL_KeyboardEvent event)
         {
             keIt++;
         }
-
     }
 
     // now remove everything from keys to act
@@ -141,10 +136,22 @@ void InputHandler::KeyReleased(SDL_KeyboardEvent event)
             kcIt++;
         }
     }
-
-    // remove everything from list
 }
 
+
+/*
+    Adding key to be processed and acted
+*/
+void InputHandler::AddKeyToAct(SDL_Keycode key)
+{
+    bool found;
+   
+    found = (std::find(_keysToAct->begin(), _keysToAct->end(), key) != _keysToAct->end());
+    if(!found)
+    {
+        _keysToAct->push_back(key);
+    }
+}
 
 
 

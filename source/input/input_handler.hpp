@@ -1,11 +1,12 @@
 #ifndef __INPUT_HANDLER_HPP__
 #define __INPUT_HANDLER_HPP__
 
+
 #include <list>
 #include <tuple>
 
-
-typedef typename std::list<SDL_Keycode> KeyCodesList_t;
+#include "SDL.h"
+#include "key_act.hpp"
 
 /*
 * Represent in which mode key button was pressed or combination were entered
@@ -30,15 +31,17 @@ class InputHandler
                 int pressedAmount;
         };
 
-        std::list<KeyEvent> * _kEvents; // container to hold information about pressed keys
-        KeyCodesList_t * _keysToAct; // list of keys, which should be parsed
+        std::list<KeyEvent *> * _keysEvents; // container to hold information about pressed keys
+        std::list<KeyAct *> * _keysAct; // list of keys, which should be parsed, or rephrase on what editor should act
+        std::string _insertedString; // string, which were received. Text data
+ 
+        void KeyPressed(SDL_KeyboardEvent event);   // SDL_KEYDOWN
+        void KeyReleased(SDL_KeyboardEvent event);  // SDL_KEYUP
+        void AddKeyToAct(SDL_Keycode key);  // add key to act list
 
     public:
         InputHandler();
         bool Polling();
-        void KeyPressed(SDL_KeyboardEvent event);   // SDL_KEYDOWN
-        void KeyReleased(SDL_KeyboardEvent event);  // SDL_KEYUP
-        void AddKeyToAct(SDL_Keycode key);  // add key to act list
 
 };
 
