@@ -15,6 +15,8 @@ void Editor::Init(void)
 
 void Editor::MainLoop()
 {
+    KeysActList_t * keysAct;
+
     bool feditorRunState = true;
 
     while(feditorRunState)
@@ -23,6 +25,9 @@ void Editor::MainLoop()
         {
             break;
         }
+
+        keysAct = _inputHandler->GetKeysAct();
+
         _guiHandler->Render();
     }
 }

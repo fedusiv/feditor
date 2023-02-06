@@ -9,7 +9,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if(UNIX)
+if(APPLE)
+    message("Running on Macos. Using newest SDL2 API")
+elseif(UNIX)
     message("Running on Linux. Using previous SDL2 API")
     add_compile_definitions(WSL2)
 endif()
@@ -40,8 +42,11 @@ set(SOURCE_FILES ${COMMON_FILES} ${GUI_FILES} ${INPUT_FILES} ${CORE_FILES})
 
 set(SOURCES "source/main.cpp" ${SOURCE_FILES})
 
-include_directories(feditor ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 
+
+include_directories(feditor ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 add_executable(feditor ${SOURCES})
+target_include_directories(feditor PRIVATE "source/thirdparty/nlohmann")
+
 target_link_libraries(feditor ${SDL2_LIBRARIES})
 target_link_libraries(feditor ${SDL2_TTF_LIBRARIES})

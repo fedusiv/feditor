@@ -7,6 +7,8 @@
 
 InputHandler::InputHandler()
 {
+    _keyMapOperation = KeyMapOperation::Instance(); // create signleton
+
     _keysEvents = new std::list<KeyEvent *>(); // initialize pointer
     _keysAct = new std::list<KeyAct *>();
 
@@ -22,6 +24,7 @@ bool InputHandler::Polling()
     
     SDL_Delay(1); // rest for other applications, waited for events
 
+    RemoveKeyFromActProcess();
     while (SDL_PollEvent(&e))
     {
         switch (e.type)
@@ -38,7 +41,6 @@ bool InputHandler::Polling()
             }
             case SDL_KEYDOWN:
             {
-                std::cout << keyValue << std::endl;
                 KeyPressed(e.key);
                 break;
             }
@@ -53,6 +55,16 @@ bool InputHandler::Polling()
     return quit;
 }
 
+std::string InputHandler::GetInsertedText()
+{
+    return _insertedString;
+}
+
+KeysActList_t *InputHandler::GetKeysAct()
+{
+    return _keysAct;
+}
+
 void InputHandler::KeyPressed(SDL_KeyboardEvent event)
 {
     bool found;
@@ -65,11 +77,11 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
     // Check is it was pressed before, this is mechanism for continues pressing
     for(auto e: *_keysEvents)
     {
-        if(e.event.keysym.sym == event.keysym.sym)
+        if(e->event.keysym.sym == event.keysym.sym)
         {
             found = true;
             // key was already pressed and still is pressing
-            if(e.pressedAmount == 1)
+            if(e->pressedAmount == 1)
             {
                 timeToCompare = 300;
             }
@@ -78,12 +90,12 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
                 timeToCompare = 100;
             }
 
-            if( (event.timestamp - e.event.timestamp) >= timeToCompare )
+            if( (event.timestamp - e->event.timestamp) >= timeToCompare )
             {
-                e.event.timestamp = event.timestamp;    // save previous timestamp time
-                e.pressedAmount += 1;
+                e->event.timestamp = event.timestamp;    // save previous timestamp time
+                e->pressedAmount += 1;
                 // put key to be acted
-                AddKeyToAct(event.keysym.sym);
+                AddKeyToAct(event);  // continue to acting on button press
             }
 
             break; // exit searching loop
@@ -92,10 +104,9 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
 
     if(!found)
     {
-        // insert new key
-        auto ke = new KeyEvent(event);
-        _keysEvents->push_back(ke);
-        AddKeyToAct(event.keysym.sym);
+        auto ke = new KeyEvent(event);  // create harware event
+        _keysEvents->push_back(ke);     // put to list of hardware pressed
+        AddKeyToAct(event);  // add to logic part of acting
     }
 }
 
@@ -105,35 +116,24 @@ void InputHandler::KeyPressed(SDL_KeyboardEvent event)
 void InputHandler::KeyReleased(SDL_KeyboardEvent event)
 {
     SDL_Keycode code;   // code of event which should operate
-    std::list<KeyEvent>::iterator keIt; // key ivent iterator
-    std::list<SDL_Keycode>::iterator kcIt;  // key code to act iterator
+    KeysEventList_t::iterator keIt; // key ivent iterator
+    KeyEvent * kE;  // pointer to delete created object
 
     code = event.keysym.sym;
 
-    for(keIt = _kEvents->begin(); keIt != _kEvents->end();)
+    for(keIt = _keysEvents->begin(); keIt != _keysEvents->end();)
     {
-        if((*keIt).event.keysym.sym == code)
+        if((*keIt)->event.keysym.sym == code)
         {
             // found iterator which should be removed
-            keIt = _kEvents->erase(keIt);  // remove from events
+            kE = *keIt;
+            keIt = _keysEvents->erase(keIt);  // remove from events
+            delete kE;
             break;
         }
         else
         {
             keIt++;
-        }
-    }
-
-    // now remove everything from keys to act
-    for(kcIt = _keysToAct->begin(); kcIt != _keysToAct->end();)
-    {
-        if(*kcIt == code)
-        {
-            kcIt = _keysToAct->erase(kcIt);
-        }
-        else
-        {
-            kcIt++;
         }
     }
 }
@@ -142,17 +142,40 @@ void InputHandler::KeyReleased(SDL_KeyboardEvent event)
 /*
     Adding key to be processed and acted
 */
-void InputHandler::AddKeyToAct(SDL_Keycode key)
+void InputHandler::AddKeyToAct(SDL_KeyboardEvent event)
 {
-    bool found;
-   
-    found = (std::find(_keysToAct->begin(), _keysToAct->end(), key) != _keysToAct->end());
-    if(!found)
-    {
-        _keysToAct->push_back(key);
-    }
+   KeyAct * act;
+
+   act = new KeyAct(event);
+   _keysAct->push_back(act);
 }
 
+void InputHandler::RemoveKeyFromAct(KeyAct * act)
+{
+    _keysAct->remove(act);
+}
 
+/*
+*  By time parameter remove key from act processing
+*  This is kind of coyote time (Read coyote in game dev)
+*  Even after releasing key, if it was not processed giving some time to enter second key
+*  This mechanism for shortcuts
+*/
+void InputHandler::RemoveKeyFromActProcess(void)
+{
+    KeysActList_t::iterator kaIt; // key act iterator
+    uint32_t timeCurrent;
+    KeyAct * kA;    // pointer to keyAct, which should be deleted
 
+    timeCurrent = SDL_GetTicks();
 
+    for(kaIt = _keysAct->begin(); kaIt != _keysAct->end();)
+    {
+        if(timeCurrent - (*kaIt)->event.timestamp > 50)
+        {
+            kA = *kaIt;
+            kaIt = _keysAct->erase(kaIt);
+            delete kA;
+        }
+    }
+}
