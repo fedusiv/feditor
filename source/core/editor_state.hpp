@@ -7,7 +7,7 @@
 enum EditorState
 {
     NormalState,
-    InsertMode,
+    InsertState,
     EditorStateMax
 };
 

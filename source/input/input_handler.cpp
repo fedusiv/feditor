@@ -11,7 +11,7 @@ InputHandler::InputHandler()
     _keysEvents = new std::list<KeyEvent *>(); // initialize pointer
     _keysAct = new std::list<KeyAct *>();
 
-    SDL_StopTextInput();    // have no idea, but in the begging of app it starts to insert text already
+    //SDL_StopTextInput();    // have no idea, but in the begging of app it starts to insert text already
 }
 
 bool InputHandler::Polling()

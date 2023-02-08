@@ -3,7 +3,7 @@
 
 #include "SDL.h"
 
-#include "vector2.hpp"
+#include "../common/vector2.hpp"
 #include "colors.hpp"
 #include "glyph_handler.hpp"
 

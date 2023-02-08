@@ -6,7 +6,7 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
-#include "vector2.hpp"
+#include "../common/vector2.hpp"
 
 #define GLYPHS_AMOUNT 128
 

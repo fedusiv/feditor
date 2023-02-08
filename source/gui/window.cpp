@@ -3,7 +3,7 @@
 #include "window.hpp"
 #include "widget.hpp"
 #include "widget_editor.hpp"
-#include "vector2.hpp"
+#include "../common/vector2.hpp"
 #include "glyph_handler.hpp"
 #include "colors.hpp"
 

@@ -8,22 +8,50 @@ InsertModule::InsertModule(int id): ExecutorModule(id)
 {
     _executor = Executor::Instance();
 
-    _executor->AddExecutorElement(this, ExecutorOpCode::TextInsert, 
-                                std::vector<KeyMap>(KeyMap::KeyText), std::vector<EditorState>(EditorState::InsertMode), 
-                                "insert_text", "inserting text");
+    _activeBuffer = nullptr;
 
+    AttachExecutors();
 }
 
-void InsertModule::InsertText(void * data)
+
+void InsertModule::InsertText(void *data)
 {
     std::string * strPnt;
     strPnt = reinterpret_cast<std::string*>(data);
 
-    std::cout << *strPnt << std::endl;
+}
+
+Buffer *InsertModule::CreateNewBuffer()
+{
+    auto buffer = new Buffer();
+    _bufferList.push_back(buffer);
+
+    _activeBuffer = buffer;
+
+    return buffer;
 }
 
 
+
+
+/*
+    This function is a part of executor mechanism.
+    This function is called from executor, and runs parsed function
+*/
 void InsertModule::Execute(ExecutorOpCode opCode, void * data)
 {
-    std::cout << "Yes" << std::endl;
+    if(_executorFunctions.count(opCode))
+    {
+        auto pnt = _executorFunctions.at(opCode);
+        (this->*pnt)(data);
+        
+    }
+}
+
+void InsertModule::AttachExecutors(void)
+{
+    _executor->AddExecutorElement(this, ExecutorOpCode::TextInsert, 
+                                KeyMapVector(1,KeyMap::KeyText), std::vector<EditorState>(1,EditorState::InsertState), 
+                                "insert_text", "inserting text");
+    _executorFunctions.insert({ExecutorOpCode::TextInsert, &InsertModule::InsertText});
 }

@@ -11,8 +11,10 @@ class Buffer
     public:
         Buffer(void);
         int LinesNumber(void);
+        int bufferId;
 
     private:
+        static int _globalId;
         BufferData _buffer;
 };
 

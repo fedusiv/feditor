@@ -9,6 +9,11 @@ void KeyMapOperation::ReadMap(std::string configPath)
 
 KeyMap KeyMapOperation::GetLogicKey(SDL_Keycode keyCode)
 {
+    if(_keyMap.count(keyCode) == 0)
+    {
+        // if keymap does not exist return key zero
+        return KeyMap::KeyZero;
+    }
     return _keyMap.at(keyCode);
 }
 

@@ -13,12 +13,15 @@ Editor::Editor(GuiHandler * gui, InputHandler * input) : _guiHandler(gui), _inpu
 
 void Editor::Init(void)
 {
-    Buffer * buffer = new Buffer();
-    _guiHandler->CreateWidgetEditor(buffer);
+    
     _executor = Executor::Instance();
-    _editorState = EditorState::NormalState;
+    _editorState = EditorState::InsertState;
 
     _insertModule = new InsertModule(0x1001);
+
+    // Create empty buffer and attach it to widget. This should be temporary solution
+    auto buffer = _insertModule->CreateNewBuffer();
+    _guiHandler->CreateWidgetEditor(buffer);
 }
 
 void Editor::MainLoop()
@@ -52,6 +55,7 @@ bool Editor::InputParsing()
     {
         // string is not empty
         keyMap.push_back(KeyMap::KeyText);
+        _executor->CallExecutor(_editorState, keyMap, &textData);
     }
     else
     {

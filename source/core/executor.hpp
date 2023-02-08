@@ -176,12 +176,9 @@ class Executor
             std::string name, std::string desc
         )
         {
-            _executorList.push_back( new ExecutorElement(exec,
-                opCode,
-                keyMap,
-                states,
-                name, 
-                desc ));
+            auto element = new ExecutorElement(exec, opCode, keyMap, states, name, desc);
+            _executorList.push_back( element);
+            _executorMapTree->AddNode(element);
         }
 
         void CallExecutor(EditorState state, KeyMapVector keys, void * data = nullptr);

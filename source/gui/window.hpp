@@ -7,7 +7,7 @@
 #include "SDL.h"
 
 #include "widget.hpp"
-#include "vector2.hpp"
+#include "../common/vector2.hpp"
 #include "colors.hpp"
 #include "glyph_handler.hpp"
 #include "../common/buffer.hpp"
