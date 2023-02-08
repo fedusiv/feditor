@@ -27,10 +27,10 @@ void Widget::DrawBackground(SDL_Color color)
     SDL_Rect rect;
     
     rect = {
-        .h = _widgetSize.y,
-        .w = _widgetSize.x,
         .x = _widgetLocation.x,
-        .y = _widgetLocation.y 
+        .y = _widgetLocation.y,
+        .w = _widgetSize.x,
+        .h = _widgetSize.y,
     };
     SDL_SetRenderDrawColor(_sdlRenderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(_sdlRenderer, &rect);
@@ -69,10 +69,10 @@ void Widget::DrawCursor(Vector2 pos)
     SDL_Color color;
 
     cursor = {
-        .h = _glyphHandler->ElementSize().y,
-        .w = 2,
         .x = pos.x + _widgetLocation.x,
-        .y = pos.y + _widgetLocation.y
+        .y = pos.y + _widgetLocation.y,
+        .w = 2,
+        .h = _glyphHandler->ElementSize().y,
     };
     color = _colorStorage->GetColor(ColorPurpose::ColorWidgetCursor);
     SDL_SetRenderDrawColor(_sdlRenderer, color.r, color.g, color.b, color.a);

@@ -9,12 +9,14 @@ class KeyAct
     public:
         SDL_KeyboardEvent event;
         KeyMap keyMap;
+        bool coyoteTime; // for coyote time mechanism
         // Creates key Act. What action should be done for this key pressing.
         // Converts SDL kind of hardware code to logic code of editor
         KeyAct(SDL_KeyboardEvent event): event(event)
         {
             _keyOperation = KeyMapOperation::Instance();
-            keyMap = _keyOperation->GetLogicKey(static_cast<SDL_KeyCode>(event.keysym.sym));
+            keyMap = _keyOperation->GetLogicKey(static_cast<SDL_Keycode>(event.keysym.sym));
+            coyoteTime = false;
         }
     private:
         KeyMapOperation * _keyOperation;

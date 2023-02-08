@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include "SDL.h"
 
 enum KeyMap
@@ -11,8 +12,16 @@ enum KeyMap
     KeyDown,
     KeyLeft,
     KeyRight,
+    KeyUpA,
+    KeyDownA,
+    KeyLeftA,
+    KeyRightA,
+    KeyEnter,
+    KeyText,
     KeysMax
 };
+
+typedef std::vector<KeyMap> KeyMapVector;
 
 class KeyMapOperation
 {
@@ -26,14 +35,14 @@ class KeyMapOperation
             return _keyMapOperation;
         }
         void ReadMap(std::string configPath);
-        KeyMap GetLogicKey(SDL_KeyCode keyCode);
+        KeyMap GetLogicKey(SDL_Keycode keyCode);
 
 
     private:
         KeyMapOperation();
 
         static KeyMapOperation * _keyMapOperation;
-        std::map<SDL_KeyCode, KeyMap> _keyMap;  // This map to convert from hardware part of SDL to logic keymap
+        std::map<SDL_Keycode, KeyMap> _keyMap;  // This map to convert from hardware part of SDL to logic keymap
 };
 
 

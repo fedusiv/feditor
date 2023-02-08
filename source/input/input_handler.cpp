@@ -3,12 +3,11 @@
 
 #include "SDL.h"
 
+#include "SDL_timer.h"
 #include "input_handler.hpp"
 
 InputHandler::InputHandler()
 {
-    _keyMapOperation = KeyMapOperation::Instance(); // create signleton
-
     _keysEvents = new std::list<KeyEvent *>(); // initialize pointer
     _keysAct = new std::list<KeyAct *>();
 
@@ -24,7 +23,7 @@ bool InputHandler::Polling()
     
     SDL_Delay(1); // rest for other applications, waited for events
 
-    RemoveKeyFromActProcess();
+    _insertedString.clear(); // empty string
     while (SDL_PollEvent(&e))
     {
         switch (e.type)
@@ -117,6 +116,7 @@ void InputHandler::KeyReleased(SDL_KeyboardEvent event)
 {
     SDL_Keycode code;   // code of event which should operate
     KeysEventList_t::iterator keIt; // key ivent iterator
+    KeysActList_t::iterator kaIt;  // key act iterator
     KeyEvent * kE;  // pointer to delete created object
 
     code = event.keysym.sym;
@@ -136,9 +136,24 @@ void InputHandler::KeyReleased(SDL_KeyboardEvent event)
             keIt++;
         }
     }
+
+    for(kaIt = _keysAct->begin(); kaIt != _keysAct->end();)
+    {
+        if((*kaIt)->event.keysym.sym == code)
+        {
+            // found iterator which should be removed
+            auto it = *kaIt;
+            kaIt = _keysAct->erase(kaIt);  // remove from events
+            delete it;
+            break;
+        }
+        else
+        {
+            kaIt++;
+        }
+    }
+
 }
-
-
 /*
     Adding key to be processed and acted
 */
@@ -153,29 +168,4 @@ void InputHandler::AddKeyToAct(SDL_KeyboardEvent event)
 void InputHandler::RemoveKeyFromAct(KeyAct * act)
 {
     _keysAct->remove(act);
-}
-
-/*
-*  By time parameter remove key from act processing
-*  This is kind of coyote time (Read coyote in game dev)
-*  Even after releasing key, if it was not processed giving some time to enter second key
-*  This mechanism for shortcuts
-*/
-void InputHandler::RemoveKeyFromActProcess(void)
-{
-    KeysActList_t::iterator kaIt; // key act iterator
-    uint32_t timeCurrent;
-    KeyAct * kA;    // pointer to keyAct, which should be deleted
-
-    timeCurrent = SDL_GetTicks();
-
-    for(kaIt = _keysAct->begin(); kaIt != _keysAct->end();)
-    {
-        if(timeCurrent - (*kaIt)->event.timestamp > 50)
-        {
-            kA = *kaIt;
-            kaIt = _keysAct->erase(kaIt);
-            delete kA;
-        }
-    }
 }
