@@ -43,23 +43,36 @@ bool Editor::InputParsing()
 {
     KeysActList_t * keysAct;
     std::string textData;
-    KeyMapVector keyMap;
+    KeyMapVector keysMap;
+    bool executorResult;    // did executor make his job
 
     if(_inputHandler->Polling())
     {
         return true;
     }
-    
+    // Get data from input handler
     textData = _inputHandler->GetInsertedText();
-    if(!textData.empty())
+    keysAct = _inputHandler->GetKeysAct();
+
+    for(auto kA: *keysAct)
     {
-        // string is not empty
-        keyMap.push_back(KeyMap::KeyText);
-        _executor->CallExecutor(_editorState, keyMap, &textData);
+        keysMap.push_back(kA->keyMap); // fill keys map to pass it through executor
     }
-    else
+
+    // Execute keys (find related combination of keys and run executor for it)
+    executorResult = _executor->CallExecutor(_editorState, keysMap);
+
+    if(executorResult)
     {
-        keysAct = _inputHandler->GetKeysAct();
+        // remove everything from actor keys.
+        // This is logic of it. Calling executor once.
+        _inputHandler->RemoveAllKeysFromAct();
     }
+    else if(!textData.empty())
+    {   // if string is not empty and executor was not done it will proceed text data, otherwise just ignore.
+        keysMap.push_back(KeyMap::KeyText);
+        _executor->CallExecutor(_editorState, keysMap, &textData);
+    }
+
     return false;
 }

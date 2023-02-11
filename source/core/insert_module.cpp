@@ -13,11 +13,15 @@ InsertModule::InsertModule(int id): ExecutorModule(id)
     AttachExecutors();
 }
 
-
+/*
+    This is inserting text to active buffer
+*/
 void InsertModule::InsertText(void *data)
 {
     std::string * strPnt;
     strPnt = reinterpret_cast<std::string*>(data);
+
+    _activeBuffer->Append(*strPnt);
 
 }
 

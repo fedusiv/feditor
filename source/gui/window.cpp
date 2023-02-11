@@ -49,11 +49,11 @@ void Window::Render()
 void Window::CreateWidgetEditor(Buffer *buffer)
 {
     Vector2 size, location;
-    typedef std::pair<int,int> vp;
 
-    size = vp(1276,714);
-    location = vp(2,2);
+    size = Vector2Pair(1276,714);
+    location = Vector2Pair(2,2);
     WidgetEditor * widget = new WidgetEditor(size, location, buffer);
+    widget->SetActive(true);    // After creation of this wdiget set user to point there
 
     _widgets.push_back(widget);
 }

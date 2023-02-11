@@ -15,6 +15,9 @@ class Widget
         Widget(Vector2 size, Vector2 location);
         virtual void Render(void);
 
+        bool Active();
+        void SetActive(bool status);
+
     protected:
         static SDL_Renderer * _sdlRenderer;
 
@@ -22,6 +25,7 @@ class Widget
         Vector2 _widgetLocation; // pixel location in window
         Colors * _colorStorage; // pointer to colors handler singleton
         GlyphHandler * _glyphHandler;   // pointer to glyph handler singleton
+        bool _active;   // means, that user currently is operating with this widget
 
         void DrawCharacter(int character, Vector2 pos, SDL_Color color);
         void DrawBackground(SDL_Color color);

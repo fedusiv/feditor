@@ -3,7 +3,7 @@
 
 #include <utility>
 
-typedef std::pair<int,int> VectorPair;
+typedef std::pair<int,int> Vector2Pair;
 
 // basic data structure to hold Vector2
 class Vector2
@@ -38,7 +38,7 @@ class Vector2
             return *this;
         }
 
-        Vector2& operator= (VectorPair pair)
+        Vector2& operator= (Vector2Pair pair)
         {
             x = pair.first;
             y = pair.second;

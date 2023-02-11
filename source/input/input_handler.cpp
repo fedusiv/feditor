@@ -11,7 +11,8 @@ InputHandler::InputHandler()
     _keysEvents = new std::list<KeyEvent *>(); // initialize pointer
     _keysAct = new std::list<KeyAct *>();
 
-    //SDL_StopTextInput();    // have no idea, but in the begging of app it starts to insert text already
+    SDL_StopTextInput(); // By default text input is enabled.
+                        // This API functions only stops receiving textinput events.
 }
 
 bool InputHandler::Polling()
@@ -35,7 +36,7 @@ bool InputHandler::Polling()
             }
             case SDL_TEXTINPUT:
             {
-                _insertedString = std::string(e.text.text);
+                _insertedString.append(std::string(e.text.text));
                 break;
             }
             case SDL_KEYDOWN:
@@ -165,7 +166,7 @@ void InputHandler::AddKeyToAct(SDL_KeyboardEvent event)
    _keysAct->push_back(act);
 }
 
-void InputHandler::RemoveKeyFromAct(KeyAct * act)
+void InputHandler::RemoveAllKeysFromAct()
 {
-    _keysAct->remove(act);
+    _keysAct->clear();
 }

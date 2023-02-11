@@ -12,9 +12,12 @@ class WidgetEditor: public Widget
 
     private:
         Buffer * _buffer;
-        int _textStartY; // this field need, because of line numbers, we will set on what distance starts to draw text after lines
+        int _textStartX; // this field need, because of line numbers, we will set on what distance starts to draw text after lines
+        Vector2 _glyphSize; // current glyph size for rendering
 
-        void DrawLinesNumber(void);
+        void DrawLinesNumber(void); // draw lines number
+        void DrawData(void);    // draw actual data
+        Vector2 CalculateRealPosForCursor();    // calculating real position on pixels, related to local coordinates for cursor
 };
 
 #endif // __WIDGET_EDITOR_HPP__

@@ -29,7 +29,7 @@ class InputHandler
     public:
         InputHandler();
         bool Polling();
-        void RemoveKeyFromAct(KeyAct * act);
+        void RemoveAllKeysFromAct();
         std::string GetInsertedText(); // requested text, which was inserted, basically it will returnb onlt one character.
         KeysActList_t * GetKeysAct();   // request and return list of keys, to which editor should react
 

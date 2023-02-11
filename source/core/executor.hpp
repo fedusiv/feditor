@@ -73,19 +73,49 @@ class Executor
             }
 
 
+            /*
+                Get editor state and keys sequence.
+                It will parse all keys to find one key combination to return executor pointer
+            */
             ExecutorElement * GetExecutor(EditorState state, KeyMapVector keyMap)
             {
                 Node * parent;
                 ExecutorElement * executor;
+                std::vector<Node*>::iterator iN;
+                KeyMapVector::iterator iK;
 
+                // Get initial state
                 executor = nullptr;
                 parent = _parent[state];
-                std::vector<Node*>::iterator iN;
-                iN =  std::find_if(parent->childs.begin(), parent->childs.end(), 
-                            [&keyMap](const Node* n) { return (keyMap[0]) == n->key;} );
-                if(iN != parent->childs.end())
+
+                for(iK = keyMap.begin(); iK != keyMap.end();)
                 {
-                    executor = (*iN)->executor;
+                    iN =  std::find_if(parent->childs.begin(), parent->childs.end(), 
+                                [&iK](const Node* n) { return (*iK) == n->key;} );
+                    if(iN != parent->childs.end())
+                    {
+                        // found key in this state
+                        parent = (*iN); // this is new parent, where we will look and continue
+
+                        // check if this key has childs, means, there are combinations
+                        if((*iN)->childs.size())
+                        {
+                            // size bigger than zero, means it has childs
+                            iK++;
+                            executor = parent->executor;    // for now save executor
+                            continue;   // go to next loop
+                        }
+                        else {
+                            // There is no childs there for this key.
+                            executor = parent->executor;    // save executor and exit loop
+                            break;
+                        }
+                    }
+                    else {
+                        // did not find any childs with given key.
+                        iK++; // bring next one key to parse
+                        continue;   // go to next loop
+                    }
                 }
 
                 return executor;
@@ -181,7 +211,7 @@ class Executor
             _executorMapTree->AddNode(element);
         }
 
-        void CallExecutor(EditorState state, KeyMapVector keys, void * data = nullptr);
+        bool CallExecutor(EditorState state, KeyMapVector keys, void * data = nullptr);
 };
 
 

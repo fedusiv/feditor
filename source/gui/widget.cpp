@@ -7,6 +7,7 @@ Widget::Widget(Vector2 size, Vector2 location): _widgetSize(size), _widgetLocati
 {
     _colorStorage = Colors::Instance();
     _glyphHandler = GlyphHandler::Instance();
+    _active = false;
 }
 
 void Widget::Render()
@@ -37,7 +38,7 @@ void Widget::DrawBackground(SDL_Color color)
 }
 
 /*
-*   x and y are real pixel place
+*   x and y are relative pixel place
 */
 void Widget::DrawCharacter(int character, Vector2 pos, SDL_Color color)
 {
@@ -61,7 +62,7 @@ void Widget::DrawCharacter(int character, Vector2 pos, SDL_Color color)
 
 
 /*
-* Draw in x and y pos in real coordinates
+* Draw in x and y pos in relative coordinates
 */
 void Widget::DrawCursor(Vector2 pos)
 {
@@ -77,4 +78,14 @@ void Widget::DrawCursor(Vector2 pos)
     color = _colorStorage->GetColor(ColorPurpose::ColorWidgetCursor);
     SDL_SetRenderDrawColor(_sdlRenderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(_sdlRenderer, &cursor);
+}
+
+bool Widget::Active()
+{
+    return _active;
+}
+
+void Widget::SetActive(bool status)
+{
+    _active = status;
 }
