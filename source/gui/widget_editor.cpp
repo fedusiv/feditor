@@ -49,19 +49,24 @@ void WidgetEditor::DrawData(void)
     BufferLine * lineData;  // data of current line
     BufferLine::iterator iL; // iterator of line
 
-    color = _colorStorage->GetColor(ColorWidgetEditorLineNumber);
+    color = _colorStorage->GetColor(ColorWidgetEditorText);
 
     linesNumber = _buffer->LinesNumber();
     pos.x = _textStartX * _glyphSize.x;
     pos.y = 0;
 
-    for(lineNumber = 0; lineNumber <= linesNumber; lineNumber++)
+    for(lineNumber = 0; lineNumber < linesNumber; lineNumber++)
     {
         lineData = _buffer->LineData(lineNumber);
+        if(lineData == nullptr)
+        {
+            // no lines left to draw. Or lines just empty
+            continue;
+        }
         for( iL = lineData->begin(); iL != lineData->end(); iL++)
         {
             DrawCharacter((*iL), pos, color);
-            pos.x++;
+            pos.x+= _glyphSize.x;
         }
         pos.x = _textStartX * _glyphSize.x;
         pos.y += _glyphSize.y;

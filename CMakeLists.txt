@@ -34,9 +34,10 @@ file(GLOB INPUT_FILES_INCLUDE "source/input/*.hpp")
 file(GLOB INPUT_FILES_SRC "source/input/*.cpp")
 set(INPUT_FILES ${INPUT_FILES_INCLUDE} ${INPUT_FILES_SRC})
 
-file(GLOB COMMON_FILES_INCLUDE "source/common/*.hpp")
+#file(GLOB COMMON_FILES_INCLUDE "source/common/*.hpp")
 file(GLOB COMMON_FILES_SRC "source/common/*.cpp")
-set(COMMON_FILES ${COMMON_FILES_INCLUDE} ${COMMON_FILES_SRC})
+#set(COMMON_FILES ${COMMON_FILES_INCLUDE} ${COMMON_FILES_SRC})
+set(COMMON_FILES ${COMMON_FILES_SRC})
 
 set(SOURCE_FILES ${COMMON_FILES} ${GUI_FILES} ${INPUT_FILES} ${CORE_FILES})
 
@@ -47,6 +48,7 @@ set(SOURCES "source/main.cpp" ${SOURCE_FILES})
 include_directories(feditor ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 add_executable(feditor ${SOURCES})
 target_include_directories(feditor PRIVATE "source/thirdparty/nlohmann")
+target_include_directories(feditor PRIVATE "source/common")
 
 target_link_libraries(feditor ${SDL2_LIBRARIES})
 target_link_libraries(feditor ${SDL2_TTF_LIBRARIES})

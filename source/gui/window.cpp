@@ -78,7 +78,7 @@ void Window::CreateWindow()
     // set glyphs
     _glyphHandler = GlyphHandler::Instance();
     _glyphHandler->SetRenderer(_sdlRenderer);
-    _glyphHandler->GlyphBuilder(16, "./assets/FiraCode-Retina.ttf");
+    _glyphHandler->GlyphBuilder(14, "./assets/FiraCodeRegularNerdFontCompleteMono.ttf");
 
     // Creating widgets
     InitWidgets();

@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "insert_module.hpp"
+#include "utility.hpp"
 
 InsertModule::InsertModule(int id): ExecutorModule(id)
 {
@@ -23,6 +24,12 @@ void InsertModule::InsertText(void *data)
 
     _activeBuffer->Append(*strPnt);
 
+}
+
+void InsertModule::InsertTextNewLine(void *data)
+{
+    UNUSED(data);
+    _activeBuffer->InsertNewLine();
 }
 
 Buffer *InsertModule::CreateNewBuffer()
@@ -58,4 +65,10 @@ void InsertModule::AttachExecutors(void)
                                 KeyMapVector(1,KeyMap::KeyText), std::vector<EditorState>(1,EditorState::InsertState), 
                                 "insert_text", "inserting text");
     _executorFunctions.insert({ExecutorOpCode::TextInsert, &InsertModule::InsertText});
+
+    _executor->AddExecutorElement(this, ExecutorOpCode::TextInsertNewLine, 
+                                KeyMapVector(1,KeyMap::KeyEnter), std::vector<EditorState>(1,EditorState::InsertState), 
+                                "insert_text", "inserting text");
+    _executorFunctions.insert({ExecutorOpCode::TextInsertNewLine, &InsertModule::InsertTextNewLine});
+
 }

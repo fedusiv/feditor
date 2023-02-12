@@ -12,13 +12,35 @@ Buffer::Buffer(void)
 void Buffer::Append(std::string data)
 {
     BufferLine line;
-    BufferData::iterator it = ( _buffer.begin() + _cursorPosition.y );
+    BufferData::iterator it;
+
+    if(_buffer.empty())
+    {
+        // if buffer empty we need to create new line there
+        _buffer.push_back(BufferLine(0));
+    }
+    it = ( _buffer.begin() + _cursorPosition.y );
 
     for(auto c: data)
     {
         (*it).insert((*it).begin() + _cursorPosition.x, static_cast<int>(c));
         _cursorPosition.x++;
     }
+}
+
+void Buffer::InsertNewLine(void)
+{
+    BufferData::iterator it;
+
+    if(_buffer.empty())
+    {
+        // if buffer empty we need to create new line there
+        _buffer.push_back(BufferLine(0));
+    }
+    it = ( _buffer.begin() + _cursorPosition.y + 1 );
+    _buffer.insert(it, (BufferLine(0)));
+    _cursorPosition.x = 0;
+    _cursorPosition.y += 1;
 }
 
 BufferLine * Buffer::LineData(int lineNumber)

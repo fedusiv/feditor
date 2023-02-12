@@ -15,7 +15,8 @@ class Buffer
         Buffer(void);
         int LinesNumber(void);
         int bufferId;
-        void Append(std::string data);
+        void Append(std::string data); // append text data on current cursor position
+        void InsertNewLine(void);   // insert new line.
         BufferLine * LineData(int lineNumber);
         Vector2 CursorPosition();
 

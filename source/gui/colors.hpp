@@ -10,6 +10,7 @@ enum ColorPurpose
     ColorWidgetBg,
     ColorWidgetCursor,
     ColorWidgetEditorLineNumber,
+    ColorWidgetEditorText,
     ColorPurposeMax
 };
 

@@ -28,6 +28,7 @@ class InsertModule : ExecutorModule
 
         // Executors functions
         void InsertText(void * data);
+        void InsertTextNewLine(void * data);
 };
 
 #endif // __INSERT_MODULE_HPP__
