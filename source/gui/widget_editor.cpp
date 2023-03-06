@@ -1,19 +1,24 @@
 #include <math.h>
 #include <iostream>
 
-#include "SDL.h"
+#include "vec2.hpp"
 #include "widget_editor.hpp"
 
-WidgetEditor::WidgetEditor(Vector2 size, Vector2 location, Buffer *buffer) : Widget(size, location), _buffer(buffer)
+WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(buffer)
 {
+    _drawingOffset = Vec2(0,5);
+    _currentUpperLine = 0;
+    _linesPageMoveOffset = 1;
+    CalculateAvaliableLines();
+
+    _cursorPrevPos = _buffer->CursorPosition();
 }
 
 void WidgetEditor::Render(void)
 {
-    Widget::Render();
+    PageUpdate();
 
-    // Get current glyph size
-    _glyphSize = _glyphHandler->ElementSize();
+    Widget::Render();
 
     DrawLinesNumber();
     DrawData();
@@ -26,11 +31,12 @@ void WidgetEditor::Render(void)
 
 }
 
-Vector2 WidgetEditor::CalculateRealPosForCursor()
+Vec2 WidgetEditor::CalculateRealPosForCursor()
 {
-    Vector2 logicPos, relativePos;
+    Vec2 logicPos, relativePos;
 
     logicPos = _buffer->CursorPosition();
+    logicPos.y -= _currentUpperLine;
     relativePos.x = (logicPos.x + _textStartX) * _glyphSize.x;
     relativePos.y = logicPos.y * _glyphSize.y;
 
@@ -44,18 +50,20 @@ void WidgetEditor::DrawData(void)
 {
     int linesNumber; // whole amount of lines
     int lineNumber; // current lineNumber
-    SDL_Color color;
-    Vector2 pos;    // position to draw
+    Vec2 pos;    // position to draw
     BufferLine * lineData;  // data of current line
     BufferLine::iterator iL; // iterator of line
 
-    color = _colorStorage->GetColor(ColorWidgetEditorText);
-
-    linesNumber = _buffer->LinesNumber();
     pos.x = _textStartX * _glyphSize.x;
     pos.y = 0;
 
-    for(lineNumber = 0; lineNumber < linesNumber; lineNumber++)
+    linesNumber = _buffer->LinesNumber();   // whole amount of lines in file
+    if(linesNumber - _currentUpperLine > _availableLines)   // calculate last line number in the current page
+    {
+        linesNumber = _availableLines + _currentUpperLine;
+    }
+
+    for(lineNumber = _currentUpperLine + 1; lineNumber < linesNumber; lineNumber++)
     {
         lineData = _buffer->LineData(lineNumber);
         if(lineData == nullptr)
@@ -65,7 +73,7 @@ void WidgetEditor::DrawData(void)
         }
         for( iL = lineData->begin(); iL != lineData->end(); iL++)
         {
-            DrawCharacter((*iL), pos, color);
+            DrawCharacter((*iL), pos, ColorPurpose::ColorWidgetEditorText);
             pos.x+= _glyphSize.x;
         }
         pos.x = _textStartX * _glyphSize.x;
@@ -78,22 +86,22 @@ void WidgetEditor::DrawLinesNumber(void)
     int linesNumber; // whole amount of lines
     int digitsAmount;   // maximum digits amount if lines numbering
     int lineNumber; // current lineNumber
-    Vector2 pos;    // position to draw
-    SDL_Color color;
+    Vec2 pos;    // position to draw
 
-    color = _colorStorage->GetColor(ColorWidgetEditorLineNumber);
-
-    linesNumber = _buffer->LinesNumber();
+    linesNumber = _buffer->LinesNumber();   // get maximum lines in the file
     if(linesNumber < 1)
     {
         linesNumber = 1;
     }
+    if(linesNumber - _currentUpperLine > _availableLines)
+    {
+        linesNumber = _availableLines + _currentUpperLine;
+    }
 
-    pos.x = 0;
-    pos.y = 0; // draw from begginning of widget
+    pos = Vec2(0,0);
     digitsAmount = int(log10(linesNumber) + 1);
     _textStartX = 4 + digitsAmount; // for text drawing, need to know what offset to draw text
-    for(lineNumber = 1; lineNumber <= linesNumber; lineNumber++)
+    for(lineNumber = _currentUpperLine + 1; lineNumber <= linesNumber; lineNumber++)
     {
         pos.x = 0;  // clear x position
         // draw line with line number. it should at least two character before first digit, and at least two characters after
@@ -104,15 +112,60 @@ void WidgetEditor::DrawLinesNumber(void)
         pos.x += (2 + digitsAmount - s.size()) * _glyphSize.x;
         for(auto ch : s)
         {
-            DrawCharacter((int)(ch), pos, color);
+            DrawCharacter((int)(ch), pos, ColorPurpose::ColorWidgetEditorLineNumber);
             pos.x += _glyphSize.x;
         }
 
         pos.y += _glyphSize.y;   // for next step
-        if(pos.y + _glyphSize.y >= _widgetSize.y)
+        if(pos.y + _glyphSize.y >= _widgetRect.h)
         {
             // reached maximum avaliable size. do not draw
             break;
         }
     }
+}
+
+/*
+    Based on cursor position, need to decide, widget need to move page, move lines, etc
+*/
+void WidgetEditor::PageUpdate(void)
+{
+    Vec2 cursorPos;
+    int linesNumber;
+
+    cursorPos = _buffer->CursorPosition();
+    if(cursorPos == _cursorPrevPos)
+    {
+        return; // no need to update paging
+    }
+
+    linesNumber =  _buffer->LinesNumber();
+
+
+    if(cursorPos.y - _linesPageMoveOffset < _currentUpperLine)
+    {   // This is moving page up
+        _currentUpperLine--; // moving line by one step
+    }
+    if(cursorPos.y + _linesPageMoveOffset >= _currentUpperLine + _availableLines)
+    {   // This is moving page down
+        _currentUpperLine++; // moving line by one step
+    }
+
+    // Making borders of it
+    if(_currentUpperLine < 0)
+    {
+        _currentUpperLine = 0;
+    }
+    if(_currentUpperLine > linesNumber)
+    {
+        _currentUpperLine = linesNumber;
+    }
+
+    _cursorPrevPos = cursorPos;
+
+}
+
+void WidgetEditor::CalculateAvaliableLines(void)
+{
+    _availableLines = _widgetRect.h / _glyphSize.y;
 }

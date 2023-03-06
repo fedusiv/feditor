@@ -2,11 +2,12 @@
 #define __EXECUTOR_HPP__
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <algorithm>
 
-#include "executor_module.hpp"
-#include "../input/key_map.hpp"
+#include "executoraccess.hpp"
+#include "executoroc.hpp"
+#include "keymap.hpp"
 #include "editor_state.hpp"
 
 /*
@@ -27,13 +28,13 @@ class Executor
     class ExecutorElement
     {
         public:
-            ExecutorElement(ExecutorModule * exec, ExecutorOpCode opCode, 
+            ExecutorElement(ExecutorMethod * execM, ExecutorOpCode opCode, 
                     std::vector<KeyMap> keyMap,
                     std::vector<EditorState> states,
                     std::string name, std::string desc, int id = 1)
-                : exec(exec), opCode(opCode),keyMap(keyMap), states(states), name(name), desc(desc)
+                : execM(execM), opCode(opCode),keyMap(keyMap), states(states), name(name), desc(desc)
             {};
-            ExecutorModule * exec;
+            ExecutorMethod * execM;
             ExecutorOpCode opCode;
             std::vector<KeyMap> keyMap;
             std::vector<EditorState> states;
@@ -76,13 +77,14 @@ class Executor
             /*
                 Get editor state and keys sequence.
                 It will parse all keys to find one key combination to return executor pointer
+                Also it edits keyMap variable and keeps only keys on which executor is find
             */
-            ExecutorElement * GetExecutor(EditorState state, KeyMapVector keyMap)
+            ExecutorElement * GetExecutor(EditorState state, KeysMapList& keyMap)
             {
                 Node * parent;
                 ExecutorElement * executor;
                 std::vector<Node*>::iterator iN;
-                KeyMapVector::iterator iK;
+                KeysMapList::iterator iK;
 
                 // Get initial state
                 executor = nullptr;
@@ -100,20 +102,26 @@ class Executor
                         // check if this key has childs, means, there are combinations
                         if((*iN)->childs.size())
                         {
-                            // size bigger than zero, means it has childs
-                            iK++;
-                            executor = parent->executor;    // for now save executor
+                            iK++; // size bigger than zero, means it has childs
                             continue;   // go to next loop
                         }
                         else {
                             // There is no childs there for this key.
-                            executor = parent->executor;    // save executor and exit loop
+                            executor = parent->executor;    // save executor
+                            // remove all other keys from keyMap
+                            iK++;
+                            while(iK != keyMap.end())
+                            {
+                                iK = keyMap.erase(iK);
+                            }
+                            // everything is removed. Exit
                             break;
                         }
                     }
                     else {
                         // did not find any childs with given key.
-                        iK++; // bring next one key to parse
+                        iK = keyMap.erase(iK); // bring next one key to parse
+                        // keyMap was decreased, because we did not used this key
                         continue;   // go to next loop
                     }
                 }
@@ -125,8 +133,19 @@ class Executor
             void AddNode(ExecutorElement * execElement)
             {
                 Node * parent;
-                KeyMapVector::iterator iK;
+                KeysMapList::iterator iK;
                 std::vector<Node*>::iterator iN;
+
+                // some key combination can be run from any editor state
+                // First check, if executor element if related to maximum editor state, attach that executor element to all modes
+                if(execElement->states[0] == EditorState::EditorStateMax)
+                {
+                    for(int i = 0; i < EditorState::EditorStateMax; i++)
+                    {
+                        execElement->states.push_back(static_cast<EditorState>(i));
+                    }
+                    execElement->states.erase(execElement->states.begin()); // remove first element, which is EditorStateMax
+                }
 
                 for(EditorState state: execElement->states)
                 {
@@ -178,12 +197,13 @@ class Executor
 
     private:
         static Executor * _executorSingleton;
-        std::vector<ExecutorElement *> _executorList;   // list with all executors
-        ExecutorMapTree * _executorMapTree;     // Map tree with executors
+        std::unordered_map<ExecutorOpCode, ExecutorElement *> _executorList;   // list with all executors, which can be access by executor opcode
+        ExecutorMapTree * _executorKeyMapTree;     // Map tree with executors, parsed be keymap
+        ExecutorAccess * _execAccess;   // object, which keeps access to all important modules, which responce for application functionality
 
         Executor()
         {
-            _executorMapTree = new ExecutorMapTree();
+            _executorKeyMapTree = new ExecutorMapTree();
         }
     
     
@@ -196,22 +216,24 @@ class Executor
             }
             return _executorSingleton;
         }
+
+        void AttachAccess(ExecutorAccess * access)
+        {
+            _execAccess = access;
+        }
+
         // Create and add executor element.
         // Here key value is keyMap. If other executor attached to given keyMap in specific editor state, other executor will be deleted and new one will be placed
         void AddExecutorElement(
-            ExecutorModule * exec,
+            ExecutorMethod * execM,
             ExecutorOpCode opCode,
-            KeyMapVector keyMap,
+            KeysMapList keyMap,
             std::vector<EditorState> states,
             std::string name, std::string desc
-        )
-        {
-            auto element = new ExecutorElement(exec, opCode, keyMap, states, name, desc);
-            _executorList.push_back( element);
-            _executorMapTree->AddNode(element);
-        }
+        );
 
-        bool CallExecutor(EditorState state, KeyMapVector keys, void * data = nullptr);
+        bool CallExecutor(EditorState state, KeysMapList& keys, void * data = nullptr); // Run executor by keymap list
+        bool CallExecutor(ExecutorOpCode opCode, void * data = nullptr);    // run executor directly by opcode
 };
 
 

@@ -1,83 +1,61 @@
 #include "widget.hpp"
-#include "colors.hpp"
+#include "graphics.hpp"
 
-SDL_Renderer * Widget::_sdlRenderer;    // static variable need to be also defined in cpp file.
-
-Widget::Widget(Vector2 size, Vector2 location): _widgetSize(size), _widgetLocation(location)
+Widget::Widget(Rect rect): _widgetFullRect(rect)
 {
-    _colorStorage = Colors::Instance();
-    _glyphHandler = GlyphHandler::Instance();
-    _active = false;
+    _active = true;
+    _widgetBorderThick = 2;
+    _drawingOffset = Vec2(0,0);
+    _cursorWidth = 2;
+    _cursorHeightAdd = 2;
+    _glyphSize = Graphics::GlyphMaxSize();
+    _widgetRect = _widgetFullRect;
+    _widgetRect -= _widgetBorderThick;
+
+    _colorBgWidget = ColorPurpose::ColorWidgetBg;
+    _colorBorderWidget = ColorPurpose::ColorWidgetBorder;
 }
 
 void Widget::Render()
 {
-    SDL_Color widgetBg;
-
-    widgetBg = _colorStorage->GetColor(ColorPurpose::ColorWidgetBg);
-    DrawBackground(widgetBg);
+    DrawBackground();
 }
 
-void Widget::SetSdlRenderer(SDL_Renderer *renderer)
+void Widget::DrawBackground()
 {
-    _sdlRenderer = renderer;
-}
-
-void Widget::DrawBackground(SDL_Color color)
-{
-    SDL_Rect rect;
-    
-    rect = {
-        .x = _widgetLocation.x,
-        .y = _widgetLocation.y,
-        .w = _widgetSize.x,
-        .h = _widgetSize.y,
-    };
-    SDL_SetRenderDrawColor(_sdlRenderer, color.r, color.g, color.b, color.a);
-    SDL_RenderFillRect(_sdlRenderer, &rect);
+    Graphics::DrawRect(_widgetFullRect,_colorBgWidget);
+    Graphics::DrawRect(_widgetRect,_colorBorderWidget);
 }
 
 /*
 *   x and y are relative pixel place
 */
-void Widget::DrawCharacter(int character, Vector2 pos, SDL_Color color)
+void Widget::DrawCharacter(int character, Vec2 pos, ColorPurpose color)
 {
-    SDL_Rect * glyphRect;
-    SDL_Rect dest;
-    SDL_Texture * texture;
-
-    _glyphHandler->Glyph(character, &glyphRect, &texture);
-
-    SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
-    SDL_SetTextureAlphaMod(texture,color.a);
-
-    dest.x = pos.x + _widgetLocation.x;
-    dest.y = pos.y + _widgetLocation.y;
-    dest.w = glyphRect->w;
-    dest.h = glyphRect->h;
-
-    SDL_RenderCopy(_sdlRenderer, texture, NULL, &dest);
+    pos += _drawingOffset;
+    // Adding offset of widget to real coordinates
+    pos.x += _widgetRect.x;
+    pos.y += _widgetRect.y;
+    Graphics::DrawGlyph(character, pos, color);
 }
-
 
 
 /*
 * Draw in x and y pos in relative coordinates
 */
-void Widget::DrawCursor(Vector2 pos)
+void Widget::DrawCursor(Vec2 pos)
 {
-    SDL_Rect cursor;
-    SDL_Color color;
+    Vec2 endpos;
 
-    cursor = {
-        .x = pos.x + _widgetLocation.x,
-        .y = pos.y + _widgetLocation.y,
-        .w = 2,
-        .h = _glyphHandler->ElementSize().y,
-    };
-    color = _colorStorage->GetColor(ColorPurpose::ColorWidgetCursor);
-    SDL_SetRenderDrawColor(_sdlRenderer, color.r, color.g, color.b, color.a);
-    SDL_RenderFillRect(_sdlRenderer, &cursor);
+    pos += _drawingOffset;
+    pos.x += _widgetRect.x;
+    pos.y += _widgetRect.y;
+    endpos = pos;
+    endpos.y += _glyphSize.y;
+    endpos.x += _cursorWidth;
+    pos.y -= _cursorHeightAdd;
+
+    Graphics::DrawLine(pos, endpos, ColorPurpose::ColorWidgetCursor);
 }
 
 bool Widget::Active()

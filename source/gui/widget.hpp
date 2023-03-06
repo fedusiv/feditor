@@ -1,34 +1,38 @@
 #ifndef __WIDGET_HPP__
 #define __WIDGET_HPP__
 
-#include "SDL.h"
-
-#include "../common/vector2.hpp"
 #include "colors.hpp"
-#include "glyph_handler.hpp"
+#include "vec2.hpp"
 
 class Widget
 {
     public:
-        static void SetSdlRenderer(SDL_Renderer * renderer);
 
-        Widget(Vector2 size, Vector2 location);
+        Widget(Rect rect);
         virtual void Render(void);
 
         bool Active();
         void SetActive(bool status);
 
+
     protected:
-        static SDL_Renderer * _sdlRenderer;
 
-        Vector2 _widgetSize;    // size in pixels
-        Vector2 _widgetLocation; // pixel location in window
-        Colors * _colorStorage; // pointer to colors handler singleton
-        GlyphHandler * _glyphHandler;   // pointer to glyph handler singleton
+        Rect _widgetFullRect;  // widget size and location related to real pixel position in window
+        Rect _widgetRect; // rect of widget without borders
+
+        Vec2 _glyphSize;
+        int _cursorWidth; // width in pixels for cursor
+        int _cursorHeightAdd; // amount of pixel to increase height of cursor
+        
         bool _active;   // means, that user currently is operating with this widget
+        int _widgetBorderThick;
+        Vec2 _drawingOffset;     // offset in pixels from border of widget to begin draw.
 
-        void DrawCharacter(int character, Vector2 pos, SDL_Color color);
-        void DrawBackground(SDL_Color color);
-        void DrawCursor(Vector2 pos); // draw cursor at given position
+        ColorPurpose _colorBgWidget;    // colors to draw background
+        ColorPurpose _colorBorderWidget;// colors to draw background
+
+        void DrawCharacter(int character, Vec2 pos, ColorPurpose color);
+        void DrawBackground();
+        void DrawCursor(Vec2 pos); // draw cursor at given position
 };
 #endif // __WIDGET_HPP__

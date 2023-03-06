@@ -1,78 +1,81 @@
-#include <iostream>
+#include "editor.hpp"
+#include "editor_state.hpp"
+#include "executor.hpp"
+#include "keymap.hpp"
 #include <vector>
 
-#include "editor.hpp"
-#include "executor.hpp"
-#include "../common/buffer.hpp"
-
-Editor::Editor(GuiHandler * gui, InputHandler * input) : _guiHandler(gui), _inputHandler(input)
+void Editor::CreateNewEmptyFile(ExecutorAccess * execA, void * data)
 {
-    Init();
-    MainLoop();
-}
-
-void Editor::Init(void)
-{
-    
-    _executor = Executor::Instance();
-    _editorState = EditorState::InsertState;
-
-    _insertModule = new InsertModule(0x1001);
-
-    // Create empty buffer and attach it to widget. This should be temporary solution
-    auto buffer = _insertModule->CreateNewBuffer();
-    _guiHandler->CreateWidgetEditor(buffer);
-}
-
-void Editor::MainLoop()
-{
-
-    bool feditorRunState = true;
-
-    while(feditorRunState)
+    auto buffer = execA->bufferHandler->CreateBuffer();
+    if(nullptr != buffer)
     {
-        if(InputParsing())
-        {
-            break;
-        }
-        _guiHandler->Render();
+        execA->gui->CreateWidgetEditor(buffer);
     }
 }
 
-bool Editor::InputParsing()
+void Editor::InsertText(ExecutorAccess * execA, void * data)
 {
-    KeysActList_t * keysAct;
-    std::string textData;
-    KeyMapVector keysMap;
-    bool executorResult;    // did executor make his job
+    KeysInsertedText text;
+    text = *((KeysInsertedText*)(data));
+    execA->bufferHandler->AppendToActiveBuffer(text);
+}
 
-    if(_inputHandler->Polling())
-    {
-        return true;
-    }
-    // Get data from input handler
-    textData = _inputHandler->GetInsertedText();
-    keysAct = _inputHandler->GetKeysAct();
+void Editor::InsertNewLine(ExecutorAccess * execA, void * data)
+{
+    execA->bufferHandler->InsertNewLine();
+}
 
-    for(auto kA: *keysAct)
-    {
-        keysMap.push_back(kA->keyMap); // fill keys map to pass it through executor
-    }
+void Editor::MoveCursorStepUp(ExecutorAccess * execA, void * data)
+{
+    execA->bufferHandler->MoveCursor(MoveCursorDirection::CursorUp);
+}
 
-    // Execute keys (find related combination of keys and run executor for it)
-    executorResult = _executor->CallExecutor(_editorState, keysMap);
+void Editor::MoveCursorStepDown(ExecutorAccess * execA, void * data)
+{
+    execA->bufferHandler->MoveCursor(MoveCursorDirection::CursorDown);
+}
 
-    if(executorResult)
-    {
-        // remove everything from actor keys.
-        // This is logic of it. Calling executor once.
-        _inputHandler->RemoveAllKeysFromAct();
-    }
-    else if(!textData.empty())
-    {   // if string is not empty and executor was not done it will proceed text data, otherwise just ignore.
-        keysMap.push_back(KeyMap::KeyText);
-        _executor->CallExecutor(_editorState, keysMap, &textData);
-    }
+void Editor::MoveCursorStepLeft(ExecutorAccess * execA, void * data)
+{
+    execA->bufferHandler->MoveCursor(MoveCursorDirection::CursorLeft);
+}
 
-    return false;
+void Editor::MoveCursorStepRight(ExecutorAccess * execA, void * data)
+{
+    execA->bufferHandler->MoveCursor(MoveCursorDirection::CursorRight);
+}
+
+void Editor::DeleteBeforeCursor(ExecutorAccess * execA, void * data)
+{
+    execA->bufferHandler->DeleteAtCursor(DeleteOperations::BeforeCursor);
+}
+
+void Editor::DeleteAfterCursor(ExecutorAccess * execA, void * data)
+{
+    execA->bufferHandler->DeleteAtCursor(DeleteOperations::AfterCursor);
+}
+
+void Editor::Exit(ExecutorAccess * execA, void * data)
+{
+    execA->gui->RequestExit();
+}
+
+void Editor::Init()
+{
+    Executor * exec = Executor::Instance();
+
+    exec->AddExecutorElement(Editor::CreateNewEmptyFile, ExecutorOpCode::CreateEmptyEditorWidget, std::vector<KeyMap>(0), std::vector<EditorState>(1, EditorState::NormalState), "new_file", "foo");
+    exec->AddExecutorElement(Editor::InsertText, ExecutorOpCode::TextInsert, std::vector<KeyMap>(0), std::vector<EditorState>(1, EditorState::InsertState), "insert_text", "foo");
+    exec->AddExecutorElement(Editor::InsertNewLine, ExecutorOpCode::TextInsertNewLine, std::vector<KeyMap>(1, {KeyMap::KeyEnter}), std::vector<EditorState>(1, EditorState::InsertState), "insert_new_line", "foo");
+    exec->AddExecutorElement(Editor::DeleteBeforeCursor, ExecutorOpCode::DeleteBeforeCursor, std::vector<KeyMap>(1, {KeyMap::KeyBackspace}), std::vector<EditorState>(1, EditorState::InsertState), "delete_before_cursor", "foo");
+    exec->AddExecutorElement(Editor::DeleteAfterCursor, ExecutorOpCode::DeleteAfterCursor, std::vector<KeyMap>(1, {KeyMap::KeyDelete}), std::vector<EditorState>(1, EditorState::InsertState), "delete_after_cursor", "foo");
+
+
+    exec->AddExecutorElement(Editor::MoveCursorStepUp, ExecutorOpCode::MoveCursorUp, std::vector<KeyMap>(1, {KeyMap::KeyUp}), std::vector<EditorState>(1, EditorState::InsertState), "move_cursor_up", "foo");
+    exec->AddExecutorElement(Editor::MoveCursorStepDown, ExecutorOpCode::MoveCursorDown, std::vector<KeyMap>(1, {KeyMap::KeyDown}), std::vector<EditorState>(1, EditorState::InsertState), "move_cursor_down", "foo");
+    exec->AddExecutorElement(Editor::MoveCursorStepLeft, ExecutorOpCode::MoveCursorLeft, std::vector<KeyMap>(1, {KeyMap::KeyLeft}), std::vector<EditorState>(1, EditorState::InsertState), "move_cursor_left", "foo");
+    exec->AddExecutorElement(Editor::MoveCursorStepRight, ExecutorOpCode::MoveCursorRight, std::vector<KeyMap>(1, {KeyMap::KeyRight}), std::vector<EditorState>(1, EditorState::InsertState), "move_cursor_right", "foo");
+
+    exec->AddExecutorElement(Editor::Exit, ExecutorOpCode::ExitApp, std::vector<KeyMap>(1, {KeyMap::KeyExit}), std::vector<EditorState>(1, EditorState::EditorStateMax), "exit", "foo");
+
 }

@@ -1,54 +1,46 @@
-cmake_minimum_required(VERSION 3.16)
-INCLUDE(FindPkgConfig)
+cmake_minimum_required(VERSION 3.16) # FetchContent is available in 3.11+
 
-# set the project name
+if(APPLE)
+    set(CMAKE_HOST_SYSTEM_PROCESSOR arm64)
+endif()
+
+if(UNIX)
+    set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+    set(CMAKE_C_COMPILER "/usr/bin/clang")
+endif()
+
 project(feditor)
 
-set(CMAKE_HOST_SYSTEM_PROCESSOR arm64)
+# Generate compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall")
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(APPLE)
     message("Running on Macos. Using newest SDL2 API")
 elseif(UNIX)
-    message("Running on Linux. Using previous SDL2 API")
+    message("Running on Linux. Using previous SDL2 API")    # This is only for WSl2, need to be fixed
     add_compile_definitions(WSL2)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
-
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/sdl2)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
-# This mess with adding src files need to be fixed
-file(GLOB CORE_FILES_INCLUDE "source/core/*.hpp")
-file(GLOB CORE_FILES_SRC "source/core/*.cpp")
-set(CORE_FILES ${CORE_FILES_INCLUDE} ${CORE_FILES_SRC})
-
-file(GLOB GUI_FILES_INCLUDE "source/gui/*.hpp")
-file(GLOB GUI_FILES_SRC "source/gui/*.cpp")
-set(GUI_FILES ${GUI_FILES_INCLUDE} ${GUI_FILES_SRC})
-
-file(GLOB INPUT_FILES_INCLUDE "source/input/*.hpp")
-file(GLOB INPUT_FILES_SRC "source/input/*.cpp")
-set(INPUT_FILES ${INPUT_FILES_INCLUDE} ${INPUT_FILES_SRC})
-
-#file(GLOB COMMON_FILES_INCLUDE "source/common/*.hpp")
-file(GLOB COMMON_FILES_SRC "source/common/*.cpp")
-#set(COMMON_FILES ${COMMON_FILES_INCLUDE} ${COMMON_FILES_SRC})
-set(COMMON_FILES ${COMMON_FILES_SRC})
-
-set(SOURCE_FILES ${COMMON_FILES} ${GUI_FILES} ${INPUT_FILES} ${CORE_FILES})
-
+file(GLOB GUI_FILES "source/gui/*.cpp")
+file(GLOB CORE_FILES "source/core/*.cpp")
+file(GLOB INPUT_FILES "source/input/*.cpp")
+set(SOURCE_FILES ${GUI_FILES} ${CORE_FILES} ${INPUT_FILES})
 set(SOURCES "source/main.cpp" ${SOURCE_FILES})
 
-
-
 include_directories(feditor ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
-add_executable(feditor ${SOURCES})
+
+add_executable(${PROJECT_NAME} ${SOURCES})
+
+target_include_directories(${PROJECT_NAME} PRIVATE "source/core")
+target_include_directories(${PROJECT_NAME} PRIVATE "source/gui")
+target_include_directories(${PROJECT_NAME} PRIVATE "source/input")
 target_include_directories(feditor PRIVATE "source/thirdparty/nlohmann")
-target_include_directories(feditor PRIVATE "source/common")
 
 target_link_libraries(feditor ${SDL2_LIBRARIES})
 target_link_libraries(feditor ${SDL2_TTF_LIBRARIES})

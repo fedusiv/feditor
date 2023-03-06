@@ -4,22 +4,23 @@ Colors * Colors::_colors;   // need because of static
 
 Colors::Colors()
 {
-    SDL_Color windowBackgroundColor = {.r = 255, .g = 255, .b = 255, .a = 255};
-    SDL_Color widgetBackgroundColor = {.r = 24, .g = 21, .b = 26, .a = 255};
-    SDL_Color widgetCursorColor = {.r = 168, .g = 160, .b = 50, .a = 255};
-    SDL_Color widgetEditorLineNumberColor = {.r = 120, .g = 123, .b = 156, .a = 255};
-    SDL_Color widgetEditorText = {.r = 220, .g = 229, .b = 232, .a = 255};
+    // Default values for coloring
+    _colorsStorage[ColorPurpose::ColorWindowBg] = {.r = 255, .g = 255, .b = 255, .a = 255};
+    _colorsStorage[ColorPurpose::ColorWidgetBg] = {.r = 24, .g = 21, .b = 26, .a = 255};
+    _colorsStorage[ColorPurpose::ColorWidgetBorder] = {.r = 14, .g = 11, .b = 16, .a = 255};
+    _colorsStorage[ColorPurpose::ColorWidgetCursor] = {.r = 168, .g = 160, .b = 50, .a = 255};
+    _colorsStorage[ColorPurpose::ColorWidgetEditorLineNumber] = {.r = 120, .g = 123, .b = 156, .a = 255};
+    _colorsStorage[ColorPurpose::ColorWidgetEditorText] = {.r = 0, .g = 255, .b = 0, .a = 150};
+    _colorsStorage[ColorPurpose::ColorStatusLineModalMode] = {.r = 0, .g = 255, .b = 0, .a = 255};
+    _colorsStorage[ColorPurpose::ColorStatusLineInsertMode] = {.r = 135, .g = 135, .b = 212, .a = 255};
 
-    _colorsStorage.push_back(windowBackgroundColor);
-    _colorsStorage.push_back(widgetBackgroundColor);
-    _colorsStorage.push_back(widgetCursorColor);
-    _colorsStorage.push_back(widgetEditorLineNumberColor);
-    _colorsStorage.push_back(widgetEditorText);
+
+    _colorsStorage[ColorPurpose::ColorWhite] = {.r = 240, .g = 240, .b = 240, .a = 240};
 }
 
 SDL_Color Colors::GetColor(ColorPurpose pur)
 {
-    return _colorsStorage.at(pur);
+    return _colorsStorage[pur];
 }
 
 Colors *Colors::Instance()
