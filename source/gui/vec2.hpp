@@ -2,8 +2,6 @@
 #define __VEC2_HPP__
 
 #include <utility>
-#include "raylib.h"
-
 
 class Rect {
     public:

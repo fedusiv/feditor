@@ -63,7 +63,7 @@ void WidgetEditor::DrawData(void)
         linesNumber = _availableLines + _currentUpperLine;
     }
 
-    for(lineNumber = _currentUpperLine + 1; lineNumber < linesNumber; lineNumber++)
+    for(lineNumber = _currentUpperLine; lineNumber < linesNumber; lineNumber++)
     {
         lineData = _buffer->LineData(lineNumber);
         if(lineData == nullptr)
