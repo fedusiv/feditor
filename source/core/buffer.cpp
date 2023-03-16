@@ -121,11 +121,11 @@ void Buffer::DeleteAtCursor(DeleteOperations operation)
     BufferLine* line;
     BufferLine::iterator it;
 
+    line = &_buffer[_cursorPosition.y];
     if(operation == DeleteOperations::BeforeCursor)
     {
         if(_cursorPosition.x != 0)
         {   // default removing one character
-            line = &_buffer[_cursorPosition.y];
             _cursorPosition.x -= 1; // update cursor position
             it = line->begin() + _cursorPosition.x;
             line->erase(it);
@@ -134,7 +134,16 @@ void Buffer::DeleteAtCursor(DeleteOperations operation)
     }
     else if(operation == DeleteOperations::AfterCursor)
     {
-
+        if(_cursorPosition.x == line->size())
+        {
+            // this is in the end of the line
+        }
+        else
+        {
+            // somewhere not in the end of line
+            it = line->begin() + _cursorPosition.x;
+            line->erase(it);
+        }
     }
 }
 
