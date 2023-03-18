@@ -31,7 +31,7 @@ bool Graphics::Init(Vec2 windowSize)
     );
     _sdlRenderer = SDL_CreateRenderer(_sdlWindow,-1,SDL_RENDERER_ACCELERATED);  // create renderer, where everything will be drawn
 
-    CreateFont(16, "assets/consolas.ttf");
+    CreateFont(32, "assets/consolas.ttf");
 
     return true;
 }

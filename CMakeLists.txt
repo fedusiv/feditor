@@ -18,9 +18,11 @@ set(CMAKE_CXX_FLAGS "-Wall")
 
 if(APPLE)
     message("Running on Macos. Using newest SDL2 API")
+    add_compile_definitions(UNIX)
 elseif(UNIX)
     message("Running on Linux. Using previous SDL2 API")    # This is only for WSl2, need to be fixed
     add_compile_definitions(WSL2)
+    add_compile_definitions(UNIX)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/sdl2)

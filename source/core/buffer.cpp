@@ -1,13 +1,43 @@
+#include <iostream>
+#include <fstream>
 #include "buffer.hpp"
 #include "vec2.hpp"
-#include <iostream>
 
 int Buffer::_globalId = 1;
 
-Buffer::Buffer(void)
+Buffer::Buffer(std::string filepath): _filepath(filepath)
 {
+    std::ifstream file;
+
     bufferId = _globalId++;
-    _buffer.push_back(BufferLine(0));   // creates empty buffer with one empty line
+    if(filepath.empty()){
+        _buffer.push_back(BufferLine(0));   // creates empty buffer with one empty line
+    }
+    else
+    {
+        auto pos = filepath.find_last_of('/');  // get position of begin filename
+        _filename = filepath.substr(pos + 1);   // substring filename
+        file.open(_filepath,std::fstream::in|std::fstream::out);
+        if(file.fail())
+        {
+            // fail to open the file
+            // TODO: made this as error handling
+        }
+        else
+        {   // file is opened successfully, fill buffer with file
+            for (std::string line; std::getline(file, line); ) 
+            {
+                BufferLine bufferline;
+                // opened one line.
+                for(auto c: line)
+                {
+                    bufferline.push_back(static_cast<int>(c));
+                }
+                _buffer.push_back(bufferline);
+            }
+            file.close();
+        }
+    }
 }
 
 void Buffer::Append(KeysInsertedText data)

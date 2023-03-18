@@ -16,7 +16,7 @@ class BufferHandler
             return _handler;
         }
 
-        Buffer * CreateBuffer(void);    // create empty buffer
+        Buffer * CreateBuffer(std::string filepath);    // create empty buffer
         void AppendToActiveBuffer(KeysInsertedText text);   // insert text
         void InsertNewLine(void);   // insert new line
         void MoveCursor(MoveCursorDirection direction); // moving cursor by one step

@@ -27,7 +27,7 @@ enum DeleteOperations
 class Buffer
 {
     public:
-        Buffer(void);
+        Buffer(std::string filepath);
         int LinesNumber(void);
         int bufferId;
         void Append(KeysInsertedText data); // append text data on current cursor position
@@ -41,6 +41,8 @@ class Buffer
         static int _globalId;
         Vec2 _cursorPosition;
         BufferData _buffer;
+        std::string _filename;
+        std::string _filepath;
 };
 
 #endif // __BUFFER_HPP__

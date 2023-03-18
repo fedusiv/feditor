@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 #include <vector>
 
 #include "editor_state.hpp"
@@ -7,7 +8,7 @@
 #include "core.hpp"
 #include "editor.hpp"
 
-Core::Core(Gui * gui, Input * input) : _guiHandler(gui), _inputHandler(input)
+Core::Core(Gui * gui, Input * input,std::string location) : _guiHandler(gui), _inputHandler(input), _locationPoint(location)
 {
     Init();
     MainLoop();
@@ -28,7 +29,17 @@ void Core::Init(void)
 
     _guiHandler->CreateWindow();
 
-    _executor->CallExecutor(ExecutorOpCode::CreateEmptyEditorWidget);
+    // it's file or directory, first need to specify
+    if( std::filesystem::is_directory(_locationPoint))
+    {
+        // it's directory, we can not do anything
+        std::cout << "Can not open directory for now. Work in progress.." << std::endl;
+        return;
+    }
+    else
+    {
+        _executor->CallExecutor(ExecutorOpCode::OpenFileEditorWidget, (void*)&_locationPoint);
+    }
 }
 
 void Core::MainLoop()

@@ -2,10 +2,10 @@
 
 BufferHandler * BufferHandler::_handler;   // need because of static
 
-Buffer * BufferHandler::CreateBuffer(void)
+Buffer * BufferHandler::CreateBuffer(std::string filepath)
 {
     Buffer * buffer;
-    buffer = new Buffer();
+    buffer = new Buffer(filepath);
     _bufferList.push_back(buffer);
     _activeBuffer = buffer;
 

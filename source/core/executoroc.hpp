@@ -14,7 +14,7 @@ enum class ExecutorOpCode
     MoveCursorLeft,
     MoveCursorRight,
 
-    CreateEmptyEditorWidget,
+    OpenFileEditorWidget,
 
     ExitApp,
 

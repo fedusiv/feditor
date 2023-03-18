@@ -10,7 +10,7 @@
 class Core
 {
     public:
-        Core(Gui * gui, Input * input);
+        Core(Gui * gui, Input * input, std::string location);
 
     private:
         void Init(void);
@@ -23,7 +23,7 @@ class Core
         BufferHandler * _bufferHandler;
         ExecutorAccess * _execAccess;
 
-
+        std::string _locationPoint;
         EditorState _editorState;
 
 };
