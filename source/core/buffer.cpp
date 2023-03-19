@@ -79,6 +79,12 @@ void Buffer::InsertNewLine(void)
     }
     it = ( _buffer.begin() + _cursorPosition.y + 1 );
     _buffer.insert(it, (BufferLine(0)));
+    if(_cursorPosition.x < (*(it-1)).size())
+    {
+        // new line request is pressed in the middle of line. Move all content right after cursor to new line
+        (*it).insert((*it).begin(), (*(it-1)).begin() + _cursorPosition.x, (*(it-1)).end()); // this abracadabra it inserting data from previous line to new one
+        (*(it-1)).erase((*(it-1)).begin() + _cursorPosition.x, (*(it-1)).end());
+    }
     _cursorPosition.x = 0;
     _cursorPosition.y += 1;
 }
@@ -168,7 +174,20 @@ void Buffer::DeleteAtCursor(DeleteOperations operation)
             _cursorPosition.x -= 1; // update cursor position
             it = line->begin() + _cursorPosition.x;
             line->erase(it);
-
+        }
+        else
+        {
+            if(_cursorPosition.y == 0)
+            {
+                return; // can not provide operation in the beginning of file
+            }
+            // delete current line, move data to line upper.
+            auto lineprev = &_buffer[_cursorPosition.y-1];
+            auto lineprevSize = lineprev->size();
+            lineprev->insert(lineprev->end(), line->begin(), line->end());
+            _buffer.erase(_buffer.begin()+_cursorPosition.y);
+            _cursorPosition.y -= 1; // it goes to the live above
+            _cursorPosition.x = lineprevSize;
         }
     }
     else if(operation == DeleteOperations::AfterCursor)
