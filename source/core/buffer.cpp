@@ -5,7 +5,7 @@
 
 int Buffer::_globalId = 1;
 
-Buffer::Buffer(std::string filepath): _filepath(filepath)
+Buffer::Buffer(std::string filepath): _filepath(filepath), _largestLineSize(0)
 {
     std::ifstream file;
 
@@ -33,6 +33,10 @@ Buffer::Buffer(std::string filepath): _filepath(filepath)
                 {
                     bufferline.push_back(static_cast<int>(c));
                 }
+                if(line.size() > _largestLineSize)
+                {   // obtain largest size of charcter in lines
+                    _largestLineSize = line.size();
+                }
                 _buffer.push_back(bufferline);
             }
             file.close();
@@ -56,6 +60,11 @@ void Buffer::Append(KeysInsertedText data)
     {
         (*it).insert((*it).begin() + _cursorPosition.x, c);
         _cursorPosition.x++;
+    }
+    // check if largest size can be updated
+    if((*it).size() > _largestLineSize)
+    {
+        _largestLineSize = (*it).size();
     }
 }
 
@@ -185,6 +194,11 @@ BufferLine * Buffer::LineData(int lineNumber)
 int Buffer::LinesNumber(void)
 {
     return _buffer.size();
+}
+
+int Buffer::ColumnsNumber(void)
+{
+    return _largestLineSize;
 }
 
 /*

@@ -9,7 +9,10 @@ WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(bu
     _drawingOffset = Vec2(0,5);
     _currentUpperLine = 0;
     _linesPageMoveOffset = 1;
+    _currentLeftLine = 0;
+    _linesPageShiftOffset = 1;
     CalculateAvaliableLines();
+    CalculateAvaliableColumns();
 
     _cursorPrevPos = _buffer->CursorPosition();
 }
@@ -37,6 +40,7 @@ Vec2 WidgetEditor::CalculateRealPosForCursor()
 
     logicPos = _buffer->CursorPosition();
     logicPos.y -= _currentUpperLine;
+    logicPos.x -= _currentLeftLine;
     relativePos.x = (logicPos.x + _textStartX) * _glyphSize.x;
     relativePos.y = logicPos.y * _glyphSize.y;
 
@@ -50,6 +54,7 @@ void WidgetEditor::DrawData(void)
 {
     int linesNumber; // whole amount of lines
     int lineNumber; // current lineNumber
+    int columnSize; // amount of possible characters in one line
     Vec2 pos;    // position to draw
     BufferLine * lineData;  // data of current line
     BufferLine::iterator iL; // iterator of line
@@ -71,10 +76,18 @@ void WidgetEditor::DrawData(void)
             // no lines left to draw. Or lines just empty
             continue;
         }
-        for( iL = lineData->begin(); iL != lineData->end(); iL++)
+        columnSize = _availableColumns - _textStartX;
+        if(lineData->size() > _currentLeftLine)
         {
-            DrawCharacter((*iL), pos, ColorPurpose::ColorWidgetEditorText);
-            pos.x+= _glyphSize.x;
+            for( iL = lineData->begin() + _currentLeftLine; iL != lineData->end(); iL++)
+            {
+                DrawCharacter((*iL), pos, ColorPurpose::ColorWidgetEditorText);
+                pos.x+= _glyphSize.x;
+                if(--columnSize < 1)
+                {   // limit amount of drawing characters to one page of editor
+                    break;
+                }
+            }
         }
         pos.x = _textStartX * _glyphSize.x;
         pos.y += _glyphSize.y;
@@ -132,15 +145,16 @@ void WidgetEditor::PageUpdate(void)
 {
     Vec2 cursorPos;
     int linesNumber;
+    int columnsNumber;
 
     cursorPos = _buffer->CursorPosition();
     if(cursorPos == _cursorPrevPos)
     {
         return; // no need to update paging
     }
-
+    // Vertical offset
     linesNumber =  _buffer->LinesNumber();
-
+    columnsNumber = _buffer->ColumnsNumber();
 
     if(cursorPos.y - _linesPageMoveOffset < _currentUpperLine)
     {   // This is moving page up
@@ -161,6 +175,37 @@ void WidgetEditor::PageUpdate(void)
         _currentUpperLine = linesNumber;
     }
 
+    // Horizontal offset
+    if(cursorPos.x - _linesPageShiftOffset < _currentLeftLine)
+    {   // This is shifting page left
+        _currentLeftLine--; // shift line by one step to the left
+    }
+    if(cursorPos.x + _linesPageShiftOffset  >= _currentLeftLine + _availableColumns  - _textStartX)  // available lines here is all availables lines in editor widget including lines numbers
+    {   // This is shifting page right
+        _currentLeftLine++; // shift line by one step to the right
+    }
+
+    // Making borders of it
+    if(_currentLeftLine < 0)
+    {
+        _currentLeftLine  = 0;
+    }
+    if(_currentLeftLine > columnsNumber)
+    {
+        _currentLeftLine  = columnsNumber;
+    }
+    
+    // This part is to shifting page horizontal location when cursor changes drastically positon.
+    // Good example when you are going from rightest position in line to leftest position in line and vise versa
+    if(cursorPos.x < _currentLeftLine)
+    {
+        _currentLeftLine = cursorPos.x;
+    }
+    if(cursorPos.x > _currentLeftLine + _availableColumns - _textStartX)
+    {
+        _currentLeftLine = cursorPos.x - _availableLines  + _textStartX;
+    }
+
     _cursorPrevPos = cursorPos;
 
 }
@@ -168,4 +213,9 @@ void WidgetEditor::PageUpdate(void)
 void WidgetEditor::CalculateAvaliableLines(void)
 {
     _availableLines = _widgetRect.h / _glyphSize.y;
+}
+
+void WidgetEditor::CalculateAvaliableColumns(void)
+{
+    _availableColumns = _widgetRect.w / _glyphSize.x;
 }
