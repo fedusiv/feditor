@@ -11,6 +11,9 @@ class WidgetEditor: public Widget
         WidgetEditor(Rect rect, Buffer * buffer);
         void Render(void) override;
 
+    protected:
+        void CalculateDrawingOffset(void) override;
+
     private:
         Buffer * _buffer;
         int _textStartX; // this field need, because of line numbers, we will set on what distance starts to draw text after lines

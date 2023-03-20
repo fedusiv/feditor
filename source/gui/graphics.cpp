@@ -11,7 +11,7 @@ SDL_Texture *   Graphics::_fontTexture[GLYPHS_AMOUNT]; // array of glyphs textur
 Vec2            Graphics::_glyphMaxSize;
 Colors *        Graphics::_colors;    // pointer to colors singleton
 
-bool Graphics::Init(Vec2 windowSize)
+bool Graphics::Init(Vec2 windowSize, int fontSize)
 {
     _colors = Colors::Instance();
     TTF_Init();
@@ -31,7 +31,7 @@ bool Graphics::Init(Vec2 windowSize)
     );
     _sdlRenderer = SDL_CreateRenderer(_sdlWindow,-1,SDL_RENDERER_ACCELERATED);  // create renderer, where everything will be drawn
 
-    CreateFont(32, "assets/consolas.ttf");
+    CreateFont(fontSize, "assets/consolas.ttf");
 
     return true;
 }

@@ -21,10 +21,13 @@ class Gui
 
     private:
         void InitWidgets(void);     // initialize starting widgets
+        void CreateStatusLine(void);// create status line. Status line can be only once
 
         std::list<Widget*> _widgetsList; // all widgets in gui window
-        WidgetStatusLine * statusLine;  // pointer to status line widget
+        WidgetStatusLine * statusLine = nullptr;  // pointer to status line widget
         bool _needExit;     // flag if need to exit
+        Vec2 _windowsSize;  // current window size
+        int _fontSize;      // current font size
 
 };
 

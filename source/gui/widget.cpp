@@ -16,6 +16,10 @@ Widget::Widget(Rect rect): _widgetFullRect(rect)
     _colorBorderWidget = ColorPurpose::ColorWidgetBorder;
 }
 
+Widget::~Widget()
+{
+}
+
 void Widget::Render()
 {
     DrawBackground();
@@ -58,6 +62,10 @@ void Widget::DrawCursor(Vec2 pos)
     Graphics::DrawLine(pos, endpos, ColorPurpose::ColorWidgetCursor);
 }
 
+void Widget::CalculateDrawingOffset()
+{
+}
+
 bool Widget::Active()
 {
     return _active;
@@ -66,4 +74,9 @@ bool Widget::Active()
 void Widget::SetActive(bool status)
 {
     _active = status;
+}
+
+Rect Widget::GetRect()
+{
+    return _widgetFullRect;
 }

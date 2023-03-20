@@ -6,14 +6,15 @@
 
 WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(buffer)
 {
-    _drawingOffset = Vec2(0,5);
     _currentUpperLine = 0;
     _linesPageMoveOffset = 1;
     _currentLeftLine = 0;
     _linesPageShiftOffset = 1;
     CalculateAvaliableLines();
     CalculateAvaliableColumns();
+    CalculateDrawingOffset();
 
+ 
     _cursorPrevPos = _buffer->CursorPosition();
 }
 
@@ -207,6 +208,15 @@ void WidgetEditor::PageUpdate(void)
     }
 
     _cursorPrevPos = cursorPos;
+
+}
+
+void WidgetEditor::CalculateDrawingOffset(void)
+{
+    int verticalOffset;
+    verticalOffset = _widgetRect.h - _availableLines * _glyphSize.y; // calculate how many unused space we have in drawing data
+    // Set offset of drawing as half of available, to make kind of centered text data
+    _drawingOffset = Vec2(0,verticalOffset/2);
 
 }
 

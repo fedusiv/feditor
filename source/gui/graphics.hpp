@@ -13,7 +13,7 @@
 class Graphics
 {
     public:
-        static bool Init(Vec2 windowSize);
+        static bool Init(Vec2 windowSize, int fontSize);
         static void DeInit();
         static void RenderBegin();
         static void RenderEnd();

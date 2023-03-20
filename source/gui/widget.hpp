@@ -9,10 +9,13 @@ class Widget
     public:
 
         Widget(Rect rect);
+        virtual ~Widget();
         virtual void Render(void);
 
         bool Active();
         void SetActive(bool status);
+
+        Rect GetRect();
 
 
     protected:
@@ -34,5 +37,6 @@ class Widget
         void DrawCharacter(int character, Vec2 pos, ColorPurpose color);
         void DrawBackground();
         void DrawCursor(Vec2 pos); // draw cursor at given position
+        virtual void CalculateDrawingOffset(void);
 };
 #endif // __WIDGET_HPP__

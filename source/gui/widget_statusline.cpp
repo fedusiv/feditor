@@ -4,11 +4,15 @@
 
 WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
 {
-    _drawingOffset = Vec2(10,12);
+    _drawingOffset = Vec2(_glyphSize.x,0);
 
     _currentEditorState = EditorState::InsertState;
     _editorStateName[EditorState::InsertState] = "INSERT";
     _editorStateName[EditorState::NormalState] = "MODAL";
+}
+
+WidgetStatusLine::~WidgetStatusLine()
+{
 }
 
 void WidgetStatusLine::Render()
@@ -39,7 +43,7 @@ void WidgetStatusLine::DrawCurrentMode()
     // calculate start position. in status line everyhting need to be drawn based on size of font, and drawn in the middle
     int center = _widgetFullRect.h / 2;
     center -= _glyphSize.y / 2;
-    startPos.y -= center;
+    startPos.y += center;
 
     for(auto c: modeName)
     {

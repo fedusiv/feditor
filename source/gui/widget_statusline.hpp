@@ -10,6 +10,7 @@ class WidgetStatusLine: public Widget
 {
     public:
         WidgetStatusLine(Rect rect);
+        ~WidgetStatusLine();
         void Render(void) override;
 
     private:
