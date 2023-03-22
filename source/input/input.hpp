@@ -14,6 +14,8 @@ class Input
         KeysMapList _keysMap;
         KeysInsertedText _keysText;
 
+        void ClearOneTimeActs(void);
+
     public:
         Input();
         void Update(bool inputRead);

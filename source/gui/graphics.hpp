@@ -15,6 +15,7 @@ class Graphics
     public:
         static bool Init(Vec2 windowSize, int fontSize);
         static void DeInit();
+        static Vec2 GetAppSize();
         static void RenderBegin();
         static void RenderEnd();
         static void DrawRect(Rect rect, ColorPurpose color);

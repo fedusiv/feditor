@@ -2,6 +2,7 @@
 #include "editor_state.hpp"
 #include "executor.hpp"
 #include "keymap.hpp"
+#include <iostream>
 #include <vector>
 
 void Editor::OpenFile(ExecutorAccess * execA, void * data)
@@ -62,6 +63,10 @@ void Editor::Exit(ExecutorAccess * execA, void * data)
 {
     execA->gui->RequestExit();
 }
+void Editor::GuiResize(ExecutorAccess * execA, void * data)
+{
+    execA->gui->Resize();
+}
 
 void Editor::Init()
 {
@@ -80,5 +85,6 @@ void Editor::Init()
     exec->AddExecutorElement(Editor::MoveCursorStepRight, ExecutorOpCode::MoveCursorRight, std::vector<KeyMap>(1, {KeyMap::KeyRight}), std::vector<EditorState>(1, EditorState::InsertState), "move_cursor_right", "foo");
 
     exec->AddExecutorElement(Editor::Exit, ExecutorOpCode::ExitApp, std::vector<KeyMap>(1, {KeyMap::KeyExit}), std::vector<EditorState>(1, EditorState::EditorStateMax), "exit", "foo");
+    exec->AddExecutorElement(Editor::GuiResize, ExecutorOpCode::GuiResize, std::vector<KeyMap>(1, {KeyMap::KeyResize}), std::vector<EditorState>(1, EditorState::EditorStateMax), "resize_app", "foo");
 
 }

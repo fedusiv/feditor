@@ -11,6 +11,7 @@ class Widget
         Widget(Rect rect);
         virtual ~Widget();
         virtual void Render(void);
+        virtual void Resize(Vec2 windowSize);
 
         bool Active();
         void SetActive(bool status);
@@ -37,6 +38,7 @@ class Widget
         void DrawCharacter(int character, Vec2 pos, ColorPurpose color);
         void DrawBackground();
         void DrawCursor(Vec2 pos); // draw cursor at given position
+        void UpdateWidgetRect(Rect fullRect);
         virtual void CalculateDrawingOffset(void);
 };
 #endif // __WIDGET_HPP__

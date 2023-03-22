@@ -1,5 +1,6 @@
 #include "widget.hpp"
 #include "graphics.hpp"
+#include "vec2.hpp"
 
 Widget::Widget(Rect rect): _widgetFullRect(rect)
 {
@@ -9,9 +10,8 @@ Widget::Widget(Rect rect): _widgetFullRect(rect)
     _cursorWidth = 2;
     _cursorHeightAdd = 2;
     _glyphSize = Graphics::GlyphMaxSize();
-    _widgetRect = _widgetFullRect;
-    _widgetRect -= _widgetBorderThick;
-
+ 
+    UpdateWidgetRect(_widgetFullRect);  // maybe it's overflow to use function, but API exists and better to use it. do crease code amount
     _colorBgWidget = ColorPurpose::ColorWidgetBg;
     _colorBorderWidget = ColorPurpose::ColorWidgetBorder;
 }
@@ -23,6 +23,10 @@ Widget::~Widget()
 void Widget::Render()
 {
     DrawBackground();
+}
+
+void Widget::Resize(Vec2 windowSize)
+{
 }
 
 void Widget::DrawBackground()
@@ -79,4 +83,11 @@ void Widget::SetActive(bool status)
 Rect Widget::GetRect()
 {
     return _widgetFullRect;
+}
+
+void Widget::UpdateWidgetRect(Rect fullRect)
+{
+    _widgetFullRect = fullRect;
+    _widgetRect = _widgetFullRect;
+    _widgetRect -= _widgetBorderThick;
 }

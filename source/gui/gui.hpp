@@ -18,6 +18,7 @@ class Gui
         void CreateWidgetEditor(Buffer * buffer);  // create empty widget for edititng text
         bool NeedExit(void);    // report when application need to be exited
         void RequestExit(void); // request to close app
+        void Resize(void);      // resize request
 
     private:
         void InitWidgets(void);     // initialize starting widgets

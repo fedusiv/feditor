@@ -28,6 +28,17 @@ void Gui::Update(void)
     Graphics::RenderEnd();
 }
 
+void Gui::Resize(void)
+{
+    Vec2 newSize;
+
+    newSize = Graphics::GetAppSize();   // get new size from gprahic API
+    for(auto w: _widgetsList)
+    {
+        w->Resize(newSize);
+    }
+}
+
 void Gui::CreateWindow(void)
 {
     if(!Graphics::Init(_windowsSize, _fontSize))
@@ -47,10 +58,8 @@ void Gui::CreateStatusLine(void)
     {
         delete statusLine;
     }
-    rect.w = _windowsSize.x;
-    rect.h = _fontSize + (_fontSize / 5); // size of status line is 10% of font size in up then fontsize goes and after that again 10%
-    rect.x = 0;
-    rect.y = _windowsSize.y - rect.h;
+    rect.x = _windowsSize.x;
+    rect.y = _windowsSize.y;
     statusLine = new WidgetStatusLine(rect);
     _widgetsList.push_back(statusLine);
 

@@ -176,6 +176,16 @@ void Graphics::DrawGlyph(int character, Vec2 pos, ColorPurpose color)
     SDL_RenderCopy(_sdlRenderer, texture, NULL, &dest);
 }
 
+Vec2 Graphics::GetAppSize()
+{
+    int w;
+    int h;
+    
+    SDL_GetWindowSize(_sdlWindow, &w, &h);
+    auto res = Vec2(w,h);
+    return res;
+}
+
 Vec2 Graphics::GlyphMaxSize()
 {
     return _glyphMaxSize;

@@ -17,6 +17,7 @@ enum class ExecutorOpCode
     OpenFileEditorWidget,
 
     ExitApp,
+    GuiResize,
 
     ExecutorOpCodeMax
 };

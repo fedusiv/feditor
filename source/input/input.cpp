@@ -39,6 +39,17 @@ void Input::Update(bool inputRead)
                  _keysAct.push_back(new KeyAction(KeyMap::KeyExit));    // Exit is high priority in this case
                 return; // exit even from function
             }
+            case SDL_WINDOWEVENT:
+            {
+                if(e.window.event == SDL_WINDOWEVENT_RESIZED)
+                {
+                    // was called resized 
+                    _keysAct.clear();
+                    _keysAct.push_back(new KeyAction(KeyMap::KeyResize));   // Resize as a system call is on high priority
+                    return;
+                }
+                break;
+            }
             case SDL_TEXTINPUT:
             {
                 if(inputRead)
@@ -127,6 +138,31 @@ KeysMapList Input::KeysMap()
     return _keysMap;
 }
 
+
+/*
+ * Removes keys, which is definitely can be acted only ones.
+ */
+void Input::ClearOneTimeActs(void)
+{
+    KeysActionList::iterator kaIt;
+
+    for(kaIt = _keysAct.begin(); kaIt != _keysAct.end();)
+    {
+        if((*kaIt)->keyMap == KeyResize)   // For now it's hardcoded to only one
+        {
+            // found iterator which should be removed
+            auto it = *kaIt;
+            kaIt = _keysAct.erase(kaIt);  // remove from events
+            delete it;
+        }
+        else
+        {
+            kaIt++;
+        }
+    }
+
+}
+
 void Input::ClearKeysMap()
 {
     double currentTime;
@@ -134,6 +170,7 @@ void Input::ClearKeysMap()
 
     currentTime = SDL_GetTicks();
 
+    ClearOneTimeActs(); // First remove keys, which can be acted only ones
     for(auto key: _keysAct)
     {
         it = std::find(_keysMap.begin(), _keysMap.end(), key->keyMap);

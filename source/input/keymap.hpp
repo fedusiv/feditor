@@ -6,7 +6,8 @@
 enum KeyMap
 {
     KeyZero,
-    KeyExit,    // 
+    KeyExit,    // pressed exit key, or basically gui related api detected exit call (close window button for example)
+    KeyResize,  // gui event, that window was resized
     KeyUp,
     KeyDown,
     KeyLeft,

@@ -21,6 +21,7 @@ class Editor
         static void MoveCursorStepRight(ExecutorAccess * execA, void * data);   // moving cursor by one step to the right
 
         static void Exit(ExecutorAccess * execA, void * data);  // when user requested to exit application
+        static void GuiResize(ExecutorAccess * execA, void * data);  // when user requested to resize whole application
 
     private:
         static EditorState _editorState;

@@ -9,9 +9,10 @@
 class WidgetStatusLine: public Widget
 {
     public:
-        WidgetStatusLine(Rect rect);
+        WidgetStatusLine(Rect rect);    // Rect here is windows size. It uses only x and y
         ~WidgetStatusLine();
         void Render(void) override;
+        void Resize(Vec2 windowSize) override;
 
     private:
         void DrawCurrentMode(void);
