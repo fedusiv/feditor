@@ -89,10 +89,11 @@ void Buffer::InsertNewLine(void)
     _cursorPosition.y += 1;
 }
 
+// This method moves cursor one step
 void Buffer::MoveCursor(MoveCursorDirection direction)
 {
     int tmp;
-
+    
     switch (direction) {
         case MoveCursorDirection::CursorUp:
         {
@@ -195,6 +196,11 @@ void Buffer::DeleteAtCursor(DeleteOperations operation)
         if(_cursorPosition.x == line->size())
         {
             // this is in the end of the line
+            auto linenext = &_buffer[_cursorPosition.y+1];  // get next line, it will be deleted
+            auto linenextSize = linenext->size();
+            line->insert(line->end(), linenext->begin(), linenext->end());  // copy data from next line to current line
+            _buffer.erase(_buffer.begin() + _cursorPosition.y+1);   // erase next line
+            _cursorPosition.x = linenextSize;
         }
         else
         {
