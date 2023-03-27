@@ -4,7 +4,6 @@
 #include "widget.hpp"
 #include <string>
 #include <vector>
-#include "editor_state.hpp"
 
 class WidgetStatusLine: public Widget
 {
@@ -16,7 +15,6 @@ class WidgetStatusLine: public Widget
 
     private:
         void DrawCurrentMode(void);
-        EditorState _currentEditorState;
         std::string _editorStateName[EditorState::EditorStateMax];
 
 };

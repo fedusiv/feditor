@@ -12,7 +12,7 @@ WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
 
     _currentEditorState = EditorState::InsertState;
     _editorStateName[EditorState::InsertState] = "INSERT";
-    _editorStateName[EditorState::NormalState] = "MODAL";
+    _editorStateName[EditorState::NormalState] = "NORMAL";
 }
 
 WidgetStatusLine::~WidgetStatusLine()

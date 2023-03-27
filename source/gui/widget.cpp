@@ -14,6 +14,7 @@ Widget::Widget(Rect rect): _widgetFullRect(rect)
     UpdateWidgetRect(_widgetFullRect);  // maybe it's overflow to use function, but API exists and better to use it. do crease code amount
     _colorBgWidget = ColorPurpose::ColorWidgetBg;
     _colorBorderWidget = ColorPurpose::ColorWidgetBorder;
+    _currentEditorState = EditorState::NormalState;
 }
 
 Widget::~Widget()
@@ -90,4 +91,10 @@ void Widget::UpdateWidgetRect(Rect fullRect)
     _widgetFullRect = fullRect;
     _widgetRect = _widgetFullRect;
     _widgetRect -= _widgetBorderThick;
+}
+
+
+void Widget::SetEditorState(EditorState state)
+{
+    _currentEditorState = state;
 }

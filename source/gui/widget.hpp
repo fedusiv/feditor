@@ -3,6 +3,7 @@
 
 #include "colors.hpp"
 #include "vec2.hpp"
+#include "editor_state.hpp"
 
 class Widget
 {
@@ -15,6 +16,7 @@ class Widget
 
         bool Active();
         void SetActive(bool status);
+        void SetEditorState(EditorState state);
 
         Rect GetRect();
 
@@ -34,6 +36,8 @@ class Widget
 
         ColorPurpose _colorBgWidget;    // colors to draw background
         ColorPurpose _colorBorderWidget;// colors to draw background
+
+        EditorState _currentEditorState;
 
         void DrawCharacter(int character, Vec2 pos, ColorPurpose color);
         void DrawBackground();

@@ -80,3 +80,12 @@ void Gui::RequestExit(void)
 {
     _needExit = true;
 }
+
+
+void Gui::SetEditorState(EditorState state)
+{
+    for(auto w: _widgetsList)
+    {
+        w->SetEditorState(state);
+    }
+}

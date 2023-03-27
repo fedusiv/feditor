@@ -16,6 +16,12 @@ enum KeyMap
     KeyText,
     KeyBackspace,
     KeyDelete,
+    KeyEsc,
+
+    KeyP,
+    KeyL,
+    KeySemicolon,
+    KeyQuotes,
     KeysMax
 };
 

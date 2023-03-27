@@ -8,6 +8,8 @@ class Editor
 {
     public:
         static void Init(); // add all executor's functors to executor
+        static EditorState GetEditorState(void);
+
         static void OpenFile(ExecutorAccess * execA, void * data); // create new empty widget with blank buffer data
         static void InsertText(ExecutorAccess * execA, void * data);    // insert text to active buffer
         static void InsertNewLine(ExecutorAccess * execA, void * data);    // insert new line
@@ -22,6 +24,7 @@ class Editor
 
         static void Exit(ExecutorAccess * execA, void * data);  // when user requested to exit application
         static void GuiResize(ExecutorAccess * execA, void * data);  // when user requested to resize whole application
+        static void ChangeEditorModeToNormal(ExecutorAccess * execA, void * data); // when changing mode of editor
 
     private:
         static EditorState _editorState;

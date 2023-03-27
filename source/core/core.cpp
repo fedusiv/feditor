@@ -16,10 +16,7 @@ Core::Core(Gui * gui, Input * input,std::string location) : _guiHandler(gui), _i
 
 void Core::Init(void)
 {
-    _editorState = EditorState::InsertState;
-
     _executor = Executor::Instance();
-    _editorState = EditorState::InsertState;
     _bufferHandler = BufferHandler::Instance();
 
     _execAccess = new ExecutorAccess(_guiHandler, _bufferHandler);
@@ -28,6 +25,8 @@ void Core::Init(void)
     Editor::Init(); // init and attach to executor all executor functions
 
     _guiHandler->CreateWindow();
+
+    _executor->CallExecutor(ExecutorOpCode::ChangeEditorModeToNormal, nullptr); // set editor to Normal Mode as default
 
     // it's file or directory, first need to specify
     if( std::filesystem::is_directory(_locationPoint))
@@ -54,13 +53,16 @@ void Core::MainLoop()
 
 void Core::InputHandling()
 {
+    EditorState editorState;
     KeysInsertedText textData;
     KeysMapList keysMap;
     bool executorResult;    // did executor make his job
     bool insertText;
 
+    editorState = Editor::GetEditorState();
+
     insertText = false;
-    if(_editorState == EditorState::InsertState)
+    if(editorState  == EditorState::InsertState)
     {
         insertText = true;
     }
@@ -76,7 +78,7 @@ void Core::InputHandling()
     if(!keysMap.empty())    // trigger executor if only there is at least one key
     {
         // Execute keys (find related combination of keys and run executor for it)
-        executorResult = _executor->CallExecutor(_editorState, keysMap);
+        executorResult = _executor->CallExecutor(editorState, keysMap);
     }
     
     if(executorResult)

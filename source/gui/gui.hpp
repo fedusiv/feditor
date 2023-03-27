@@ -19,6 +19,7 @@ class Gui
         bool NeedExit(void);    // report when application need to be exited
         void RequestExit(void); // request to close app
         void Resize(void);      // resize request
+        void SetEditorState(EditorState state); // update or set editor mode
 
     private:
         void InitWidgets(void);     // initialize starting widgets

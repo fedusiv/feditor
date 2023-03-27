@@ -24,7 +24,6 @@ class Core
         ExecutorAccess * _execAccess;
 
         std::string _locationPoint;
-        EditorState _editorState;
 
 };
 
