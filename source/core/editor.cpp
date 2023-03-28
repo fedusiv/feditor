@@ -80,7 +80,12 @@ void Editor::ChangeEditorModeToNormal(ExecutorAccess * execA, void * data)
 {
     _editorState = EditorState::NormalState;
     execA->gui->SetEditorState(EditorState::NormalState);
+}
 
+void Editor::ChangeEditorModeToInsert(ExecutorAccess * execA, void * data)
+{
+    _editorState = EditorState::InsertState;
+    execA->gui->SetEditorState(EditorState::InsertState);
 }
 
 void Editor::Init()
@@ -107,6 +112,7 @@ void Editor::Init()
     exec->AddExecutorElement(Editor::Exit, ExecutorOpCode::ExitApp, std::vector<KeyMap>(1, {KeyMap::KeyExit}), std::vector<EditorState>(1, EditorState::EditorStateMax), "exit", "foo");
     exec->AddExecutorElement(Editor::GuiResize, ExecutorOpCode::GuiResize, std::vector<KeyMap>(1, {KeyMap::KeyResize}), std::vector<EditorState>(1, EditorState::EditorStateMax), "resize_app", "foo");
 
+    // Change modes
     exec->AddExecutorElement(Editor::ChangeEditorModeToNormal, ExecutorOpCode::ChangeEditorModeToNormal, std::vector<KeyMap>(1, {KeyMap::KeyEsc}), std::vector<EditorState>(1, EditorState::InsertState), "set_mode_normal", "foo");
-
+    exec->AddExecutorElement(Editor::ChangeEditorModeToInsert, ExecutorOpCode::ChangeEditorModeToNormal, std::vector<KeyMap>(1, {KeyMap::KeyI}), std::vector<EditorState>(1, EditorState::NormalState), "set_mode_insert", "foo");
 }

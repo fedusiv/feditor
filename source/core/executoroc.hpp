@@ -20,6 +20,7 @@ enum class ExecutorOpCode
     GuiResize,
 
     ChangeEditorModeToNormal,
+    ChangeEditorModeToInsert,
 
     ExecutorOpCodeMax
 };

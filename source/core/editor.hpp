@@ -25,6 +25,7 @@ class Editor
         static void Exit(ExecutorAccess * execA, void * data);  // when user requested to exit application
         static void GuiResize(ExecutorAccess * execA, void * data);  // when user requested to resize whole application
         static void ChangeEditorModeToNormal(ExecutorAccess * execA, void * data); // when changing mode of editor
+        static void ChangeEditorModeToInsert(ExecutorAccess * execA, void * data); // when changing mode of editor
 
     private:
         static EditorState _editorState;

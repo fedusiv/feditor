@@ -41,10 +41,11 @@ class KeyAction
                 case SDLK_DELETE:    {keyMap = KeyMap::KeyDelete; break;}
                 case SDLK_ESCAPE:    {keyMap = KeyMap::KeyEsc; break;}
                 case SDLK_SEMICOLON: {keyMap = KeyMap::KeySemicolon; break;}
-                case SDLK_QUOTE:  {keyMap = KeyMap::KeyQuotes; break;}
+                case SDLK_QUOTE:     {keyMap = KeyMap::KeyQuotes; break;}
 
                 case SDLK_l:         {keyMap = KeyMap::KeyL; break;}
                 case SDLK_p:         {keyMap = KeyMap::KeyP; break;}
+                case SDLK_i:         {keyMap = KeyMap::KeyI; break;}
 
 
                 default:
