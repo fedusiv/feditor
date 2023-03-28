@@ -1,6 +1,8 @@
 # F(edusiv)editor
 
-Feditor is GUI, raylib based fully keyboard controllable text editor.
+UNDER DEVELOPMENT! DO NOT EXPECT ANYTHING FROM IT NOW
+
+Feditor is GUI, sdl based fully keyboard controllable text editor.
 
 I like neovim and vscode, but want to be this more arranged for my willings and needs
 
