@@ -1,0 +1,100 @@
+#include "widget.hpp"
+#include "graphics.hpp"
+#include "vec2.hpp"
+
+Widget::Widget(Rect rect): _widgetFullRect(rect)
+{
+    _active = true;
+    _widgetBorderThick = 2;
+    _drawingOffset = Vec2(0,0);
+    _cursorWidth = 2;
+    _cursorHeightAdd = 2;
+    _glyphSize = Graphics::GlyphMaxSize();
+ 
+    UpdateWidgetRect(_widgetFullRect);  // maybe it's overflow to use function, but API exists and better to use it. do crease code amount
+    _colorBgWidget = ColorPurpose::ColorWidgetBg;
+    _colorBorderWidget = ColorPurpose::ColorWidgetBorder;
+    _currentEditorState = EditorState::NormalState;
+}
+
+Widget::~Widget()
+{
+}
+
+void Widget::Render()
+{
+    DrawBackground();
+}
+
+void Widget::Resize(Vec2 windowSize)
+{
+}
+
+void Widget::DrawBackground()
+{
+    Graphics::DrawRect(_widgetFullRect,_colorBgWidget);
+    Graphics::DrawRect(_widgetRect,_colorBorderWidget);
+}
+
+/*
+*   x and y are relative pixel place
+*/
+void Widget::DrawCharacter(int character, Vec2 pos, ColorPurpose color)
+{
+    pos += _drawingOffset;
+    // Adding offset of widget to real coordinates
+    pos.x += _widgetRect.x;
+    pos.y += _widgetRect.y;
+    Graphics::DrawGlyph(character, pos, color);
+}
+
+
+/*
+* Draw in x and y pos in relative coordinates
+*/
+void Widget::DrawCursor(Vec2 pos)
+{
+    Vec2 endpos;
+
+    pos += _drawingOffset;
+    pos.x += _widgetRect.x;
+    pos.y += _widgetRect.y;
+    endpos = pos;
+    endpos.y += _glyphSize.y;
+    endpos.x += _cursorWidth;
+    pos.y -= _cursorHeightAdd;
+
+    Graphics::DrawLine(pos, endpos, ColorPurpose::ColorWidgetCursor);
+}
+
+void Widget::CalculateDrawingOffset()
+{
+}
+
+bool Widget::Active()
+{
+    return _active;
+}
+
+void Widget::SetActive(bool status)
+{
+    _active = status;
+}
+
+Rect Widget::GetRect()
+{
+    return _widgetFullRect;
+}
+
+void Widget::UpdateWidgetRect(Rect fullRect)
+{
+    _widgetFullRect = fullRect;
+    _widgetRect = _widgetFullRect;
+    _widgetRect -= _widgetBorderThick;
+}
+
+
+void Widget::SetEditorState(EditorState state)
+{
+    _currentEditorState = state;
+}

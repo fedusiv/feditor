@@ -20,10 +20,16 @@ cmake_func()
     if [ ${DEBUG} -eq 1 ];
     then
         echo "Debug build"
-        cmake --log-level=VERBOSE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=/usr/bin/clang++ ..
+        cmake \
+        --log-level=VERBOSE \
+        -DCMAKE_BUILD_TYPE=Debug \
+            ..
     else
         echo "Release build"
-        cmake --log-level=VERBOSE -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/clang++ ..
+        cmake \
+        --log-level=VERBOSE \
+        -DCMAKE_BUILD_TYPE=Release \
+            ..
     fi
 }
 
