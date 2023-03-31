@@ -6,6 +6,7 @@
 
 #include "SDL.h"
 #include "SDL_keycode.h"
+#include "SDL_mouse.h"
 #include "keymap.hpp"
 
 class KeyAction
@@ -25,6 +26,21 @@ class KeyAction
         KeyAction(KeyMap keymap) : acted(0), keyMap(keymap), time(0.0)
         {
 
+        }
+
+        static KeyMap ConvertMouseButtons(int sdlButton)
+        {
+            KeyMap keyMap;
+            switch(sdlButton){
+                case SDL_BUTTON_LEFT:   {keyMap = KeyMap::KeyMouseL; break;}
+                case SDL_BUTTON_RIGHT:   {keyMap = KeyMap::KeyMouseR; break;}
+                case SDL_BUTTON_MIDDLE:   {keyMap = KeyMap::KeyMouseM; break;}
+                default:
+                        keyMap = KeyMap::KeyZero;
+                        break;
+            }
+
+            return keyMap;
         }
 
     private:

@@ -88,6 +88,11 @@ void Editor::ChangeEditorModeToInsert(ExecutorAccess * execA, void * data)
     execA->gui->SetEditorState(EditorState::InsertState);
 }
 
+void Editor::MoveCursorTo(ExecutorAccess *execA, void *data)
+{
+    execA->gui->AlignCursorPositionByMouse();
+}
+
 void Editor::Init()
 {
     Executor * exec = Executor::Instance();
@@ -108,11 +113,14 @@ void Editor::Init()
     exec->AddExecutorElement(Editor::MoveCursorStepDown, ExecutorOpCode::MoveCursorDown, std::vector<KeyMap>(1, {KeyMap::KeySemicolon}), std::vector<EditorState>{EditorState::NormalState}, "move_cursor_down", "foo");
     exec->AddExecutorElement(Editor::MoveCursorStepLeft, ExecutorOpCode::MoveCursorLeft, std::vector<KeyMap>(1, {KeyMap::KeyL}), std::vector<EditorState>{EditorState::NormalState}, "move_cursor_left", "foo");
     exec->AddExecutorElement(Editor::MoveCursorStepRight, ExecutorOpCode::MoveCursorRight, std::vector<KeyMap>(1, {KeyMap::KeyQuotes}), std::vector<EditorState>{EditorState::NormalState}, "move_cursor_right", "foo");
+    // Move cursor by mouse
+    exec->AddExecutorElement(Editor::MoveCursorTo, ExecutorOpCode::MoveCursorTo, std::vector<KeyMap>(1, {KeyMap::KeyMouseL}), std::vector<EditorState>{EditorState::NormalState, EditorState::InsertState}, "move_cursor_to", "foo");
+
 
     exec->AddExecutorElement(Editor::Exit, ExecutorOpCode::ExitApp, std::vector<KeyMap>(1, {KeyMap::KeyExit}), std::vector<EditorState>(1, EditorState::EditorStateMax), "exit", "foo");
     exec->AddExecutorElement(Editor::GuiResize, ExecutorOpCode::GuiResize, std::vector<KeyMap>(1, {KeyMap::KeyResize}), std::vector<EditorState>(1, EditorState::EditorStateMax), "resize_app", "foo");
 
     // Change modes
     exec->AddExecutorElement(Editor::ChangeEditorModeToNormal, ExecutorOpCode::ChangeEditorModeToNormal, std::vector<KeyMap>(1, {KeyMap::KeyEsc}), std::vector<EditorState>(1, EditorState::InsertState), "set_mode_normal", "foo");
-    exec->AddExecutorElement(Editor::ChangeEditorModeToInsert, ExecutorOpCode::ChangeEditorModeToNormal, std::vector<KeyMap>(1, {KeyMap::KeyI}), std::vector<EditorState>(1, EditorState::NormalState), "set_mode_insert", "foo");
+    exec->AddExecutorElement(Editor::ChangeEditorModeToInsert, ExecutorOpCode::ChangeEditorModeToInsert, std::vector<KeyMap>(1, {KeyMap::KeyI}), std::vector<EditorState>(1, EditorState::NormalState), "set_mode_insert", "foo");
 }

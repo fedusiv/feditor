@@ -10,6 +10,7 @@ class WidgetEditor: public Widget
     public:
         WidgetEditor(Rect rect, Buffer * buffer);
         void Render(void) override;
+        void SetCursorPosition(Vec2 position) override; // setting cursor position of widget editor
 
     protected:
         void CalculateDrawingOffset(void) override;

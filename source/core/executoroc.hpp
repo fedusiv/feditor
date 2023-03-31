@@ -13,6 +13,7 @@ enum class ExecutorOpCode
     MoveCursorDown,
     MoveCursorLeft,
     MoveCursorRight,
+    MoveCursorTo,
 
     OpenFileEditorWidget,
 

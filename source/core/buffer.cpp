@@ -211,6 +211,21 @@ void Buffer::DeleteAtCursor(DeleteOperations operation)
     }
 }
 
+void Buffer::SetCursorPosition(Vec2 position)
+{
+    if(position.y > _buffer.size())
+    {
+        position.y = _buffer.size() - 1;    // position of y is bigger, than size of buffer. Set it to maximum size of buffer data. Another words set to last line
+        // -1 only because we need position of, and position of last line is size - 1 (array starts from 0, rule of language)
+    }
+    auto line = LineData(position.y);
+    if(line->size() < position.x)
+    {
+        position.x = line->size();      // same with cursor position on x axis, it can not be bigger, than line width.
+    }
+    _cursorPosition = position;
+}
+
 BufferLine * Buffer::LineData(int lineNumber)
 {
     return &_buffer[lineNumber];

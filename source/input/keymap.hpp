@@ -20,6 +20,10 @@ enum KeyMap
     KeySemicolon,
     KeyQuotes,
 
+    KeyMouseL,
+    KeyMouseR,
+    KeyMouseM,
+
     KeyP,
     KeyL,
     KeyI,

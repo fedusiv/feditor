@@ -4,6 +4,7 @@
 
 Widget::Widget(Rect rect): _widgetFullRect(rect)
 {
+    _widgetType = WidgetType::WidgetTypeBase;
     _active = true;
     _widgetBorderThick = 2;
     _drawingOffset = Vec2(0,0);
@@ -93,8 +94,32 @@ void Widget::UpdateWidgetRect(Rect fullRect)
     _widgetRect -= _widgetBorderThick;
 }
 
+bool Widget::IsInWidget(Vec2 position)
+{
+    // check if position okay for x coordinate
+    if(_widgetFullRect.x < position.x && _widgetFullRect.x + _widgetFullRect.w > position.x)
+    {
+        // check if position okay for y coordinate
+        if(_widgetFullRect.y < position.y && _widgetFullRect.y + _widgetFullRect.h > position.y)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 void Widget::SetEditorState(EditorState state)
 {
     _currentEditorState = state;
+}
+
+WidgetType Widget::GetWidgetType(void)
+{
+    return _widgetType;
+}
+
+void Widget::SetCursorPosition(Vec2 position)
+{
+    // no functionality
 }

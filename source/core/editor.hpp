@@ -21,6 +21,7 @@ class Editor
         static void MoveCursorStepDown(ExecutorAccess * execA, void * data);    // moving cursor by one step to the down
         static void MoveCursorStepLeft(ExecutorAccess * execA, void * data);    // moving cursor by one step to the left
         static void MoveCursorStepRight(ExecutorAccess * execA, void * data);   // moving cursor by one step to the right
+        static void MoveCursorTo(ExecutorAccess * execA, void * data);         // moving cursor to specific position determined by coordinate
 
         static void Exit(ExecutorAccess * execA, void * data);  // when user requested to exit application
         static void GuiResize(ExecutorAccess * execA, void * data);  // when user requested to resize whole application

@@ -4,7 +4,7 @@
             "type": "cppbuild",
             "label": "build",
             "command": "./build.sh",
-            "args": [ "-d"],
+            "args": [ "-d", "-c"],
             "options": {
                 "cwd": "${workspaceFolder}"
             },

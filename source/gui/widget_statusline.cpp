@@ -5,7 +5,8 @@
 WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
 {
     Vec2 windowSize;
-
+    
+    _widgetType = WidgetType::WidgetTypeStatusLine;
     windowSize = Vec2(rect.x,rect.y);   // get current window size
     Resize(windowSize);
     _drawingOffset = Vec2(_glyphSize.x,0);

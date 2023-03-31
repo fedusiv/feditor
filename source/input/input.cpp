@@ -26,7 +26,8 @@ void Input::Update(bool inputRead)
 
     quit = false;
     
-    SDL_Delay(1); // rest for other applications, waited for events
+    // Do we need this delay?
+    //SDL_Delay(1); // rest for other applications, waited for events
 
     _keysText.clear(); // empty string
     while (SDL_PollEvent(&e))
@@ -68,8 +69,21 @@ void Input::Update(bool inputRead)
                 KeyReleased(e.key.keysym.sym);
                 break;
             }
+            case SDL_MOUSEBUTTONDOWN:   // detects mouse buttons pressed
+            {
+                auto keyMap = KeyAction::ConvertMouseButtons(e.button.button);
+                KeyPressed(keyMap);
+                break;
+            }
+            case SDL_MOUSEBUTTONUP:     // detectes mouse buttons released
+            {
+                auto keyMap = KeyAction::ConvertMouseButtons(e.button.button);
+                KeyReleased(keyMap);
+                break;
+            }
         }
     }
+    SDL_GetMouseState(&_mousePosition.x, &_mousePosition.y);    // obtain mouse position
 }
 
 void Input::KeyPressed(int code)
@@ -85,9 +99,22 @@ void Input::KeyPressed(int code)
     }
 }
 
+// Insert key directly by it's keyMap
+void Input::KeyPressed(KeyMap keyMap)
+{
+    KeysActionList::iterator kaIt;
+
+    kaIt = std::find_if(_keysAct.begin(), _keysAct.end(),
+            [&keyMap](KeyAction* k) { return keyMap == k->keyMap;} );
+    if(kaIt == _keysAct.end())
+    {
+        // No element there
+        _keysAct.push_back(new KeyAction(keyMap));
+    }
+}
+
 void Input::KeyReleased(int code)
 {
-
     KeysActionList::iterator kaIt;
 
     for(kaIt = _keysAct.begin(); kaIt != _keysAct.end();)
@@ -105,8 +132,29 @@ void Input::KeyReleased(int code)
             kaIt++;
         }
     }
-
 }
+
+void Input::KeyReleased(KeyMap keyMap)
+{
+    KeysActionList::iterator kaIt;
+
+    for(kaIt = _keysAct.begin(); kaIt != _keysAct.end();)
+    {
+        if((*kaIt)->keyMap == keyMap)
+        {
+            // found iterator which should be removed
+            auto it = *kaIt;
+            kaIt = _keysAct.erase(kaIt);  // remove from events
+            delete it;
+            break;
+        }
+        else
+        {
+            kaIt++;
+        }
+    }
+}
+
 
 KeysMapList Input::KeysMap()
 {
@@ -148,7 +196,8 @@ void Input::ClearOneTimeActs(void)
 
     for(kaIt = _keysAct.begin(); kaIt != _keysAct.end();)
     {
-        if((*kaIt)->keyMap == KeyResize)   // For now it's hardcoded to only one
+        if((*kaIt)->keyMap == KeyResize ||
+            (*kaIt)->keyMap == KeyMouseL)   // TODO: Add list with one time acting keys
         {
             // found iterator which should be removed
             auto it = *kaIt;
@@ -191,4 +240,9 @@ void Input::ClearKeysMap()
 KeysInsertedText& Input::KeysText(void)
 {
     return _keysText;
+}
+
+Vec2 Input::CurrentMousePosition(void)
+{
+    return _mousePosition;
 }

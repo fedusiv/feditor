@@ -5,6 +5,14 @@
 #include "vec2.hpp"
 #include "editor_state.hpp"
 
+enum WidgetType
+{
+    WidgetTypeBase,
+    WidgetTypeEditor,
+    WidgetTypeStatusLine,
+    WidgetTypeMax
+};
+
 class Widget
 {
     public:
@@ -17,6 +25,9 @@ class Widget
         bool Active();
         void SetActive(bool status);
         void SetEditorState(EditorState state);
+        bool IsInWidget(Vec2 position);  // check if given position coordinates is related to this widget
+        virtual void SetCursorPosition(Vec2 position); // if widget has functionality for cursor, it will update position. Inherited widget class need to override this. By default it does nothing
+        WidgetType GetWidgetType(void);     // get widget type
 
         Rect GetRect();
 
@@ -38,6 +49,7 @@ class Widget
         ColorPurpose _colorBorderWidget;// colors to draw background
 
         EditorState _currentEditorState;
+        WidgetType _widgetType;
 
         void DrawCharacter(int character, Vec2 pos, ColorPurpose color);
         void DrawBackground();

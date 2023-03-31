@@ -6,6 +6,7 @@
 
 WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(buffer)
 {
+    _widgetType = WidgetType::WidgetTypeEditor;
     _currentUpperLine = 0;
     _linesPageMoveOffset = 1;
     _currentLeftLine = 0;
@@ -218,6 +219,50 @@ void WidgetEditor::CalculateDrawingOffset(void)
     // Set offset of drawing as half of available, to make kind of centered text data
     _drawingOffset = Vec2(0,verticalOffset/2);
 
+}
+
+void WidgetEditor::SetCursorPosition(Vec2 position)
+{
+    bool found;
+    Vec2 lineStartPos;  // current coordinates, that we are investigating
+    Vec2 cursorPos;     // cursor position at that we pointed
+    lineStartPos.y = _drawingOffset.y;  // we are starting looking from offset.
+
+    found = false;
+    while(lineStartPos.y < _widgetFullRect.h)
+    {
+        lineStartPos.x = _textStartX * _glyphSize.x;    // coordinate where text is starting
+        if(lineStartPos.y + _glyphSize.y > position.y)
+        {
+            // it's inside this line
+            if(lineStartPos.x > position.x)
+            {
+                // position somewhere before text.
+                // it means, that user pointed into line numbers field
+                break;  // exit loop. we found everything we need
+            }
+            while(lineStartPos.x < _widgetFullRect.w)
+            {
+                if(lineStartPos.x + _glyphSize.x > position.x)
+                {
+                    // found x position
+                    found = true;
+                    break;
+                }
+                lineStartPos.x += _glyphSize.x;
+                cursorPos.x++;
+            }
+        }
+        if(found)
+        {
+            break;
+        }
+        lineStartPos.y += _glyphSize.y;
+        cursorPos.y++;
+    }
+
+    // here we have requested position of cursor, need to verify, that buffer exists these values
+    _buffer->SetCursorPosition(cursorPos);  // set explicitly postiion of cursor. Buffer will handle by itself appropriate position to requested
 }
 
 void WidgetEditor::CalculateAvaliableLines(void)

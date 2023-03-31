@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include "gui.hpp"
 #include "widget_editor.hpp"
@@ -68,6 +69,7 @@ void Gui::CreateStatusLine(void)
 void Gui::CreateWidgetEditor(Buffer * buffer)
 {
     auto w = new WidgetEditor(Rect(0,0,_windowsSize.x,_windowsSize.y - statusLine->GetRect().h), buffer);
+    _widgetsEditorList.push_back(w);
     _widgetsList.push_back(w);
 }
 
@@ -87,5 +89,41 @@ void Gui::SetEditorState(EditorState state)
     for(auto w: _widgetsList)
     {
         w->SetEditorState(state);
+    }
+}
+
+void Gui::UpdateMousePosition(Vec2 mousePosition)
+{
+    _mousePosition = mousePosition;
+}
+
+void Gui::AlignCursorPositionByMouse()
+{
+    Vec2 position;
+
+    position = _mousePosition;
+    for(auto w: _widgetsList)
+    {
+        if(w->IsInWidget(position))
+        {
+            switch(w->GetWidgetType())
+            {
+                case WidgetType::WidgetTypeEditor:
+                {
+                    auto wIt = std::find_if(_widgetsEditorList.begin(), _widgetsEditorList.end(),
+                            [&w](WidgetEditor* we){ return w == we;} );
+                    if(wIt != _widgetsEditorList.end())
+                    {   // additional verification
+                        (*wIt)->SetCursorPosition(position);
+                    }
+                    break;
+                }
+                case WidgetType::WidgetTypeStatusLine:
+                    break;
+                default:
+                    w->SetCursorPosition(position);
+                    break;
+            }
+        }
     }
 }

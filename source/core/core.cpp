@@ -26,7 +26,7 @@ void Core::Init(void)
 
     _guiHandler->CreateWindow();
 
-    _executor->CallExecutor(ExecutorOpCode::ChangeEditorModeToNormal, nullptr); // set editor to Normal Mode as default
+    _executor->CallExecutor(ExecutorOpCode::ChangeEditorModeToInsert, nullptr); // set editor to Insert Mode as default
 
     // it's file or directory, first need to specify
     if( std::filesystem::is_directory(_locationPoint))
@@ -48,6 +48,7 @@ void Core::MainLoop()
     {
         _guiHandler->Update();
         InputHandling();
+        _guiHandler->UpdateMousePosition(_inputHandler->CurrentMousePosition());
     }
 }
 

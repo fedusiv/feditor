@@ -9,7 +9,7 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/build/feditor",
-        "args": [],
+        "args": ["~/play/feditor/source/main.cpp"],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
         "environment": [],
