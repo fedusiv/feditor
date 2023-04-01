@@ -22,9 +22,6 @@ Input::Input()
 void Input::Update(bool inputRead)
 {
     SDL_Event e;
-    bool quit;
-
-    quit = false;
     
     // Do we need this delay?
     //SDL_Delay(1); // rest for other applications, waited for events

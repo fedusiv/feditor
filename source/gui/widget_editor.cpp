@@ -260,7 +260,7 @@ void WidgetEditor::SetCursorPosition(Vec2 position)
         lineStartPos.y += _glyphSize.y;
         cursorPos.y++;
     }
-
+    cursorPos.y += _currentUpperLine;   // need to add logic offset with current upperline. Because we get cursorPos relative to current page, but need to convert it to full buffer size
     // here we have requested position of cursor, need to verify, that buffer exists these values
     _buffer->SetCursorPosition(cursorPos);  // set explicitly postiion of cursor. Buffer will handle by itself appropriate position to requested
 }
