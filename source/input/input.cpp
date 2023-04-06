@@ -7,7 +7,8 @@
 
 Input::Input()
 {
-
+    _oneTimeActKeys.push_back(KeyMouseL);
+    _oneTimeActKeys.push_back(KeyResize);
 }
 
 
@@ -194,8 +195,11 @@ void Input::ClearOneTimeActs(void)
 
     for(kaIt = _keysAct.begin(); kaIt != _keysAct.end();)
     {
-        if((*kaIt)->keyMap == KeyResize ||
-            (*kaIt)->keyMap == KeyMouseL)   // TODO: Add list with one time acting keys
+        auto keyMap = (*kaIt)->keyMap;
+        auto kIt = std::find_if(_oneTimeActKeys.begin(), _oneTimeActKeys.end(),
+            [&keyMap](KeyMap k) { return keyMap == k;} );
+
+        if(kIt != _oneTimeActKeys.end())
         {
             // found iterator which should be removed
             auto it = *kaIt;

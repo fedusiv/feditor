@@ -15,6 +15,7 @@ class Input
         KeysMapList _keysMap;
         KeysInsertedText _keysText;
         Vec2 _mousePosition;
+        std::list<KeyMap> _oneTimeActKeys ; 
 
         void ClearOneTimeActs(void);
 
