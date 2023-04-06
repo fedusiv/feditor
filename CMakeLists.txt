@@ -16,12 +16,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall")
 
-if(APPLE)
-    message("Running on Macos. Using newest SDL2 API")
-    add_compile_definitions(UNIX)
-elseif(UNIX)
-    message("Running on Linux. Using previous SDL2 API")    # This is only for WSl2, need to be fixed
-    add_compile_definitions(WSL2)
+if(UNIX)
+    message("Running on UNIX systems.") 
     add_compile_definitions(UNIX)
 endif()
 

@@ -3,6 +3,7 @@
 
 #include "SDL.h"
 #include "input.hpp"
+#include "graphics.hpp"
 
 Input::Input()
 {
@@ -80,7 +81,7 @@ void Input::Update(bool inputRead)
             }
         }
     }
-    SDL_GetMouseState(&_mousePosition.x, &_mousePosition.y);    // obtain mouse position
+    _mousePosition = Graphics::MousePosition(); // obtain mouse position
 }
 
 void Input::KeyPressed(int code)

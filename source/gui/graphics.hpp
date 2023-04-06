@@ -13,7 +13,7 @@
 class Graphics
 {
     public:
-        static bool Init(Vec2 windowSize, int fontSize);
+        static bool Init(Vec2& windowSize, int fontSize);
         static void DeInit();
         static Vec2 GetAppSize();
         static void RenderBegin();
@@ -22,6 +22,7 @@ class Graphics
         static void DrawLine(Vec2 startPos, Vec2 endPos, ColorPurpose color);
         static void DrawGlyph(int character, Vec2 pos, ColorPurpose color);
         static Vec2 GlyphMaxSize();
+        static Vec2 MousePosition();
 
     private:
 
@@ -34,5 +35,6 @@ class Graphics
         static SDL_Texture * _fontTexture[GLYPHS_AMOUNT]; // array of glyphs textures
         static Vec2 _glyphMaxSize;
         static Colors * _colors;    // pointer to colors singleton
+        static int _dpiScaleFactor;  // because on high dpi screen points of sdl and pixels are different, we need to use scale factor for some functionality
 };
 #endif // __GRAPHICS_HPP__

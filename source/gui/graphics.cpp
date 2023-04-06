@@ -10,9 +10,12 @@ SDL_Rect        Graphics::_glyphs[GLYPHS_AMOUNT]; // rects of created glyphs
 SDL_Texture *   Graphics::_fontTexture[GLYPHS_AMOUNT]; // array of glyphs textures
 Vec2            Graphics::_glyphMaxSize;
 Colors *        Graphics::_colors;    // pointer to colors singleton
+int             Graphics::_dpiScaleFactor;
 
-bool Graphics::Init(Vec2 windowSize, int fontSize)
+bool Graphics::Init(Vec2& windowSize, int fontSize)
 {
+    int w,h;
+
     _colors = Colors::Instance();
     TTF_Init();
 
@@ -27,11 +30,15 @@ bool Graphics::Init(Vec2 windowSize, int fontSize)
         SDL_WINDOWPOS_UNDEFINED,
         windowSize.x,
         windowSize.y,
-        SDL_WINDOW_RESIZABLE
+        SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
     );
-    _sdlRenderer = SDL_CreateRenderer(_sdlWindow,-1,SDL_RENDERER_ACCELERATED);  // create renderer, where everything will be drawn
+    // Calculate scale factor
+    SDL_GL_GetDrawableSize(_sdlWindow, &windowSize.x, &windowSize.y);   // get size in pixels.
+    SDL_GetWindowSize(_sdlWindow, &w, &h);  // get size in points
+    _dpiScaleFactor = windowSize.y / h; // calculated scale factor pixels / points
 
-    CreateFont(fontSize, "assets/consolas.ttf");
+    _sdlRenderer = SDL_CreateRenderer(_sdlWindow,-1,SDL_RENDERER_ACCELERATED);  // create renderer, where everything will be drawn
+    CreateFont(fontSize * _dpiScaleFactor, "assets/Iosevka.ttf");
 
     return true;
 }
@@ -72,10 +79,8 @@ void Graphics::CreateFont(int fontSize, std::string fontName)
     SDL_Rect glyphRect;
     SDL_Color whiteDefautSdlColor; // default color
     int i;
-    uint32_t pixelFormat;
 
     whiteDefautSdlColor = { .r = 255, .g = 255, .b = 255, .a = 255}; // glyph will de drawn in white color, because white color can be recolored.
-    pixelFormat = SDL_PIXELFORMAT_ARGB32;
 
     memset(&_glyphs, 0, sizeof(SDL_Rect) * GLYPHS_AMOUNT);
 
@@ -85,20 +90,15 @@ void Graphics::CreateFont(int fontSize, std::string fontName)
         SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_CRITICAL, "Can not open provided font by filename");
     }
 
-    TTF_SetFontHinting(_font, TTF_HINTING_NONE);
-    //TTF_SetFontKerning(_font,1);
+    TTF_SetFontHinting(_font, TTF_HINTING_LIGHT_SUBPIXEL);
+    TTF_SetFontKerning(_font,1);
 
     // Save characters
     // from 32 to 126.
     for (i = ' '; i <= '~'; i++)
     {
-#ifndef WSL2
         text = TTF_RenderGlyph32_Blended(_font, i, whiteDefautSdlColor);    // render glyph from font in argb32 format. This is highest quality of rendering text I made
-#else
-        text = TTF_RenderGlyph_Blended(_font, i, whiteDefautSdlColor); // wsl2 using old sdl2. For now did not find how to solve it properly.
-#endif
         _fontTexture[i] = SDL_CreateTextureFromSurface(_sdlRenderer, text);    // create texture, which will be used
-        SDL_QueryTexture(_fontTexture[i], &pixelFormat, nullptr, &text->w, &text->h); // double check, to make sure, that texture will use argb32 pixel format
         glyphRect.w = text->w;
         glyphRect.h = text->h;
         _glyphs[i] = glyphRect;
@@ -181,7 +181,7 @@ Vec2 Graphics::GetAppSize()
     int w;
     int h;
     
-    SDL_GetWindowSize(_sdlWindow, &w, &h);
+    SDL_GL_GetDrawableSize(_sdlWindow, &w, &h); // this is for high DPI
     auto res = Vec2(w,h);
     return res;
 }
@@ -190,3 +190,13 @@ Vec2 Graphics::GlyphMaxSize()
 {
     return _glyphMaxSize;
 }
+
+Vec2 Graphics::MousePosition(void)
+{
+    Vec2 position;
+
+    SDL_GetMouseState(&position.x, &position.y);    // obtain mouse position
+    position *= _dpiScaleFactor;
+    return position;
+}
+

@@ -71,6 +71,13 @@ class Vec2
             return *this;
         }
 
+        Vec2& operator*=(const int& scale)
+        {
+            x *= scale;
+            y *= scale;
+            return *this;
+        }
+
         void FromRect(Rect rect)
         {
             x = rect.x;
