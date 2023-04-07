@@ -1,4 +1,5 @@
 #include "graphics.hpp"
+#include "SDL_stdinc.h"
 
 #include <SDL.h>
 
@@ -11,6 +12,7 @@ SDL_Texture *   Graphics::_fontTexture[GLYPHS_AMOUNT]; // array of glyphs textur
 Vec2            Graphics::_glyphMaxSize;
 Colors *        Graphics::_colors;    // pointer to colors singleton
 int             Graphics::_dpiScaleFactor;
+Uint64          Graphics::_frameStartTicks; // time in sdl ticks when frame drawing has started
 
 bool Graphics::Init(Vec2& windowSize, int fontSize)
 {
@@ -47,6 +49,7 @@ void Graphics::RenderBegin()
 {
     SDL_Color bgColor;
 
+    _frameStartTicks = SDL_GetTicks64();
     bgColor = _colors->GetColor(ColorPurpose::ColorWindowBg);
     SDL_SetRenderDrawColor(_sdlRenderer,   // set background for window
     bgColor.r,
@@ -58,8 +61,16 @@ void Graphics::RenderBegin()
 
 void Graphics::RenderEnd()
 {
+    Uint64 duration;
+    Uint32 delta;
+
     SDL_RenderPresent(_sdlRenderer);
-    SDL_Delay(1);
+
+    duration = SDL_GetTicks64() - _frameStartTicks;
+    delta= 1000 / FPS;
+    if (duration < delta) {
+        SDL_Delay(delta - duration);
+    }
 }
 
 void Graphics::DeInit()

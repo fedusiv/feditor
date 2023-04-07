@@ -8,6 +8,7 @@
 #include <string>
 
 #define GLYPHS_AMOUNT 128
+#define FPS           60
 
 // This is Graphics API
 class Graphics
@@ -36,5 +37,6 @@ class Graphics
         static Vec2 _glyphMaxSize;
         static Colors * _colors;    // pointer to colors singleton
         static int _dpiScaleFactor;  // because on high dpi screen points of sdl and pixels are different, we need to use scale factor for some functionality
+        static Uint64 _frameStartTicks; // time in sdl ticks(it's milliseconds based on sdl documentation) when frame drawing has started
 };
 #endif // __GRAPHICS_HPP__
