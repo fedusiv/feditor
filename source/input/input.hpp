@@ -18,6 +18,7 @@ class Input
         std::list<KeyMap> _oneTimeActKeys ; 
 
         void ClearOneTimeActs(void);
+        void FillOneTimeActed(void);
 
     public:
         Input();

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "SDL.h"
+#include "vec2.hpp"
 #include "SDL_keycode.h"
 #include "SDL_mouse.h"
 #include "keymap.hpp"
@@ -28,20 +29,8 @@ class KeyAction
 
         }
 
-        static KeyMap ConvertMouseButtons(int sdlButton)
-        {
-            KeyMap keyMap;
-            switch(sdlButton){
-                case SDL_BUTTON_LEFT:   {keyMap = KeyMap::KeyMouseL; break;}
-                case SDL_BUTTON_RIGHT:   {keyMap = KeyMap::KeyMouseR; break;}
-                case SDL_BUTTON_MIDDLE:   {keyMap = KeyMap::KeyMouseM; break;}
-                default:
-                        keyMap = KeyMap::KeyZero;
-                        break;
-            }
-
-            return keyMap;
-        }
+        static KeyMap ConvertMouseButtons(int sdlButton);
+        static KeyMap ConvertMouseWheel(Vec2 direction);
 
     private:
         KeyMap ConvertFromKeyCode()

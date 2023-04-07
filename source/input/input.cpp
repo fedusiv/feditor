@@ -7,8 +7,7 @@
 
 Input::Input()
 {
-    _oneTimeActKeys.push_back(KeyMouseL);
-    _oneTimeActKeys.push_back(KeyResize);
+    FillOneTimeActed();
 }
 
 
@@ -78,6 +77,15 @@ void Input::Update(bool inputRead)
             {
                 auto keyMap = KeyAction::ConvertMouseButtons(e.button.button);
                 KeyReleased(keyMap);
+                break;
+            }
+            case SDL_MOUSEWHEEL:    // mouse wheel
+            {
+                Vec2 vec(e.wheel.x, e.wheel.y);
+                auto keyMap = KeyAction::ConvertMouseWheel(vec);
+                if(keyMap != KeyMap::KeyZero){
+                    KeyPressed(keyMap);
+                }
                 break;
             }
         }
@@ -247,4 +255,13 @@ KeysInsertedText& Input::KeysText(void)
 Vec2 Input::CurrentMousePosition(void)
 {
     return _mousePosition;
+}
+
+void Input::FillOneTimeActed(void)
+{
+    _oneTimeActKeys.push_back(KeyZero);
+    _oneTimeActKeys.push_back(KeyMouseL);
+    _oneTimeActKeys.push_back(KeyResize);
+    _oneTimeActKeys.push_back(KeyWheelUp);
+    _oneTimeActKeys.push_back(KeyWheelDown);
 }

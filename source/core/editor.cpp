@@ -93,6 +93,13 @@ void Editor::MoveCursorTo(ExecutorAccess *execA, void *data)
     execA->gui->AlignCursorPositionByMouse();
 }
 
+void Editor::ScrollUp(ExecutorAccess * execA, void * data)
+{
+}
+
+void Editor::ScrollDown(ExecutorAccess * execA, void * data)
+{
+}
 void Editor::Init()
 {
     Executor * exec = Executor::Instance();
@@ -115,7 +122,9 @@ void Editor::Init()
     exec->AddExecutorElement(Editor::MoveCursorStepRight, ExecutorOpCode::MoveCursorRight, std::vector<KeyMap>(1, {KeyMap::KeyQuotes}), std::vector<EditorState>{EditorState::NormalState}, "move_cursor_right", "foo");
     // Move cursor by mouse
     exec->AddExecutorElement(Editor::MoveCursorTo, ExecutorOpCode::MoveCursorTo, std::vector<KeyMap>(1, {KeyMap::KeyMouseL}), std::vector<EditorState>{EditorState::NormalState, EditorState::InsertState}, "move_cursor_to", "foo");
-
+    // Scroll widget
+    exec->AddExecutorElement(Editor::ScrollUp, ExecutorOpCode::ScrollUp, std::vector<KeyMap>(1, {KeyMap::KeyWheelUp}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_up", "foo");
+    exec->AddExecutorElement(Editor::ScrollDown, ExecutorOpCode::ScrollDown, std::vector<KeyMap>(1, {KeyMap::KeyWheelDown}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_down", "foo");
 
     exec->AddExecutorElement(Editor::Exit, ExecutorOpCode::ExitApp, std::vector<KeyMap>(1, {KeyMap::KeyExit}), std::vector<EditorState>(1, EditorState::EditorStateMax), "exit", "foo");
     exec->AddExecutorElement(Editor::GuiResize, ExecutorOpCode::GuiResize, std::vector<KeyMap>(1, {KeyMap::KeyResize}), std::vector<EditorState>(1, EditorState::EditorStateMax), "resize_app", "foo");

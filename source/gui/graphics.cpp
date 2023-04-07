@@ -59,6 +59,7 @@ void Graphics::RenderBegin()
 void Graphics::RenderEnd()
 {
     SDL_RenderPresent(_sdlRenderer);
+    SDL_Delay(1);
 }
 
 void Graphics::DeInit()

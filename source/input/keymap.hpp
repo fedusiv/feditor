@@ -23,6 +23,8 @@ enum KeyMap
     KeyMouseL,
     KeyMouseR,
     KeyMouseM,
+    KeyWheelUp,
+    KeyWheelDown,
 
     KeyP,
     KeyL,
