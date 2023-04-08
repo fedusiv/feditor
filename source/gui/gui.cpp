@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "gui.hpp"
+#include "widget.hpp"
 #include "widget_editor.hpp"
 #include "widget_statusline.hpp"
 #include "graphics.hpp"
@@ -126,4 +127,33 @@ void Gui::AlignCursorPositionByMouse()
             }
         }
     }
+}
+
+void Gui::PageScrolling(Vec2 direction)
+{
+    Widget *w;
+
+    w = GetWidgetUnderMouse();
+    if(nullptr == w)
+    {
+       return; 
+    }
+    w->PageScrolling(direction);
+}
+
+Widget* Gui::GetWidgetUnderMouse(void)
+{
+    Vec2 position;
+    Widget* result;
+
+    result = nullptr;
+    position = _mousePosition;
+    auto wIt = std::find_if(_widgetsList.begin(), _widgetsList.end(),
+            [&position](Widget* w){ return w->IsInWidget(position);});
+    if(wIt != _widgetsList.end())
+    {   // this is double check. because under any mouse position inside app should be widget. Otherwise we have a bug.
+        result = (*wIt);
+    }
+    return result;
+
 }

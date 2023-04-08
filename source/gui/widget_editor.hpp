@@ -1,9 +1,12 @@
 #ifndef __WIDGET_EDITOR_HPP__
 #define __WIDGET_EDITOR_HPP__
 
+#include "graphics.hpp"
 #include "vec2.hpp"
 #include "widget.hpp"
 #include "buffer.hpp"
+
+#define SCROLL_VERTICAL_STEP 3
 
 class WidgetEditor: public Widget
 {
@@ -11,6 +14,7 @@ class WidgetEditor: public Widget
         WidgetEditor(Rect rect, Buffer * buffer);
         void Render(void) override;
         void SetCursorPosition(Vec2 position) override; // setting cursor position of widget editor
+        void PageScrolling(Vec2 direction) override; // moving editor page based on explicit commands to scroll page
 
     protected:
         void CalculateDrawingOffset(void) override;
@@ -32,6 +36,8 @@ class WidgetEditor: public Widget
         Vec2 CalculateRealPosForCursor();    // calculating real position on pixels, related to local coordinates for cursor
         void CalculateAvaliableLines();     // calculate amount of lines, which can be drawn on one editor page
         void CalculateAvaliableColumns();   // calculate amount of columns, width of line in one editor page
+        void IncreaseUpperLine(int value);  // increase _currentUpperLine by provided value
+        void IncreaseLeftLine(int value);   // increase _currentLeftLine by provided value
 };
 
 #endif // __WIDGET_EDITOR_HPP__

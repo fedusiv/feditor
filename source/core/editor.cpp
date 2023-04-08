@@ -95,10 +95,12 @@ void Editor::MoveCursorTo(ExecutorAccess *execA, void *data)
 
 void Editor::ScrollUp(ExecutorAccess * execA, void * data)
 {
+    execA->gui->PageScrolling(Vec2(0,1));
 }
 
 void Editor::ScrollDown(ExecutorAccess * execA, void * data)
 {
+    execA->gui->PageScrolling(Vec2(0,-1));
 }
 void Editor::Init()
 {

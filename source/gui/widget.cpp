@@ -123,3 +123,8 @@ void Widget::SetCursorPosition(Vec2 position)
 {
     // no functionality
 }
+
+void Widget::PageScrolling(Vec2 direction)
+{
+    // no functionality
+}

@@ -146,8 +146,6 @@ void WidgetEditor::DrawLinesNumber(void)
 void WidgetEditor::PageUpdate(void)
 {
     Vec2 cursorPos;
-    int linesNumber;
-    int columnsNumber;
 
     cursorPos = _buffer->CursorPosition();
     if(cursorPos == _cursorPrevPos)
@@ -155,48 +153,25 @@ void WidgetEditor::PageUpdate(void)
         return; // no need to update paging
     }
     // Vertical offset
-    linesNumber =  _buffer->LinesNumber();
-    columnsNumber = _buffer->ColumnsNumber();
-
     if(cursorPos.y - _linesPageMoveOffset < _currentUpperLine)
     {   // This is moving page up
-        _currentUpperLine--; // moving line by one step
+        IncreaseUpperLine(-1);  // moving line by one step
     }
     if(cursorPos.y + _linesPageMoveOffset >= _currentUpperLine + _availableLines)
     {   // This is moving page down
-        _currentUpperLine++; // moving line by one step
-    }
-
-    // Making borders of it
-    if(_currentUpperLine < 0)
-    {
-        _currentUpperLine = 0;
-    }
-    if(_currentUpperLine > linesNumber)
-    {
-        _currentUpperLine = linesNumber;
+        IncreaseUpperLine(1); // moving line by one step
     }
 
     // Horizontal offset
     if(cursorPos.x - _linesPageShiftOffset < _currentLeftLine)
     {   // This is shifting page left
-        _currentLeftLine--; // shift line by one step to the left
+        IncreaseLeftLine(-1);// shift line by one step to the left
     }
     if(cursorPos.x + _linesPageShiftOffset  >= _currentLeftLine + _availableColumns  - _textStartX)  // available lines here is all availables lines in editor widget including lines numbers
     {   // This is shifting page right
-        _currentLeftLine++; // shift line by one step to the right
+        IncreaseLeftLine(1);// shift line by one step to the right
     }
-
-    // Making borders of it
-    if(_currentLeftLine < 0)
-    {
-        _currentLeftLine  = 0;
-    }
-    if(_currentLeftLine > columnsNumber)
-    {
-        _currentLeftLine  = columnsNumber;
-    }
-    
+     
     // This part is to shifting page horizontal location when cursor changes drastically positon.
     // Good example when you are going from rightest position in line to leftest position in line and vise versa
     if(cursorPos.x < _currentLeftLine)
@@ -212,13 +187,66 @@ void WidgetEditor::PageUpdate(void)
 
 }
 
+// Page scrolling is explicitly called to change paging of buffer
+void WidgetEditor::PageScrolling(Vec2 direction)
+{
+    Vec2 cursorPos;
+
+    cursorPos = _buffer->CursorPosition();
+    // Vertical update of page scrolling
+    if(direction.y > 0)
+    {
+        IncreaseUpperLine(-1 * SCROLL_VERTICAL_STEP);
+    }
+    else if(direction.y < 0)
+    {
+        IncreaseUpperLine(SCROLL_VERTICAL_STEP);
+    }
+    if(_currentUpperLine == _buffer->LinesNumber())
+    {   // at least one line should be visible
+        _currentUpperLine--;
+    }
+    if(cursorPos.y < _currentUpperLine)
+    {   // cursor need to follow visible area of buffer
+        cursorPos.y = _currentUpperLine;
+    }
+    if(cursorPos.y >= _currentUpperLine + _availableLines)
+    {   // cursor need to follow visible area of buffer
+        cursorPos.y = _currentUpperLine + _availableLines -1;
+    }
+
+    // Horizontal update of page scrolling
+    if(direction.x > 0)
+    {
+        IncreaseLeftLine(-1 * SCROLL_VERTICAL_STEP);
+    }
+    else if(direction.x < 0)
+    {
+        IncreaseLeftLine(SCROLL_VERTICAL_STEP);
+    }
+    if(_currentLeftLine == _buffer->ColumnsNumber())
+    {   // at least one character should be visible
+        _currentLeftLine--;
+    }
+    if(cursorPos.x < _currentLeftLine)
+    {   // cursor need to follow visible area of buffer
+        cursorPos.y = _currentLeftLine;
+    }
+    if(cursorPos.x >= _currentLeftLine + _availableColumns)
+    {   // cursor need to follow visible area of buffer
+        cursorPos.x = _currentLeftLine + _availableColumns -1;
+    }
+
+    _buffer->SetCursorPosition(cursorPos);
+
+}
+
 void WidgetEditor::CalculateDrawingOffset(void)
 {
     int verticalOffset;
     verticalOffset = _widgetRect.h - _availableLines * _glyphSize.y; // calculate how many unused space we have in drawing data
     // Set offset of drawing as half of available, to make kind of centered text data
     _drawingOffset = Vec2(0,verticalOffset/2);
-
 }
 
 void WidgetEditor::SetCursorPosition(Vec2 position)
@@ -273,4 +301,38 @@ void WidgetEditor::CalculateAvaliableLines(void)
 void WidgetEditor::CalculateAvaliableColumns(void)
 {
     _availableColumns = _widgetRect.w / _glyphSize.x;
+}
+
+void WidgetEditor::IncreaseUpperLine(int value)
+{
+    int linesNumber;
+
+    linesNumber = _buffer->LinesNumber();
+    _currentUpperLine += value;
+    if(_currentUpperLine < 0)
+    {
+        _currentUpperLine = 0;
+    }
+    if(_currentUpperLine > linesNumber)
+    {
+        _currentUpperLine = linesNumber;
+    }
+
+}
+
+void WidgetEditor::IncreaseLeftLine(int value)
+{
+    int columnsNumber;
+
+    columnsNumber = _buffer->ColumnsNumber();
+    _currentLeftLine += value;
+    if(_currentLeftLine < 0)
+    {
+        _currentLeftLine  = 0;
+    }
+    if(_currentLeftLine > columnsNumber)
+    {
+        _currentLeftLine  = columnsNumber;
+    }
+
 }
