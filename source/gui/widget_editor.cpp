@@ -218,19 +218,19 @@ void WidgetEditor::PageScrolling(Vec2 direction)
     // Horizontal update of page scrolling
     if(direction.x > 0)
     {
-        IncreaseLeftLine(-1 * SCROLL_VERTICAL_STEP);
+        IncreaseLeftLine(-1 * SCROLL_HORIZONTAL_STEP);
     }
     else if(direction.x < 0)
     {
-        IncreaseLeftLine(SCROLL_VERTICAL_STEP);
+        IncreaseLeftLine(SCROLL_HORIZONTAL_STEP);
     }
-    if(_currentLeftLine == _buffer->ColumnsNumber())
-    {   // at least one character should be visible
-        _currentLeftLine--;
+    if(_currentLeftLine >= _buffer->GetLineSize(cursorPos.y))
+    {
+        _currentLeftLine = _buffer->GetLineSize(cursorPos.y);   // left line can not be bigger than current line size
     }
     if(cursorPos.x < _currentLeftLine)
     {   // cursor need to follow visible area of buffer
-        cursorPos.y = _currentLeftLine;
+        cursorPos.x = _currentLeftLine;
     }
     if(cursorPos.x >= _currentLeftLine + _availableColumns)
     {   // cursor need to follow visible area of buffer

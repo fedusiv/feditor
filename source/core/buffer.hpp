@@ -38,6 +38,7 @@ class Buffer
         void DeleteAtCursor(DeleteOperations operation);
         void MoveCursor(MoveCursorDirection direction);
         void SetCursorPosition(Vec2 position);  // explicit nomination of cursor position. Buffer will check if this position if possible to be reached. If not it will set to first appropriate place
+        int GetLineSize(int lineNumber);    // get line size
 
     private:
         static int _globalId;

@@ -11,6 +11,16 @@ KeyMap KeyAction::ConvertMouseWheel(Vec2 direction)
     {
         return KeyWheelUp;
     }
+
+    if(0 > direction.x)
+    {
+        return KeyWheelRight;
+    }
+    if(0 < direction.x)
+    {
+        return KeyWheelLeft;
+    }
+
     return KeyZero;
 }
 

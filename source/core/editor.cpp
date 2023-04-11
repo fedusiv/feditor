@@ -102,6 +102,19 @@ void Editor::ScrollDown(ExecutorAccess * execA, void * data)
 {
     execA->gui->PageScrolling(Vec2(0,-1));
 }
+
+void Editor::ScrollLeft(ExecutorAccess * execA, void * data)
+{
+    execA->gui->PageScrolling(Vec2(-1,0));
+}
+
+void Editor::ScrollRight(ExecutorAccess * execA, void * data)
+{
+    execA->gui->PageScrolling(Vec2(1,0));
+}
+
+
+
 void Editor::Init()
 {
     Executor * exec = Executor::Instance();
@@ -127,6 +140,8 @@ void Editor::Init()
     // Scroll widget
     exec->AddExecutorElement(Editor::ScrollUp, ExecutorOpCode::ScrollUp, std::vector<KeyMap>(1, {KeyMap::KeyWheelUp}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_up", "foo");
     exec->AddExecutorElement(Editor::ScrollDown, ExecutorOpCode::ScrollDown, std::vector<KeyMap>(1, {KeyMap::KeyWheelDown}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_down", "foo");
+    exec->AddExecutorElement(Editor::ScrollLeft, ExecutorOpCode::ScrollLeft, std::vector<KeyMap>(1, {KeyMap::KeyWheelLeft}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_left", "foo");
+    exec->AddExecutorElement(Editor::ScrollRight, ExecutorOpCode::ScrollRight, std::vector<KeyMap>(1, {KeyMap::KeyWheelRight}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_right", "foo");
 
     exec->AddExecutorElement(Editor::Exit, ExecutorOpCode::ExitApp, std::vector<KeyMap>(1, {KeyMap::KeyExit}), std::vector<EditorState>(1, EditorState::EditorStateMax), "exit", "foo");
     exec->AddExecutorElement(Editor::GuiResize, ExecutorOpCode::GuiResize, std::vector<KeyMap>(1, {KeyMap::KeyResize}), std::vector<EditorState>(1, EditorState::EditorStateMax), "resize_app", "foo");

@@ -7,6 +7,7 @@
 #include "buffer.hpp"
 
 #define SCROLL_VERTICAL_STEP 3
+#define SCROLL_HORIZONTAL_STEP 2
 
 class WidgetEditor: public Widget
 {

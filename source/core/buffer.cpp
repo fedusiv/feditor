@@ -223,6 +223,10 @@ void Buffer::SetCursorPosition(Vec2 position)
     {
         position.x = line->size();      // same with cursor position on x axis, it can not be bigger, than line width.
     }
+    if(position.x < 0)
+    {
+        position.x = 0;
+    }
     _cursorPosition = position;
 }
 
@@ -239,6 +243,11 @@ int Buffer::LinesNumber(void)
 int Buffer::ColumnsNumber(void)
 {
     return _largestLineSize;
+}
+
+int Buffer::GetLineSize(int lineNumber)
+{
+    return _buffer[lineNumber].size();
 }
 
 /*

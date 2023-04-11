@@ -16,6 +16,8 @@ enum class ExecutorOpCode
     MoveCursorTo,
     ScrollUp,
     ScrollDown,
+    ScrollLeft,
+    ScrollRight,
 
     OpenFileEditorWidget,
 

@@ -264,4 +264,6 @@ void Input::FillOneTimeActed(void)
     _oneTimeActKeys.push_back(KeyResize);
     _oneTimeActKeys.push_back(KeyWheelUp);
     _oneTimeActKeys.push_back(KeyWheelDown);
+    _oneTimeActKeys.push_back(KeyWheelLeft);
+    _oneTimeActKeys.push_back(KeyWheelRight);
 }
