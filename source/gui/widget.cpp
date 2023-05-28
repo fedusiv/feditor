@@ -8,7 +8,7 @@ Widget::Widget(Rect rect): _widgetFullRect(rect)
     _active = true;
     _widgetBorderThick = 2;
     _drawingOffset = Vec2(0,0);
-    _cursorWidth = 2;
+    _cursorWidth = 4;
     _cursorHeightAdd = 2;
     _glyphSize = Graphics::GlyphMaxSize();
  

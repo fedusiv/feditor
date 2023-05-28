@@ -1,7 +1,10 @@
 #include <iostream>
 #include <algorithm>
+#include <locale>
+#include <codecvt>
 
 #include "SDL.h"
+#include "SDL_stdinc.h"
 #include "input.hpp"
 #include "graphics.hpp"
 
@@ -23,7 +26,9 @@ Input::Input()
 void Input::Update(bool inputRead)
 {
     SDL_Event e;
-    
+    std::wstring_convert<std::codecvt_utf8<char32_t>,char32_t> utfConverter;    // this is converter for utf-8 symbols
+    int unicodeCode;    // unicode code, which is entered
+
     // Do we need this delay?
     //SDL_Delay(1); // rest for other applications, waited for events
 
@@ -53,7 +58,12 @@ void Input::Update(bool inputRead)
             {
                 if(inputRead)
                 {
-                    _keysText.push_back(static_cast<int>(e.text.text[0]));  // This is relevant only for English insert text!
+                    const char* inputText = e.text.text;    // get value of text from sdl to pointer
+                    std::u32string str32 = utfConverter.from_bytes(inputText);  // convert string to utf-8 symbols to string where each symbol is in 32bit char size.
+                    // Do not understand deeply. SDL2 stores unicode text in his buffer. We assume it's utf-8. To render character we need to know unicode code, it can not be done through basic int cast.
+                    // That's why we converting to unicode string and casting symbols from it.
+                    unicodeCode = static_cast<int>(str32[0]);   // Cast only first symbol (it should only one). Probably it should be upgraded to CJK (chinese korean japanese)
+                    _keysText.push_back(static_cast<int>(unicodeCode));
                 }
                 break;
             }

@@ -14,7 +14,7 @@ That's why I want to combine neovim and vscode:
 Currently I'm continuing to work on it and looking for nice contributors
 
 ## For building
-You need to install sdllib:
+to install sdllib:
 
 sdl2
 
