@@ -3,8 +3,6 @@
 
 #include "gui.hpp"
 #include "widget.hpp"
-#include "widget_editor.hpp"
-#include "widget_statusline.hpp"
 #include "graphics.hpp"
 
 
@@ -50,7 +48,35 @@ void Gui::CreateWindow(void)
         std::cout << "Error in initialization of Window. Exit" << std::endl;
         return;
     }
+    CreateLayout();
+}
+
+void Gui::CreateLayout(void)
+{
+    // Layout creates hierarchy for widgets. It has few levels.
+    // On first level there go statusline, active tab and filebrowser page.
+    // Other widgets goes in hierarchy there.
     CreateStatusLine();
+    CreateWidgetTab();
+}
+
+void Gui::CreateWidgetTab(void)
+{
+    WidgetTab * tab;
+    Rect rect;
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = _windowsSize.x;
+    rect.h = _windowsSize.y - statusLine->GetRect().h;
+    tab = new WidgetTab(rect);
+    if(nullptr != _widgetTabActive)
+    {   // If it's not nullptr, means, there is active tab already. Need to set to inactive for render
+        _widgetTabActive->SetActive(false);
+    }
+    _widgetTabActive = tab;
+
+    _widgetsList.push_back(tab);
 }
 
 void Gui::CreateStatusLine(void)
@@ -69,9 +95,7 @@ void Gui::CreateStatusLine(void)
 
 void Gui::CreateWidgetEditor(Buffer * buffer)
 {
-    auto w = new WidgetEditor(Rect(0,0,_windowsSize.x,_windowsSize.y - statusLine->GetRect().h), buffer);
-    _widgetsEditorList.push_back(w);
-    _widgetsList.push_back(w);
+    _widgetTabActive->AttachBuffer(buffer); // attach buffer to tab, and let all functionality there
 }
 
 bool Gui::NeedExit(void)
@@ -109,16 +133,9 @@ void Gui::AlignCursorPositionByMouse()
         {
             switch(w->GetWidgetType())
             {
-                case WidgetType::WidgetTypeEditor:
-                {
-                    auto wIt = std::find_if(_widgetsEditorList.begin(), _widgetsEditorList.end(),
-                            [&w](WidgetEditor* we){ return w == we;} );
-                    if(wIt != _widgetsEditorList.end())
-                    {   // additional verification
-                        (*wIt)->SetCursorPosition(position);
-                    }
+                case WidgetType::WidgetTypeTab:
+                    _widgetTabActive->SetCursorPosition(position);
                     break;
-                }
                 case WidgetType::WidgetTypeStatusLine:
                     break;
                 default:

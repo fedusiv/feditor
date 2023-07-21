@@ -6,6 +6,7 @@
 #include "buffer.hpp"
 #include "widget_statusline.hpp"
 #include "widget_editor.hpp"
+#include "widget_tab.hpp"
 
 
 class Gui
@@ -27,12 +28,15 @@ class Gui
 
     private:
         void InitWidgets(void);     // initialize starting widgets
+        void CreateLayout(void);    // making init layout for all widgets.
         void CreateStatusLine(void);// create status line. Status line can be only once
+        void CreateWidgetTab(void);// creates new widget tab
         Widget* GetWidgetUnderMouse(void);  // get pointer to widget, under which is mouse position right now
 
         std::list<Widget*> _widgetsList; // all widgets in gui window
-        std::list<WidgetEditor*> _widgetsEditorList; // all editor widgets in gui window
+        std::list<WidgetTab*> _widgetsTabsList; // all widget tabs
         WidgetStatusLine * statusLine = nullptr;  // pointer to status line widget
+        WidgetTab * _widgetTabActive = nullptr;   // pointer to active tab widget
         bool _needExit;     // flag if need to exit
         Vec2 _windowsSize;  // current window size
         int _fontSize;      // current font size

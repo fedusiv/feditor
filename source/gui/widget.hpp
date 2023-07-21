@@ -10,6 +10,7 @@ enum WidgetType
     WidgetTypeBase,
     WidgetTypeEditor,
     WidgetTypeStatusLine,
+    WidgetTypeTab,
     WidgetTypeMax
 };
 
