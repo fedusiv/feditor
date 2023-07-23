@@ -3,6 +3,7 @@
 
 #include "vec2.hpp"
 #include "widget_editor.hpp"
+#include "macros.h"
 
 WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(buffer)
 {
@@ -188,10 +189,11 @@ void WidgetEditor::PageUpdate(void)
 }
 
 // Page scrolling is explicitly called to change paging of buffer
-void WidgetEditor::PageScrolling(Vec2 direction)
+void WidgetEditor::PageScrolling(Vec2 direction, Vec2 mousePosition)
 {
     Vec2 cursorPos;
 
+    UNUSED(mousePosition);
     cursorPos = _buffer->CursorPosition();
     // Vertical update of page scrolling
     if(direction.y > 0)

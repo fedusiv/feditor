@@ -13,7 +13,7 @@ class WidgetTab: public Widget
         WidgetTab(Rect rect);
         void Render(void) override;
         void SetCursorPosition(Vec2 position) override; // setting cursor position of widget
-        void PageScrolling(Vec2 direction) override; // moving editor page based on explicit commands to scroll page
+        void PageScrolling(Vec2 direction, Vec2 mousePosition) override; // moving editor page based on explicit commands to scroll page
         void AttachBuffer(Buffer * buffer);         // attaching buffer to tab. Creates widget editor
 
     protected:

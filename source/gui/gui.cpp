@@ -155,7 +155,7 @@ void Gui::PageScrolling(Vec2 direction)
     {
        return; 
     }
-    w->PageScrolling(direction);
+    w->PageScrolling(direction, _mousePosition);
 }
 
 Widget* Gui::GetWidgetUnderMouse(void)

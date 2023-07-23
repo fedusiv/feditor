@@ -46,6 +46,7 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE "source/core")
 target_include_directories(${PROJECT_NAME} PRIVATE "source/gui")
 target_include_directories(${PROJECT_NAME} PRIVATE "source/input")
+target_include_directories(${PROJECT_NAME} PRIVATE "source/common")
 target_include_directories(feditor PRIVATE "source/thirdparty/nlohmann")
 
 target_link_libraries(feditor ${SDL2_LIBRARIES})

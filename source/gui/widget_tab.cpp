@@ -32,9 +32,16 @@ void WidgetTab::SetCursorPosition(Vec2 position)
     }
 }
 
-void WidgetTab::PageScrolling(Vec2 direction)
+void WidgetTab::PageScrolling(Vec2 direction, Vec2 mousePosition)
 {
-
+    for(auto w: _widgetsEditorList)
+    {
+        if(w->IsInWidget(mousePosition))
+        {
+            w->PageScrolling(direction, mousePosition);
+            break;
+        }
+    }
 }
 
 void WidgetTab::CalculateDrawingOffset(void)

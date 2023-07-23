@@ -124,7 +124,7 @@ void Widget::SetCursorPosition(Vec2 position)
     // no functionality
 }
 
-void Widget::PageScrolling(Vec2 direction)
+void Widget::PageScrolling(Vec2 direction, Vec2 mousePosition)
 {
     // no functionality
 }
