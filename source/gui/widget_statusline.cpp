@@ -8,7 +8,7 @@ WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
     
     _widgetType = WidgetType::WidgetTypeStatusLine;
     windowSize = Vec2(rect.x,rect.y);   // get current window size
-    Resize(windowSize);
+    //Resize(windowSize);
     _drawingOffset = Vec2(_glyphSize.x,0);
 
     _currentEditorState = EditorState::InsertState;
@@ -26,15 +26,15 @@ void WidgetStatusLine::Render()
     DrawCurrentMode();
 }
 
-void WidgetStatusLine::Resize(Vec2 windowSize)
+void WidgetStatusLine::Resize(Rect newRect)
 {
-    Rect rect;
-    // First calculate real Rectangle for Statusline
-    rect.w = windowSize.x;// window size x
-    rect.h = _glyphSize.y + (_glyphSize.y / 5); // size of status line is 10% of font size in up then fontsize goes and after that again 10%
-    rect.x = 0;
-    rect.y = windowSize.y - rect.h;
-    UpdateWidgetRect(rect);
+    // Rect rect;
+    // // First calculate real Rectangle for Statusline
+    // rect.w = windowSize.x;// window size x
+    // rect.h = _glyphSize.y + (_glyphSize.y / 5); // size of status line is 10% of font size in up then fontsize goes and after that again 10%
+    // rect.x = 0;
+    // rect.y = windowSize.y - rect.h;
+    // UpdateWidgetRect(rect);
 }
 
 void WidgetStatusLine::DrawCurrentMode()

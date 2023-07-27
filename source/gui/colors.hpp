@@ -11,6 +11,7 @@ enum ColorPurpose
     ColorWidgetCursor,
     ColorWidgetEditorLineNumber,
     ColorWidgetEditorText,
+    ColorWidgetEditorFileName,
     ColorStatusLineModalMode,
     ColorStatusLineInsertMode,
 

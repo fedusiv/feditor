@@ -89,6 +89,9 @@
         "valarray": "cpp",
         "variant": "cpp",
         "fstream": "cpp",
-        "codecvt": "cpp"
+        "codecvt": "cpp",
+        "__verbose_abort": "cpp",
+        "condition_variable": "cpp",
+        "thread": "cpp"
     }
 }

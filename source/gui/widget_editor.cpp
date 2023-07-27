@@ -37,6 +37,14 @@ void WidgetEditor::Render(void)
 
 }
 
+void WidgetEditor::Resize(Rect newRect)
+{
+    Widget::Resize(newRect);
+    CalculateAvaliableLines();
+    CalculateAvaliableColumns();
+    CalculateDrawingOffset();
+}
+
 Vec2 WidgetEditor::CalculateRealPosForCursor()
 {
     Vec2 logicPos, relativePos;

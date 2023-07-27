@@ -11,6 +11,7 @@ enum WidgetType
     WidgetTypeEditor,
     WidgetTypeStatusLine,
     WidgetTypeTab,
+    WidgetTypeLabel,
     WidgetTypeMax
 };
 
@@ -21,7 +22,7 @@ class Widget
         Widget(Rect rect);
         virtual ~Widget();
         virtual void Render(void);
-        virtual void Resize(Vec2 windowSize);
+        virtual void Resize(Rect newRect);
 
         bool Active();
         void SetActive(bool status);

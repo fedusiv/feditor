@@ -2,13 +2,14 @@
 
 WidgetTab::WidgetTab(Rect rect): Widget(rect)
 {
-
+    _layout = new GuiLayout(_widgetRect);
 }
 
 void WidgetTab::AttachBuffer(Buffer * buffer)
 {
     auto w = new WidgetEditor(Rect(_widgetRect.x, _widgetRect.y, _widgetRect.w, _widgetRect.h), buffer);
     _widgetsEditorList.push_back(w);
+    _layout->AppendWidget(w, LayoutDirection::Vertical, false);
 }
 
 void WidgetTab::Render(void)

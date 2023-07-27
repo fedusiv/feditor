@@ -11,7 +11,7 @@ class WidgetStatusLine: public Widget
         WidgetStatusLine(Rect rect);    // Rect here is windows size. It uses only x and y
         ~WidgetStatusLine();
         void Render(void) override;
-        void Resize(Vec2 windowSize) override;
+        void Resize(Rect newRect) override;
 
     private:
         void DrawCurrentMode(void);

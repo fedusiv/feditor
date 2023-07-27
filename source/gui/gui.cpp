@@ -35,7 +35,7 @@ void Gui::Resize(void)
     newSize = Graphics::GetAppSize();   // get new size from gprahic API
     for(auto w: _widgetsList)
     {
-        w->Resize(newSize);
+        //w->Resize(newSize); TODO: FIX THIS
     }
 }
 
@@ -56,7 +56,7 @@ void Gui::CreateLayout(void)
     // Layout creates hierarchy for widgets. It has few levels.
     // On first level there go statusline, active tab and filebrowser page.
     // Other widgets goes in hierarchy there.
-    CreateStatusLine();
+    //CreateStatusLine();
     CreateWidgetTab();
 }
 
@@ -68,7 +68,7 @@ void Gui::CreateWidgetTab(void)
     rect.x = 0;
     rect.y = 0;
     rect.w = _windowsSize.x;
-    rect.h = _windowsSize.y - statusLine->GetRect().h;
+    rect.h = _windowsSize.y;// - statusLine->GetRect().h;
     tab = new WidgetTab(rect);
     if(nullptr != _widgetTabActive)
     {   // If it's not nullptr, means, there is active tab already. Need to set to inactive for render

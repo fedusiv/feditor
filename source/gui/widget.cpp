@@ -12,7 +12,7 @@ Widget::Widget(Rect rect): _widgetFullRect(rect)
     _cursorHeightAdd = 2;
     _glyphSize = Graphics::GlyphMaxSize();
  
-    UpdateWidgetRect(_widgetFullRect);  // maybe it's overflow to use function, but API exists and better to use it. do crease code amount
+    UpdateWidgetRect(_widgetFullRect);
     _colorBgWidget = ColorPurpose::ColorWidgetBg;
     _colorBorderWidget = ColorPurpose::ColorWidgetBorder;
     _currentEditorState = EditorState::NormalState;
@@ -27,8 +27,9 @@ void Widget::Render()
     DrawBackground();
 }
 
-void Widget::Resize(Vec2 windowSize)
+void Widget::Resize(Rect newRect)
 {
+    UpdateWidgetRect(_widgetFullRect);
 }
 
 void Widget::DrawBackground()

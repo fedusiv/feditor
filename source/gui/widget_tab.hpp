@@ -6,6 +6,7 @@
 #include "widget.hpp"
 #include "widget_editor.hpp"
 #include "buffer.hpp"
+#include "gui_layout.hpp"
 
 class WidgetTab: public Widget
 {
@@ -21,6 +22,7 @@ class WidgetTab: public Widget
 
     private:
         std::list<WidgetEditor*> _widgetsEditorList; // all editor widgets in gui window
+        GuiLayout* _layout; // layout inside widget tab
 
 };
 
