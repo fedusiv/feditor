@@ -80,7 +80,7 @@ void Buffer::InsertNewLine(void)
         _buffer.push_back(BufferLine(0));
     }
     it = ( _buffer.begin() + _cursorPosition.y + 1 );
-    _buffer.insert(it, (BufferLine(0)));
+    it = _buffer.insert(it, (BufferLine(0))); // save it to new inserted buffer
     if(_cursorPosition.x < (*(it-1)).size())
     {
         // new line request is pressed in the middle of line. Move all content right after cursor to new line
