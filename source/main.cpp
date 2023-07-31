@@ -1,7 +1,6 @@
 #include "core.hpp"
 #include "gui.hpp"
 #include "input.hpp"
-#include <iostream>
 
 std::string ParseCliArgs(int argc, char* argv[])
 {

@@ -35,6 +35,7 @@ class GuiLayout
         LayoutGrid _layoutGrid;
 
         void CallResize(Widget* widget, Rect rect);
+        Rect CalculateOneWidgetSize();
 
 };
 

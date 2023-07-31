@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 
+typedef SDL_Color Color;
+
 enum ColorPurpose
 {
     ColorWindowBg,

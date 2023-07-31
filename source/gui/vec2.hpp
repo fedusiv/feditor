@@ -100,6 +100,19 @@ class Vec2
             return *this;
         }
 
+        Vec2& operator*=(const Vec2& mulVec)
+        {
+            x *= mulVec.x;
+            y *= mulVec.y;
+            return *this;
+        }
+        Vec2& operator* (const Vec2& mulVec)
+        {
+            x *= mulVec.x;
+            y *= mulVec.y;
+            return *this;
+        }
+
         void FromRect(Rect rect)
         {
             x = rect.x;

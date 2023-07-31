@@ -42,16 +42,16 @@ void GuiLayout::AppendWidget(Widget* widget, LayoutDirection direction, bool har
             flexibleWidgetsAmout++;
         }
         height = ((_layoutRect.h - hardSizedSize) - (hardSized + flexibleWidgetsAmout)) / flexibleWidgetsAmout;  // calculate height of flexible widgets
+        height = ( (_layoutRect.h - hardSizedSize) - ((flexibleWidgetsAmout + hardSized - 1) * _borderWidth) ) / flexibleWidgetsAmout;
         LayoutRow row;  // creates new row
         LayoutElement* element = new LayoutElement{.hardSize = hardSize, .widget = widget};
         row.push_back(element);
         _layoutGrid.push_back(row); // copy new column to grid
-        rect = _layoutRect;
-        rect.w = -1;    // no need to change width
+        rect = CalculateOneWidgetSize();
         for(auto e: _layoutGrid)
         {
-            if(!e.front()->hardSize)
-            {   // if it is not hardcoded value, do not need to resize it
+            if(e.front()->hardSize)
+            {
                 rect.h = -1;
             }
             else
@@ -62,11 +62,30 @@ void GuiLayout::AppendWidget(Widget* widget, LayoutDirection direction, bool har
             {
                 CallResize(r->widget, rect);
             }
-            rect.x += _borderWidth + e.front()->widget->GetRect().h;    // change x coordinate for futher columns
+            rect.y += _borderWidth + e.front()->widget->GetRect().h;    // change x coordinate for futher columns
         }
     }
 }
 
+Rect GuiLayout::CalculateOneWidgetSize()
+{
+    int columns, rows;
+    Rect rect;
+
+    rect = _layoutRect;
+    rows = _layoutGrid.size();   // amount of elements in one column, means how many elements in vertical
+    if(rows)
+    {
+        rect.h /= rows;
+        columns = _layoutGrid.at(0).size();    // amount of elements in one row. 
+        if(columns)
+        {
+            rect.w /= columns;
+        }
+    }
+
+    return rect;
+}
 
 void GuiLayout::CallResize(Widget* widget, Rect rect)
 {

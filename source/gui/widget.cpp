@@ -29,7 +29,7 @@ void Widget::Render()
 
 void Widget::Resize(Rect newRect)
 {
-    UpdateWidgetRect(_widgetFullRect);
+    UpdateWidgetRect(newRect);
 }
 
 void Widget::DrawBackground()
