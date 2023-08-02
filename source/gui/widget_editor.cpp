@@ -266,6 +266,9 @@ void WidgetEditor::SetCursorPosition(Vec2 position)
     Vec2 cursorPos;     // cursor position at that we pointed
     lineStartPos.y = _drawingOffset.y;  // we are starting looking from offset.
 
+    // Here we calculate to simulate widget starting from 0,0 that's why need to decrease position of cursor to widget starting point
+    position.y -= _widgetFullRect.y;
+    position.x -= _widgetFullRect.x;
     found = false;
     while(lineStartPos.y < _widgetFullRect.h)
     {
@@ -274,6 +277,8 @@ void WidgetEditor::SetCursorPosition(Vec2 position)
         {
             // it's inside this line
             if(lineStartPos.x > position.x)
+
+
             {
                 // position somewhere before text.
                 // it means, that user pointed into line numbers field
