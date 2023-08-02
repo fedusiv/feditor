@@ -2,7 +2,6 @@
 #include "gui.hpp"
 #include "input.hpp"
 
-
 std::string ParseCliArgs(int argc, char* argv[])
 {
     std::string location;
@@ -15,6 +14,7 @@ std::string ParseCliArgs(int argc, char* argv[])
 
     return location;
 }
+
 
 int main(int argc, char* argv[])
 {

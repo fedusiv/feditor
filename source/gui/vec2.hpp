@@ -16,6 +16,28 @@ class Rect {
 
         }
 
+        Rect& operator= (Rect rect)
+        {
+            if(rect.x > -1)
+            {
+                x = rect.x;
+            }
+            if(rect.y > -1)
+            {
+                y = rect.y;
+            }
+            if(rect.w > -1)
+            {
+                w = rect.w;
+            }
+            if(rect.h > -1)
+            {
+                h = rect.h;
+            }
+
+            return *this;
+        }
+
         Rect& operator-= (int thick)
         {
             x += thick;
@@ -75,6 +97,19 @@ class Vec2
         {
             x *= scale;
             y *= scale;
+            return *this;
+        }
+
+        Vec2& operator*=(const Vec2& mulVec)
+        {
+            x *= mulVec.x;
+            y *= mulVec.y;
+            return *this;
+        }
+        Vec2& operator* (const Vec2& mulVec)
+        {
+            x *= mulVec.x;
+            y *= mulVec.y;
             return *this;
         }
 

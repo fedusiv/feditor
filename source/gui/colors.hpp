@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 
+typedef SDL_Color Color;
+
 enum ColorPurpose
 {
     ColorWindowBg,
@@ -11,6 +13,7 @@ enum ColorPurpose
     ColorWidgetCursor,
     ColorWidgetEditorLineNumber,
     ColorWidgetEditorText,
+    ColorWidgetEditorFileName,
     ColorStatusLineModalMode,
     ColorStatusLineInsertMode,
 

@@ -11,6 +11,7 @@ Colors::Colors()
     _colorsStorage[ColorPurpose::ColorWidgetCursor] = {.r = 168, .g = 160, .b = 50, .a = 255};
     _colorsStorage[ColorPurpose::ColorWidgetEditorLineNumber] = {.r = 120, .g = 123, .b = 156, .a = 255};
     _colorsStorage[ColorPurpose::ColorWidgetEditorText] = {.r = 67, .g = 240, .b = 110, .a = 255};
+    _colorsStorage[ColorPurpose::ColorWidgetEditorFileName] = {.r = 67, .g = 205, .b = 240, .a = 255};
     _colorsStorage[ColorPurpose::ColorStatusLineModalMode] = {.r = 0, .g = 240, .b = 0, .a = 255};
     _colorsStorage[ColorPurpose::ColorStatusLineInsertMode] = {.r = 135, .g = 135, .b = 212, .a = 255};
 

@@ -7,6 +7,7 @@
 #include "SDL_stdinc.h"
 #include "input.hpp"
 #include "graphics.hpp"
+#include "macros.h"
 
 Input::Input()
 {
@@ -26,11 +27,12 @@ Input::Input()
 void Input::Update(bool inputRead)
 {
     SDL_Event e;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    // This stuff deprecated in c++17 and removed in c++20. TODO: replace it, with something new
     std::wstring_convert<std::codecvt_utf8<char32_t>,char32_t> utfConverter;    // this is converter for utf-8 symbols
+#pragma GCC diagnostic pop
     int unicodeCode;    // unicode code, which is entered
-
-    // Do we need this delay?
-    //SDL_Delay(1); // rest for other applications, waited for events
 
     _keysText.clear(); // empty string
     while (SDL_PollEvent(&e))

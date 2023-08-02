@@ -26,15 +26,16 @@ brew install sdl2
 brew install sdl2_ttf
 ```
 
-On wsl2:
-```
-sudo apt-get install libsdl2-ttf-dev
-sudo apt-get install libsdl2-dev
-```
+On wsl2 and linux:
+
+apt-get has older version of sdl2 lib. And seems it won't be updated. You can use homebrew as in OSX, but you need to configure CMake paths correctly, which I failed to did.
+
+I sugget to download latest sdl2 lib, build and install from sources. Tested. It will work
+
 To enable GUI from WSL2 use this
 https://aalonso.dev/blog/how-to-use-gui-apps-in-wsl2-forwarding-x-server-cdj
 
-WSL2 on some reasons of apt-get package manager has old SDL2 version.
+I'm not suggesting to using wsl2, it has few problems with graphics, but you can.
 
 Newest SDL2 can be obtain via homebrew(brew), but after that it has issue with linking glibc and using pthread.
 

@@ -3,6 +3,7 @@
 
 #include "vec2.hpp"
 #include "widget_editor.hpp"
+#include "macros.h"
 
 WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(buffer)
 {
@@ -34,6 +35,14 @@ void WidgetEditor::Render(void)
         DrawCursor(CalculateRealPosForCursor());
     }
 
+}
+
+void WidgetEditor::Resize(Rect newRect)
+{
+    Widget::Resize(newRect);
+    CalculateAvaliableLines();
+    CalculateAvaliableColumns();
+    CalculateDrawingOffset();
 }
 
 Vec2 WidgetEditor::CalculateRealPosForCursor()
@@ -188,10 +197,11 @@ void WidgetEditor::PageUpdate(void)
 }
 
 // Page scrolling is explicitly called to change paging of buffer
-void WidgetEditor::PageScrolling(Vec2 direction)
+void WidgetEditor::PageScrolling(Vec2 direction, Vec2 mousePosition)
 {
     Vec2 cursorPos;
 
+    UNUSED(mousePosition);
     cursorPos = _buffer->CursorPosition();
     // Vertical update of page scrolling
     if(direction.y > 0)
@@ -256,6 +266,9 @@ void WidgetEditor::SetCursorPosition(Vec2 position)
     Vec2 cursorPos;     // cursor position at that we pointed
     lineStartPos.y = _drawingOffset.y;  // we are starting looking from offset.
 
+    // Here we calculate to simulate widget starting from 0,0 that's why need to decrease position of cursor to widget starting point
+    position.y -= _widgetFullRect.y;
+    position.x -= _widgetFullRect.x;
     found = false;
     while(lineStartPos.y < _widgetFullRect.h)
     {
@@ -264,6 +277,8 @@ void WidgetEditor::SetCursorPosition(Vec2 position)
         {
             // it's inside this line
             if(lineStartPos.x > position.x)
+
+
             {
                 // position somewhere before text.
                 // it means, that user pointed into line numbers field
