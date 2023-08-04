@@ -34,8 +34,8 @@ void Widget::Resize(Rect newRect)
 
 void Widget::DrawBackground()
 {
-    Graphics::DrawRect(_widgetFullRect,_colorBgWidget);
-    Graphics::DrawRect(_widgetRect,_colorBorderWidget);
+    Graphics::DrawRect(_widgetFullRect,_colorBorderWidget);
+    Graphics::DrawRect(_widgetRect,_colorBgWidget);
 }
 
 /*

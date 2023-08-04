@@ -41,6 +41,7 @@ class Gui
         Vec2 _windowsSize;  // current window size
         int _fontSize;      // current font size
         Vec2 _mousePosition;    // current mouse position
+        GuiLayout * _verticalLayout = nullptr; // vertical layout of main gui
 
 };
 

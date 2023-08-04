@@ -16,7 +16,7 @@ WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(bu
     CalculateAvaliableColumns();
     CalculateDrawingOffset();
 
- 
+    _colorBgWidget = ColorPurpose::ColorWidgetEditorBg; 
     _cursorPrevPos = _buffer->CursorPosition();
 }
 

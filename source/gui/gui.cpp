@@ -4,6 +4,7 @@
 #include "gui.hpp"
 #include "widget.hpp"
 #include "graphics.hpp"
+#include "gui_layout.hpp"
 
 
 Gui::Gui()
@@ -53,11 +54,12 @@ void Gui::CreateWindow(void)
 
 void Gui::CreateLayout(void)
 {
+    _verticalLayout = new GuiLayout(Rect(0,0, _windowsSize.x, _windowsSize.y), LayoutDirection::Vertical);
     // Layout creates hierarchy for widgets. It has few levels.
     // On first level there go statusline, active tab and filebrowser page.
     // Other widgets goes in hierarchy there.
-    //CreateStatusLine();
     CreateWidgetTab();
+    CreateStatusLine();
 }
 
 void Gui::CreateWidgetTab(void)
@@ -65,10 +67,7 @@ void Gui::CreateWidgetTab(void)
     WidgetTab * tab;
     Rect rect;
 
-    rect.x = 0;
-    rect.y = 0;
-    rect.w = _windowsSize.x;
-    rect.h = _windowsSize.y;// - statusLine->GetRect().h;
+    rect = Rect(0,0, _windowsSize.x, _windowsSize.y);
     tab = new WidgetTab(rect);
     if(nullptr != _widgetTabActive)
     {   // If it's not nullptr, means, there is active tab already. Need to set to inactive for render
@@ -77,6 +76,7 @@ void Gui::CreateWidgetTab(void)
     _widgetTabActive = tab;
 
     _widgetsList.push_back(tab);
+    _verticalLayout->AppendWidget(tab, false);
 }
 
 void Gui::CreateStatusLine(void)
@@ -86,11 +86,10 @@ void Gui::CreateStatusLine(void)
     {
         delete statusLine;
     }
-    rect.x = _windowsSize.x;
-    rect.y = _windowsSize.y;
+    rect = Rect(0,0,0,0);   // empty rect, this widget is inside layout. so layout will resize it
     statusLine = new WidgetStatusLine(rect);
     _widgetsList.push_back(statusLine);
-
+    _verticalLayout->AppendWidget(statusLine, true);
 }
 
 void Gui::CreateWidgetEditor(Buffer * buffer)

@@ -2,7 +2,7 @@
 
 WidgetTab::WidgetTab(Rect rect): Widget(rect)
 {
-    _layout = new GuiLayout(_widgetRect);
+    _layout = new GuiLayout(_widgetRect, LayoutDirection::Vertical);
 }
 
 void WidgetTab::AttachBuffer(Buffer * buffer)
@@ -10,11 +10,11 @@ void WidgetTab::AttachBuffer(Buffer * buffer)
     auto w = new WidgetEditor(Rect(_widgetRect.x, _widgetRect.y, _widgetRect.w, _widgetRect.h), buffer);
     _widgetsEditorList.push_back(w);
 
-     auto l = new WidgetLabel(Rect(0,0,0,_glyphSize.y + 2), buffer->FileName(), ColorPurpose::ColorWidgetEditorFileName, Vec2(3,0));
+     auto l = new WidgetLabel(Rect(0,0,0,0), buffer->FileName(), ColorPurpose::ColorWidgetEditorFileName, Vec2(3,0)); // TODO: remove hardcoded values
     _widgetsLabelList.push_back(l);
 
-    _layout->AppendWidget(l, LayoutDirection::Vertical, true);
-    _layout->AppendWidget(w, LayoutDirection::Vertical, false);
+    _layout->AppendWidget(l, true);
+    _layout->AppendWidget(w, false);
 }
 
 void WidgetTab::Render(void)
@@ -28,6 +28,12 @@ void WidgetTab::Render(void)
     {
         w->Render();
     }
+}
+
+void WidgetTab::Resize(Rect newRect)
+{
+    Widget::Resize(newRect);
+    _layout->Resize(_widgetRect);
 }
 
 void WidgetTab::SetCursorPosition(Vec2 position)

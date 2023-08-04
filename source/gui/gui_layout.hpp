@@ -22,20 +22,24 @@ class GuiLayout
         bool hardSize;
     }LayoutElement;
 
-    typedef std::vector<LayoutElement*> LayoutRow;   // pointers to all widgets in one row
-    typedef std::vector<LayoutRow> LayoutGrid;    // grid of widgets
+    typedef std::vector<LayoutElement*> LayoutList;   // pointers to all widgets in layout
 
     public:
-        GuiLayout(Rect rect);
-        void AppendWidget(Widget* widget, LayoutDirection direction, bool hardSize);
+        GuiLayout(Rect rect, LayoutDirection direction);
+        void AppendWidget(Widget* widget, bool hardSize);
+        void Resize(Rect newRect);
 
     private:
-        int _borderWidth;   // border width between elements inside layout
+        LayoutDirection _layoutDirection; // direction of layout basically the type of layout
+        int _glyphHardSizeAdd;   // border width between elements inside layout
         Rect _layoutRect;   // available rect ot operate with
-        LayoutGrid _layoutGrid;
+        LayoutList _layoutList;
+        Vec2 _glyphSize;    // size of glyph. Hard size is based on glyph size
 
+        void AppendVerticalWidget(Widget* widget, bool hardSize); // separation for append widget
+        void AppendHorizontalWidget(Widget* widget, bool hardSize); // separation for append widget
         void CallResize(Widget* widget, Rect rect);
-        Rect CalculateOneWidgetSize();
+        int CalculateHardSizeOnGlyph(void);    // get size of height or width 
 
 };
 
