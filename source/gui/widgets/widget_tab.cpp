@@ -1,4 +1,5 @@
 #include "widget_tab.hpp"
+#include "gui_configs.hpp"
 
 WidgetTab::WidgetTab(Rect rect): Widget(rect)
 {
@@ -10,7 +11,7 @@ void WidgetTab::AttachBuffer(Buffer * buffer)
     auto w = new WidgetEditor(Rect(_widgetRect.x, _widgetRect.y, _widgetRect.w, _widgetRect.h), buffer);
     _widgetsEditorList.push_back(w);
 
-     auto l = new WidgetLabel(Rect(0,0,0,0), buffer->FileName(), ColorPurpose::ColorWidgetEditorFileName, Vec2(3,0)); // TODO: remove hardcoded values
+     auto l = new WidgetLabel(Rect(0,0,0,0), buffer->FileName(), ColorPurpose::ColorWidgetEditorFileName, WIDGET_EDITOR_BUFFER_NAME_WRITE_OFFSET); // TODO: remove hardcoded values
     _widgetsLabelList.push_back(l);
 
     _layout->AppendWidget(l, true);
