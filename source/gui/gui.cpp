@@ -32,12 +32,11 @@ void Gui::Update(void)
 void Gui::Resize(void)
 {
     Vec2 newSize;
+    Rect newRect;
 
     newSize = Graphics::GetAppSize();   // get new size from gprahic API
-    for(auto w: _widgetsList)
-    {
-        //w->Resize(newSize); TODO: FIX THIS
-    }
+    newRect = Rect(0,0, newSize.x, newSize.y);
+    _verticalLayout->Resize(newRect);
 }
 
 void Gui::CreateWindow(void)
