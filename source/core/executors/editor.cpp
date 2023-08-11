@@ -12,18 +12,6 @@ EditorState Editor::GetEditorState(void)
     return _editorState;
 }
 
-void Editor::OpenFile(ExecutorAccess * execA, void * data)
-{
-    std::string filename;
-
-    filename = *reinterpret_cast<std::string*>(data);
-    auto buffer = execA->bufferHandler->CreateBuffer(filename);
-    if(nullptr != buffer)
-    {
-        execA->gui->CreateWidgetEditor(buffer);
-    }
-}
-
 void Editor::InsertText(ExecutorAccess * execA, void * data)
 {
     KeysInsertedText text;
@@ -119,7 +107,6 @@ void Editor::Init()
 {
     Executor * exec = Executor::Instance();
 
-    exec->AddExecutorElement(Editor::OpenFile, ExecutorOpCode::OpenFileEditorWidget, std::vector<KeyMap>(0), std::vector<EditorState>(1, EditorState::NormalState), "new_file", "foo");
     exec->AddExecutorElement(Editor::InsertText, ExecutorOpCode::TextInsert, std::vector<KeyMap>(0), std::vector<EditorState>(1, EditorState::InsertState), "insert_text", "foo");
     exec->AddExecutorElement(Editor::InsertNewLine, ExecutorOpCode::TextInsertNewLine, std::vector<KeyMap>(1, {KeyMap::KeyEnter}), std::vector<EditorState>(1, EditorState::InsertState), "insert_new_line", "foo");
     exec->AddExecutorElement(Editor::DeleteBeforeCursor, ExecutorOpCode::DeleteBeforeCursor, std::vector<KeyMap>(1, {KeyMap::KeyBackspace}), std::vector<EditorState>(1, EditorState::InsertState), "delete_before_cursor", "foo");

@@ -19,6 +19,7 @@ enum KeyMap
     KeyEsc,
     KeySemicolon,
     KeyQuotes,
+    KeyCtrl,
 
     KeyMouseL,
     KeyMouseR,
@@ -31,6 +32,7 @@ enum KeyMap
     KeyP,
     KeyL,
     KeyI,
+    KeyN,
     KeysMax
 };
 

@@ -10,7 +10,6 @@ class Editor
         static void Init(); // add all executor's functors to executor
         static EditorState GetEditorState(void);
 
-        static void OpenFile(ExecutorAccess * execA, void * data); // create new empty widget with blank buffer data
         static void InsertText(ExecutorAccess * execA, void * data);    // insert text to active buffer
         static void InsertNewLine(ExecutorAccess * execA, void * data);    // insert new line
         static void DeleteBeforeCursor(ExecutorAccess * execA, void * data);    // Backspace delete, or delete before cursor

@@ -19,7 +19,7 @@ enum class ExecutorOpCode
     ScrollLeft,
     ScrollRight,
 
-    OpenFileEditorWidget,
+    CreateBuffer,
 
     ExitApp,
     GuiResize,
