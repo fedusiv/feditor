@@ -47,13 +47,15 @@ class KeyAction
                 case SDLK_ESCAPE:    {keyMap = KeyMap::KeyEsc; break;}
                 case SDLK_SEMICOLON: {keyMap = KeyMap::KeySemicolon; break;}
                 case SDLK_QUOTE:     {keyMap = KeyMap::KeyQuotes; break;}
-                case SDLK_LGUI:     {keyMap = KeyMap::KeyCtrl; break;}
+                case SDLK_LGUI:      {keyMap = KeyMap::KeyCtrl; break;}
+                case SDLK_LALT:      {keyMap = KeyMap::KeyAlt; break;}
 
                 case SDLK_l:         {keyMap = KeyMap::KeyL; break;}
                 case SDLK_p:         {keyMap = KeyMap::KeyP; break;}
                 case SDLK_i:         {keyMap = KeyMap::KeyI; break;}
                 case SDLK_n:         {keyMap = KeyMap::KeyN; break;}
-
+                case SDLK_h:         {keyMap = KeyMap::KeyH; break;}
+                case SDLK_v:         {keyMap = KeyMap::KeyV; break;}
 
                 default:
                     keyMap = KeyMap::KeyZero;

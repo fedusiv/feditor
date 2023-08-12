@@ -40,7 +40,8 @@ void Core::Init(void)
     }
     else
     {
-        _executor->CallExecutor(ExecutorOpCode::CreateBuffer, (void*)&_locationPoint);
+        ExecDataTypeCreateBuffer  d = {.filename = _locationPoint, .verticalDirection = true};
+        _executor->CallExecutor(ExecutorOpCode::CreateBuffer, &d);
     }
 }
 

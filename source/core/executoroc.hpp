@@ -1,6 +1,7 @@
 #ifndef __EXECUTOROC_HPP__
 #define __EXECUTOROC_HPP__
 
+#include <string>
 
 // Opcode of all Executors
 enum class ExecutorOpCode
@@ -20,6 +21,7 @@ enum class ExecutorOpCode
     ScrollRight,
 
     CreateBuffer,
+    CreateBufferHorizontal,
 
     ExitApp,
     GuiResize,
@@ -29,5 +31,12 @@ enum class ExecutorOpCode
 
     ExecutorOpCodeMax
 };
+
+struct ExecDataTypeCreateBuffer_t
+{
+    std::string filename;
+    bool verticalDirection;
+};
+using ExecDataTypeCreateBuffer = ExecDataTypeCreateBuffer_t;
 
 #endif //__EXECUTOROC_HPP__

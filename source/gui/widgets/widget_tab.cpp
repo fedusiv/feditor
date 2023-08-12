@@ -10,18 +10,33 @@ WidgetTab::WidgetTab(Rect rect): Widget(rect)
 
 void WidgetTab::AttachBuffer(Buffer * buffer, LayoutDirection direction)
 {
-    EditorEntity ee;
-    int vid;
+    EditorEntity ee;    // editor entity
+    int lid;    // layout id
     // if direction is vertical it means, that user wants to create vertical widget editor.
     // if direction is horizontal. User wants to create horizontal oriented widget
 
     ee = CreateEditorEntity(buffer);
-    vid = _layoutsV.size();
-    _layoutsV.push_back(new GuiLayout(_widgetRect, LayoutDirection::Vertical));   // create first column, vertical oriented layout
-    _layoutsH[0]->Append(_layoutsV[vid]);   // _layoutsH[0] is a parent for everyone. Because we need to have a main parent for all layouts and widgets. Maybe need to make it vertical. Problems for futurer me
-    _layoutsV[vid]->Append(ee.first, true);
-    _layoutsV[vid]->Append(ee.second, false);
-    SetActiveWidgetEditor(ee.second);
+    if(direction == LayoutDirection::Vertical)
+    {
+        lid = _layoutsV.size();
+        _layoutsV.push_back(new GuiLayout(_widgetRect, LayoutDirection::Vertical));   // create first column, vertical oriented layout
+        _layoutsH[0]->Append(_layoutsV[lid]);   // _layoutsH[0] is a parent for everyone. Because we need to have a main parent for all layouts and widgets. Maybe need to make it vertical. Problems for futurer me
+        _layoutsV[lid]->Append(ee.first, true);
+        _layoutsV[lid]->Append(ee.second, false);
+        SetActiveWidgetEditor(ee.second);
+    }else{
+        // horizontal split. Simple split is implemented. Put widget editor into current vertical layout
+        for(auto lv: _layoutsV)
+        {
+            if(lv->IsInLayout(_currentActiveEdtior))
+            {
+                lv->Append(ee.first, true);
+                lv->Append(ee.second, false);
+                SetActiveWidgetEditor(ee.second);
+                break;
+            }
+        }
+    }
 }
 
 void WidgetTab::Render(void)
@@ -60,6 +75,7 @@ void WidgetTab::SetActiveWidgetEditor(WidgetEditor * we)
             w->SetActive(false);
         }
     }
+    _currentActiveEdtior = we;
 }
 
 void WidgetTab::Resize(Rect newRect)

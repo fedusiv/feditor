@@ -35,6 +35,7 @@ class GuiLayout
         void Append(Widget* widget, bool hardSize);
         void Append(GuiLayout* layout);
         void Resize(Rect newRect);
+        bool IsInLayout(Widget* w); 
 
     private:
         LayoutDirection _layoutDirection; // direction of layout basically the type of layout

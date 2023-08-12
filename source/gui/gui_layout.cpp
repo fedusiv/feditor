@@ -245,3 +245,20 @@ void GuiLayout::CallResize(Widget *widget, Rect rect)
         break;
     }
 }
+
+bool GuiLayout::IsInLayout(Widget *w)
+{
+    bool res;
+
+    res = false;
+    for(auto wl: _layoutWList)
+    {
+        if(wl->widget == w)
+        {
+            res = true;
+            break;
+        }
+    }
+    return res;
+}
+    

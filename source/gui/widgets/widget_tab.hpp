@@ -34,6 +34,7 @@ class WidgetTab: public Widget
         std::list<WidgetLabel*> _widgetsLabelList; // all label widgets related to editor widgets in gui window
         std::vector<GuiLayout*> _layoutsV; // vertical layouts inside widget tab
         std::vector<GuiLayout*> _layoutsH; // horizontal layouts inside widget tab
+        WidgetEditor* _currentActiveEdtior; // pointer to current active widget editor
 
 };
 
