@@ -25,7 +25,7 @@ void WidgetTab::AttachBuffer(Buffer * buffer, LayoutDirection direction)
         _layoutsV.push_back(new GuiLayout(_widgetRect, LayoutDirection::Vertical));   // create first column, vertical oriented layout
         _layoutsH[0]->Append(_layoutsV[lid]);   // _layoutsH[0] is a parent for everyone. Because we need to have a main parent for all layouts and widgets. Maybe need to make it vertical. Problems for futurer me
         _layoutsV[lid]->Append(ee, false);
-        SetActiveWidgetEditor(ee);
+        SetActiveWidgetEntity(ee);
     }else{
         // horizontal split. Simple split is implemented. Put widget editor into current vertical layout
         for(auto lv: _layoutsV)
@@ -33,7 +33,7 @@ void WidgetTab::AttachBuffer(Buffer * buffer, LayoutDirection direction)
             if(lv->IsInLayout(_currentActiveEntity))
             {
                 lv->Append(ee, false);
-                SetActiveWidgetEditor(ee);
+                SetActiveWidgetEntity(ee);
                 break;
             }
         }
@@ -66,12 +66,12 @@ bool WidgetTab::SwitchBuffer(MoveCursorDirection direction)
     if(nullptr != w)
     {
         res = true;
-        SetActiveWidgetEditor(reinterpret_cast<WidgetEditorEntity*>(w));
+        SetActiveWidgetEntity(reinterpret_cast<WidgetEditorEntity*>(w));
     }
     return res;
 }
 
-void WidgetTab::SetActiveWidgetEditor(WidgetEditorEntity * we)
+void WidgetTab::SetActiveWidgetEntity(WidgetEditorEntity * we)
 {
     for(auto w: _widgetsEntityList)
     {
@@ -93,6 +93,10 @@ void WidgetTab::SetCursorPosition(Vec2 position)
     {
         if(w->IsInWidget(position))
         {
+            if(w != _currentActiveEntity)
+            {
+                SetActiveWidgetEntity(w);
+            }
             w->SetCursorPosition(position);
             break;
         }

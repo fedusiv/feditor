@@ -29,7 +29,7 @@ class WidgetTab: public Widget
     protected:
         void CalculateDrawingOffset(void) override;
         WidgetEditorEntity* CreateEditorEntity(Buffer * buffer);
-        void SetActiveWidgetEditor(WidgetEditorEntity * we);
+        void SetActiveWidgetEntity(WidgetEditorEntity * we);
 
     private:
         std::list<WidgetEditorEntity*> _widgetsEntityList; // all editor entities widgets in gui window

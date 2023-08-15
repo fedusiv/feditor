@@ -79,6 +79,7 @@ void Editor::ChangeEditorModeToInsert(ExecutorAccess * execA, void * data)
 void Editor::MoveCursorTo(ExecutorAccess *execA, void *data)
 {
     execA->gui->AlignCursorPositionByMouse();
+    execA->bufferHandler->UpdateActiveBuffer(); // if mouse was pressed on not active buffer, need to check if appeared request to change buffer
 }
 
 void Editor::ScrollUp(ExecutorAccess * execA, void * data)
