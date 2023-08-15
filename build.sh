@@ -22,7 +22,7 @@ cmake_func()
         echo "Debug build"
         cmake \
         --log-level=VERBOSE \
-        -DCMAKE_BUILD_TYPE=Debug \
+        -DDEBUG_FLAG=ON\
             ..
     else
         echo "Release build"

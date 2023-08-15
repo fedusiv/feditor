@@ -22,6 +22,10 @@ enum class ExecutorOpCode
 
     CreateBuffer,
     CreateBufferHorizontal,
+    SwitchBetweenEditorsInTabUp,
+    SwitchBetweenEditorsInTabDown,
+    SwitchBetweenEditorsInTabLeft,
+    SwitchBetweenEditorsInTabRight,
 
     ExitApp,
     GuiResize,

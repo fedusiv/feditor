@@ -31,3 +31,14 @@ void BufferHandler::DeleteAtCursor(DeleteOperations operation)
 {
     _activeBuffer->DeleteAtCursor(operation);
 }
+
+void BufferHandler::UpdateActiveBuffer()
+{
+    for(auto b: _bufferList)
+    {
+        if(b->RequestActive())
+        {
+            _activeBuffer = b;  // set new active buffer
+        }
+    }
+}

@@ -41,6 +41,32 @@ void FileManager::CreateBufferHorizontal(ExecutorAccess * execA, void * data)
     }
 }
 
+void FileManager::SwitchBetweenEditorsInTabUp(ExecutorAccess *execA, void *data)
+{
+    FileManager::SwitchBetweenEditorsInTab(execA, MoveCursorDirection::CursorUp);
+}
+void FileManager::SwitchBetweenEditorsInTabDown(ExecutorAccess *execA, void *data)
+{
+    FileManager::SwitchBetweenEditorsInTab(execA, MoveCursorDirection::CursorDown);
+}
+void FileManager::SwitchBetweenEditorsInTabLeft(ExecutorAccess *execA, void *data)
+{
+    FileManager::SwitchBetweenEditorsInTab(execA, MoveCursorDirection::CursorLeft);
+}
+void FileManager::SwitchBetweenEditorsInTabRight(ExecutorAccess *execA, void *data)
+{
+    FileManager::SwitchBetweenEditorsInTab(execA, MoveCursorDirection::CursorRight);
+}
+
+void FileManager::SwitchBetweenEditorsInTab(ExecutorAccess *execA, MoveCursorDirection direction)
+{
+    if(execA->gui->SwitchBuffer(direction))
+    {
+        // switch happened
+        execA->bufferHandler->UpdateActiveBuffer();
+    }
+}
+
 
 
 void FileManager::Init()
@@ -49,4 +75,9 @@ void FileManager::Init()
 
     exec->AddExecutorElement(FileManager::CreateBuffer, ExecutorOpCode::CreateBuffer, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyV}), std::vector<EditorState>(1, EditorState::InsertState), "new_file", "foo");
     exec->AddExecutorElement(FileManager::CreateBufferHorizontal, ExecutorOpCode::CreateBufferHorizontal, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyH}), std::vector<EditorState>(1, EditorState::InsertState), "new_file_horizontal", "foo");
+    // Switch widget in tab widget
+    exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabUp, ExecutorOpCode::SwitchBetweenEditorsInTabUp, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyUp}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_up", "foo");
+    exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabDown, ExecutorOpCode::SwitchBetweenEditorsInTabDown, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyDown}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_down", "foo");
+    exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabLeft, ExecutorOpCode::SwitchBetweenEditorsInTabLeft, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyLeft}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_left", "foo");
+    exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabRight, ExecutorOpCode::SwitchBetweenEditorsInTabRight, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyRight}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_right", "foo");
 }

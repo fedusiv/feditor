@@ -2,6 +2,7 @@
 #define __GUI_LAYOUT_HPP__
 
 #include <vector>
+#include <list>
 #include "vec2.hpp"
 #include "widget.hpp"
 
@@ -22,6 +23,12 @@ class GuiLayout
         bool hardSize;
     }LayoutElement;
 
+    typedef struct
+    {
+        GuiLayout* layout;
+        int index;
+    }IndexingStruct;
+
     enum class LayoutType
     {
         WidgetBase,
@@ -29,6 +36,7 @@ class GuiLayout
     };
 
     typedef std::vector<LayoutElement*> LayoutList;   // pointers to all widgets in layout
+    typedef std::list<IndexingStruct> IndexingQueue;
 
     public:
         GuiLayout(Rect rect, LayoutDirection direction);
@@ -36,6 +44,9 @@ class GuiLayout
         void Append(GuiLayout* layout);
         void Resize(Rect newRect);
         bool IsInLayout(Widget* w); 
+        LayoutDirection GetLayoutDirection();
+        Widget* GetNextWidget(Widget* source, MoveCursorDirection direction);
+        int ElementsAmount();   // amount of elements inside GuiLayout, widgets or other layouts
 
     private:
         LayoutDirection _layoutDirection; // direction of layout basically the type of layout
@@ -56,6 +67,9 @@ class GuiLayout
         void CalculateAndResizeHorizontalWidget(LayoutElement * le = nullptr);   // function calculates horizontal sizes for widgets to resize it. width
         void CalculateAndResizeVerticalLayout();    // calculates required height for layouts in layout and call resize for them
         void CalculateAndResizeHorizontalLayout();    // calculates required width for layouts in layout and call resize for them
+        void IndexingFunc(IndexingQueue * stack, Widget * w);
+        bool GetNextWidgetIndexCalculation(IndexingQueue * queue, MoveCursorDirection direction);  // this internal function of GetNextWidget, to separate functionality. This function calculate index position for next widget required by arrow movement
+        Widget* GetWidgetByMapIndex(IndexingQueue * queue);
 
 
 };

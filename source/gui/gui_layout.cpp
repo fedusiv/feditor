@@ -1,7 +1,10 @@
 #include <cassert>
+#include <algorithm>
+#include <iostream>
 
 #include "macros.h"
 #include "gui_layout.hpp"
+#include "vec2.hpp"
 #include "widget_tab.hpp"
 #include "widget_label.hpp"
 #include "widget_editor.hpp"
@@ -246,19 +249,185 @@ void GuiLayout::CallResize(Widget *widget, Rect rect)
     }
 }
 
+// Function looks in layouts, which is inside parent layout
 bool GuiLayout::IsInLayout(Widget *w)
 {
     bool res;
 
     res = false;
-    for(auto wl: _layoutWList)
+    if(_layoutType == LayoutType::LayoutBase)
     {
-        if(wl->widget == w)
+        for(auto ll: _layoutLList)
         {
-            res = true;
-            break;
+            if(ll->IsInLayout(w))
+            {
+                res = true;
+                break;
+            }
+        }
+    }else{
+        for(auto wl: _layoutWList)
+        {
+            if(wl->widget == w)
+            {
+                res = true;
+                break;
+            }
         }
     }
     return res;
 }
+
+void GuiLayout::IndexingFunc(IndexingQueue * stack, Widget * w)
+{
+    if(_layoutType == LayoutType::LayoutBase)
+    {
+        for(int i = 0; i < _layoutLList.size(); i++)
+        {
+            if(_layoutLList[i]->IsInLayout(w))
+            {
+                _layoutLList[i]->IndexingFunc(stack,w);
+                stack->push_back({.layout = this, i});    // push to stack queue struct 
+                break;
+            }
+        }
+    }else{
+        for(int i = 0; i <  _layoutWList.size(); i++)
+        {
+            if(w == _layoutWList[i]->widget)
+            {
+                stack->push_back({.layout = this, i});    // push to queue Indexing struct 
+                break;
+            }
+        }
+    }
+}
+
+Widget* GuiLayout::GetNextWidget(Widget* source, MoveCursorDirection direction)
+{
+    IndexingQueue queue; 
+    Widget* result;
     
+    result = nullptr;
+    IndexingFunc(&queue, source);   // calculate indexing position of given widget
+    if(!queue.empty())
+    {
+        // queue is not empty, widget is found, and in indexqueue we have indexes of source widget.
+        // in the function below let's find and calculate map index for neighbour widget
+        if(GetNextWidgetIndexCalculation(&queue, direction))
+        {
+            // widget has neighbour. index of position of new widget is calculated and located in stack. it can be found
+            queue.reverse();   // reverse list, to have higher in hierarchy element in the begining
+            result = GetWidgetByMapIndex(&queue);
+        }
+    }
+
+    return result;
+}
+
+Widget* GuiLayout::GetWidgetByMapIndex(IndexingQueue * queue)
+{
+    int currentIndex;
+
+    currentIndex = queue->front().index;    // get index, which element should be accessed
+    // check on extremums
+    if(currentIndex < 0)
+    {
+        currentIndex = 0;
+    }
+    if(currentIndex >= ElementsAmount())
+    {
+        currentIndex = ElementsAmount() - 1;    // index should be less on one, because indexing starts from zero
+    }
+    queue->pop_front();     // remove element from list
+    if(_layoutType == LayoutType::LayoutBase)
+    {
+        return _layoutLList[currentIndex]->GetWidgetByMapIndex(queue);
+    }else{
+        return _layoutWList[currentIndex]->widget;
+    }
+}
+
+bool GuiLayout::GetNextWidgetIndexCalculation(IndexingQueue * queue, MoveCursorDirection direction)
+{
+    int changeKf;
+    LayoutDirection ldirection;
+    IndexingQueue::iterator it;
+    bool haveNeighbour;
+
+    haveNeighbour = false;
+    for(it = queue->begin(); it != queue->end(); ++it )
+    {
+        changeKf = 1;
+        ldirection = it->layout->GetLayoutDirection();
+        switch(direction)
+        {
+            // Vertical movement
+            case MoveCursorDirection::CursorUp:
+            case MoveCursorDirection::CursorDown:
+            {
+                if(ldirection == LayoutDirection::Horizontal)
+                {
+                    // this direction is not okay for this
+                    continue; // go to next loop iteration
+                }
+                if(direction == MoveCursorDirection::CursorUp)
+                {
+                    changeKf = -1;
+                }
+                it->index += changeKf;
+                if(it->index < 0 || it->index >= it->layout->ElementsAmount())
+                {
+                    // reached extremum. need to continue to look for right place to change widget
+                    continue;
+                }else{
+                    haveNeighbour = true;   // have neighbour in required direction 
+                    break;  // exit from loop. Found the place where will appeared logic move. The parent layout
+                }
+                continue;   // continue loop
+            }
+            // Horizontal movement
+            case MoveCursorDirection::CursorLeft:
+            case MoveCursorDirection::CursorRight:
+            {
+                if(ldirection == LayoutDirection::Vertical)
+                {
+                    // this direction is not okay for this
+                    continue; // go to next loop iteration
+                }
+
+                if(direction == MoveCursorDirection::CursorLeft)
+                {
+                    changeKf = -1;
+                }
+                it->index += changeKf;
+                if(it->index < 0 || it->index >= it->layout->ElementsAmount())
+                {
+                    // reached extremum. need to continue to look for right place to change widget
+                    continue;
+                }else{
+                    haveNeighbour = true;   // have neighbour in required direction 
+                    break;  // exit from loop. Found the place where will appeared logic move. The parent layout
+                }
+                continue; // continue loop
+            }
+        }
+    }
+
+    return haveNeighbour;
+}
+
+LayoutDirection GuiLayout::GetLayoutDirection()
+{
+    return _layoutDirection;
+}
+
+int GuiLayout::ElementsAmount()
+{
+    if(_layoutType == LayoutType::LayoutBase)
+    {
+        return _layoutLList.size();
+    }else{
+        return _layoutWList.size();
+    }
+}

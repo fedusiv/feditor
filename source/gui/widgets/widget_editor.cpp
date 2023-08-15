@@ -37,6 +37,12 @@ void WidgetEditor::Render(void)
 
 }
 
+void WidgetEditor::SetActive(bool status)
+{
+    Widget::SetActive(status);
+    _buffer->RequestToSetActive(status);
+}
+
 void WidgetEditor::Resize(Rect newRect)
 {
     Widget::Resize(newRect);

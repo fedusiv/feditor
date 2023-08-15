@@ -179,3 +179,8 @@ Widget* Gui::GetWidgetUnderMouse(void)
     return result;
 
 }
+
+bool Gui::SwitchBuffer(MoveCursorDirection direction)
+{
+    return _widgetTabActive->SwitchBuffer(direction);
+}

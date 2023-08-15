@@ -25,7 +25,7 @@ class Widget
         virtual void Resize(Rect newRect);
 
         bool Active();
-        void SetActive(bool status);
+        virtual void SetActive(bool status);
         void SetEditorState(EditorState state);
         bool IsInWidget(Vec2 position);  // check if given position coordinates is related to this widget
         virtual void SetCursorPosition(Vec2 position); // if widget has functionality for cursor, it will update position. Inherited widget class need to override this. By default it does nothing

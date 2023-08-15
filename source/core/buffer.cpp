@@ -10,6 +10,8 @@ Buffer::Buffer(std::string filepath): _filepath(filepath), _largestLineSize(0)
 {
     std::ifstream file;
 
+    _requestActive = false;
+
     bufferId = _globalId++;
     if(filepath.empty()){
         _buffer.push_back(BufferLine(0));   // creates empty buffer with one empty line
@@ -265,3 +267,21 @@ std::string Buffer::FileName()
 {
     return _filename;
 }
+
+// Logic of this request functions is written in header
+void Buffer::RequestToSetActive(bool status)
+{
+    _requestActive = status;
+}
+
+bool Buffer::RequestActive()
+{
+    bool status;
+    status = _requestActive;
+    if(_requestActive)
+    {
+        _requestActive = false;
+    }
+    return status;
+}
+

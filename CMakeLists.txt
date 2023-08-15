@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.16) # FetchContent is available in 3.11+
 
+option(DEBUG_FLAG "Add debug configuration" OFF)
+
+if(DEBUG_FLAG)
+    add_compile_options(-O0 -g)
+endif()
+
 if(APPLE)
     set(MACOSX TRUE)
     set(CMAKE_HOST_SYSTEM_PROCESSOR arm64)
@@ -18,7 +24,6 @@ if(UNIX)
         add_compile_definitions(UNIX)
         message("Running on Linux systems.")
     endif()
-    add_compile_options(-g)
 endif()
 
 project(feditor)
@@ -26,7 +31,7 @@ project(feditor)
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall")
+add_compile_options(-Wall)
 
 if(UNIX)
 endif()

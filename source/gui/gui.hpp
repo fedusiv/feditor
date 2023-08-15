@@ -25,6 +25,7 @@ class Gui
         void UpdateMousePosition(Vec2 mousePosition);   // update mouse position. It's done each frame update
         void AlignCursorPositionByMouse(void);      // this function looking for widget under required coordinates and trying to change cursor position
         void PageScrolling(Vec2 direction); // scroll page of widget under mouse position
+        bool SwitchBuffer(MoveCursorDirection direction);   // change active widget inside active widget tab, in direction used arrow keys. Returns true if switch has happened
 
     private:
         void InitWidgets(void);     // initialize starting widgets

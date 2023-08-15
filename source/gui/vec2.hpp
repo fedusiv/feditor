@@ -3,6 +3,14 @@
 
 #include <utility>
 
+enum MoveCursorDirection
+{
+    CursorUp,
+    CursorDown,
+    CursorLeft,
+    CursorRight,
+};
+
 class Rect {
     public:
         int x;                // Rectangle top-left corner position x
