@@ -1,5 +1,4 @@
 #include <math.h>
-#include <iostream>
 
 #include "vec2.hpp"
 #include "widget_editor.hpp"
@@ -283,8 +282,6 @@ void WidgetEditor::SetCursorPosition(Vec2 position)
         {
             // it's inside this line
             if(lineStartPos.x > position.x)
-
-
             {
                 // position somewhere before text.
                 // it means, that user pointed into line numbers field
