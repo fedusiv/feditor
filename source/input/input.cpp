@@ -71,12 +71,12 @@ void Input::Update(bool inputRead)
             }
             case SDL_KEYDOWN:
             {
-                KeyPressed(e.key.keysym.sym);
+                KeyPressed(e.key.keysym.scancode);
                 break;
             }
             case SDL_KEYUP:
             {
-                KeyReleased(e.key.keysym.sym);
+                KeyReleased(e.key.keysym.scancode);
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:   // detects mouse buttons pressed
