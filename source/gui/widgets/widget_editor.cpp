@@ -1,5 +1,4 @@
 #include <math.h>
-#include <iostream>
 
 #include "vec2.hpp"
 #include "widget_editor.hpp"
@@ -16,7 +15,7 @@ WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(bu
     CalculateAvaliableColumns();
     CalculateDrawingOffset();
 
- 
+    _colorBgWidget = ColorPurpose::ColorWidgetEditorBg; 
     _cursorPrevPos = _buffer->CursorPosition();
 }
 
@@ -35,6 +34,12 @@ void WidgetEditor::Render(void)
         DrawCursor(CalculateRealPosForCursor());
     }
 
+}
+
+void WidgetEditor::SetActive(bool status)
+{
+    Widget::SetActive(status);
+    _buffer->RequestToSetActive(status);
 }
 
 void WidgetEditor::Resize(Rect newRect)
@@ -277,8 +282,6 @@ void WidgetEditor::SetCursorPosition(Vec2 position)
         {
             // it's inside this line
             if(lineStartPos.x > position.x)
-
-
             {
                 // position somewhere before text.
                 // it means, that user pointed into line numbers field

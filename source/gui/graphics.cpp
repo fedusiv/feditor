@@ -212,9 +212,10 @@ void Graphics::DrawGlyph(int character, Vec2 pos, ColorPurpose color)
 
     if (!haveAlphabet)
     {
-        // TODO: handle this case
+        glyph = _glyphAlphabet.front()->GetGlyph(MISSING_GLYPH_SYMBOL_CODE);
+    }else{
+        glyph = lastAlphabet->GetGlyph(character);
     }
-    glyph = lastAlphabet->GetGlyph(character);
     texture = glyph->texture;
     glyphRect = &glyph->rect;
 

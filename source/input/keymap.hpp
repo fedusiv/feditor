@@ -3,6 +3,8 @@
 
 #include <vector>
 
+// To add new key you need to add new key enum name to KeyMap enum and add new sdl to enum conversion to keys.hpp
+
 enum KeyMap
 {
     KeyZero,
@@ -19,6 +21,8 @@ enum KeyMap
     KeyEsc,
     KeySemicolon,
     KeyQuotes,
+    KeyCtrl,
+    KeyAlt,
 
     KeyMouseL,
     KeyMouseR,
@@ -31,6 +35,9 @@ enum KeyMap
     KeyP,
     KeyL,
     KeyI,
+    KeyN,
+    KeyH,
+    KeyV,
     KeysMax
 };
 

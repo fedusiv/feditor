@@ -7,6 +7,7 @@
 
 #include "core.hpp"
 #include "editor.hpp"
+#include "file_manager.hpp"
 
 Core::Core(Gui * gui, Input * input,std::string location) : _guiHandler(gui), _inputHandler(input), _locationPoint(location)
 {
@@ -21,8 +22,10 @@ void Core::Init(void)
 
     _execAccess = new ExecutorAccess(_guiHandler, _bufferHandler);
     _executor->AttachAccess(_execAccess);
-
-    Editor::Init(); // init and attach to executor all executor functions
+    
+    // init and attach to executor all executor functions
+    Editor::Init();
+    FileManager::Init();
 
     _guiHandler->CreateWindow();
 
@@ -37,7 +40,8 @@ void Core::Init(void)
     }
     else
     {
-        _executor->CallExecutor(ExecutorOpCode::OpenFileEditorWidget, (void*)&_locationPoint);
+        ExecDataTypeCreateBuffer  d = {.filename = _locationPoint, .verticalDirection = true};
+        _executor->CallExecutor(ExecutorOpCode::CreateBuffer, &d);
     }
 }
 

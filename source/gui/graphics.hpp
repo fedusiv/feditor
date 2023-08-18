@@ -14,7 +14,7 @@
 #include "colors.hpp"
 
 #define FPS           60
-
+#define MISSING_GLYPH_SYMBOL_CODE 63
 
 typedef std::tuple<int, int> alphabetCode;  // begin and end of inicode code for alphabet to render
 typedef struct

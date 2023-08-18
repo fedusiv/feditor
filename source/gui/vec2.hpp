@@ -2,6 +2,16 @@
 #define __VEC2_HPP__
 
 #include <utility>
+#include <vector>
+#include <string>
+
+enum MoveCursorDirection
+{
+    CursorUp,
+    CursorDown,
+    CursorLeft,
+    CursorRight,
+};
 
 class Rect {
     public:
@@ -119,7 +129,10 @@ class Vec2
             y = rect.y;
         }
 
-
+        std::vector<std::string> getPrint() const
+        {
+            return { "Vec2",  std::to_string(x), std::to_string(y)};
+        }
 };
 
 #endif // __VECTOR2_HPP__

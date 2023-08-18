@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.16) # FetchContent is available in 3.11+
 
+option(DEBUG_FLAG "Add debug configuration" OFF)
+
+if(DEBUG_FLAG)
+    add_compile_options(-O0 -g)
+endif()
+
 if(APPLE)
     set(MACOSX TRUE)
     set(CMAKE_HOST_SYSTEM_PROCESSOR arm64)
@@ -18,7 +24,6 @@ if(UNIX)
         add_compile_definitions(UNIX)
         message("Running on Linux systems.")
     endif()
-    add_compile_options(-g)
 endif()
 
 project(feditor)
@@ -26,7 +31,7 @@ project(feditor)
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall")
+add_compile_options(-Wall)
 
 if(UNIX)
 endif()
@@ -38,9 +43,10 @@ find_package(SDL2_ttf REQUIRED)
 file(GLOB GUI_FILES "source/gui/*.cpp")
 file(GLOB WIDGETS_FILES "source/gui/widgets/*.cpp")
 file(GLOB CORE_FILES "source/core/*.cpp")
+file(GLOB EXECUTORS_FILES "source/core/executors/*.cpp")
 file(GLOB INPUT_FILES "source/input/*.cpp")
 file(GLOB COMMON_FILES "source/common/*.cpp")
-set(SOURCE_FILES ${COMMON_FILES} ${GUI_FILES} ${WIDGETS_FILES} ${CORE_FILES} ${INPUT_FILES})
+set(SOURCE_FILES ${COMMON_FILES} ${GUI_FILES} ${WIDGETS_FILES} ${EXECUTORS_FILES} ${CORE_FILES} ${INPUT_FILES})
 set(SOURCES "source/main.cpp" ${SOURCE_FILES})
 
 include_directories(feditor ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
@@ -48,6 +54,7 @@ include_directories(feditor ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE "source/core")
+target_include_directories(${PROJECT_NAME} PRIVATE "source/core/executors")
 target_include_directories(${PROJECT_NAME} PRIVATE "source/gui")
 target_include_directories(${PROJECT_NAME} PRIVATE "source/gui/widgets")
 target_include_directories(${PROJECT_NAME} PRIVATE "source/input")

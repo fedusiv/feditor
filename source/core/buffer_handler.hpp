@@ -21,6 +21,7 @@ class BufferHandler
         void InsertNewLine(void);   // insert new line
         void MoveCursor(MoveCursorDirection direction); // moving cursor by one step
         void DeleteAtCursor(DeleteOperations operation);
+        void UpdateActiveBuffer();  // function go over all created buffers, looks for buffer, which is requested to be active, and makes decision
 
     private:
         static BufferHandler* _handler;

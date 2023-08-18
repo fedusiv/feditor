@@ -11,6 +11,7 @@ enum ColorPurpose
     ColorWidgetBg,
     ColorWidgetBorder,
     ColorWidgetCursor,
+    ColorWidgetEditorBg,
     ColorWidgetEditorLineNumber,
     ColorWidgetEditorText,
     ColorWidgetEditorFileName,

@@ -10,6 +10,8 @@ Buffer::Buffer(std::string filepath): _filepath(filepath), _largestLineSize(0)
 {
     std::ifstream file;
 
+    _requestActive = false;
+
     bufferId = _globalId++;
     if(filepath.empty()){
         _buffer.push_back(BufferLine(0));   // creates empty buffer with one empty line
@@ -215,7 +217,7 @@ void Buffer::DeleteAtCursor(DeleteOperations operation)
 
 void Buffer::SetCursorPosition(Vec2 position)
 {
-    if(position.y > _buffer.size())
+    if(position.y >= _buffer.size())
     {
         position.y = _buffer.size() - 1;    // position of y is bigger, than size of buffer. Set it to maximum size of buffer data. Another words set to last line
         // -1 only because we need position of, and position of last line is size - 1 (array starts from 0, rule of language)
@@ -265,3 +267,21 @@ std::string Buffer::FileName()
 {
     return _filename;
 }
+
+// Logic of this request functions is written in header
+void Buffer::RequestToSetActive(bool status)
+{
+    _requestActive = status;
+}
+
+bool Buffer::RequestActive()
+{
+    bool status;
+    status = _requestActive;
+    if(_requestActive)
+    {
+        _requestActive = false;
+    }
+    return status;
+}
+

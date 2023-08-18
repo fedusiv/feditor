@@ -1,41 +1,110 @@
 #include "widget_tab.hpp"
+#include "gui_configs.hpp"
+#include "macros.h"
+#include "widget_editorentity.hpp"
 
 WidgetTab::WidgetTab(Rect rect): Widget(rect)
 {
-    _layout = new GuiLayout(_widgetRect);
+    // Create initial horizontal layout. It can be called as first row
+    _layoutsH.push_back(new GuiLayout(_widgetRect, LayoutDirection::Horizontal));
+    _widgetType = WidgetType::WidgetTypeTab;
 }
 
-void WidgetTab::AttachBuffer(Buffer * buffer)
+void WidgetTab::AttachBuffer(Buffer * buffer, LayoutDirection direction)
 {
-    auto w = new WidgetEditor(Rect(_widgetRect.x, _widgetRect.y, _widgetRect.w, _widgetRect.h), buffer);
-    _widgetsEditorList.push_back(w);
+    WidgetEditorEntity* ee;    // editor entity
+    GuiLayout *glNew, *glNexto;
+    // if direction is vertical it means, that user wants to create vertical widget editor.
+    // if direction is horizontal. User wants to create horizontal oriented widget
 
-     auto l = new WidgetLabel(Rect(0,0,0,_glyphSize.y + 2), buffer->FileName(), ColorPurpose::ColorWidgetEditorFileName, Vec2(3,0));
-    _widgetsLabelList.push_back(l);
-
-    _layout->AppendWidget(l, LayoutDirection::Vertical, true);
-    _layout->AppendWidget(w, LayoutDirection::Vertical, false);
+    ee = CreateEditorEntity(buffer);
+    if(direction == LayoutDirection::Vertical)
+    {
+        // Vertical split
+        glNew = new GuiLayout(_widgetRect, LayoutDirection::Vertical); // create new vertical layout
+        glNew->Insert(ee, false); // just append widget to new created layout
+        glNexto = nullptr;
+        for(auto l : _layoutsV) // looking for layout where is active widget is located
+        {
+            if(l->IsInLayout(_currentActiveEntity))
+            {
+                // found. In this layout current active entity
+                glNexto = l;
+            }
+        }
+        _layoutsV.push_back(glNew); // order in _layoutsH[0], where is _layoutsV stored and different.
+        _layoutsH[0]->Insert(glNew, glNexto);   // _layoutsH[0] is a parent for everyone. Because we need to have a main parent for all layouts and widgets. Maybe need to make it vertical. Problems for futurer me
+    }else{
+        // horizontal split. Simple split is implemented. Put widget editor into current vertical layout
+        for(auto lv: _layoutsV)
+        {
+            if(lv->IsInLayout(_currentActiveEntity))
+            {
+                lv->Insert(ee, false, _currentActiveEntity);
+                break;
+            }
+        }
+    }
+    SetActiveWidgetEntity(ee);
 }
 
 void WidgetTab::Render(void)
 {
     Widget::Render();
-    for(auto w: _widgetsLabelList)
-    {
-        w->Render();
-    }
-    for(auto w: _widgetsEditorList)
+    for(auto w: _widgetsEntityList)
     {
         w->Render();
     }
 }
 
+WidgetEditorEntity* WidgetTab::CreateEditorEntity(Buffer * buffer)
+{
+    auto w = new WidgetEditorEntity(_widgetRect, buffer);
+    _widgetsEntityList.push_back(w);
+    return w;
+}
+
+bool WidgetTab::SwitchBuffer(MoveCursorDirection direction)
+{
+    bool res;
+    Widget * w;
+
+    res = false;
+    w = _layoutsH[0]->GetNextWidget(_currentActiveEntity, direction); // calling from higher hierarchy
+    if(nullptr != w)
+    {
+        res = true;
+        SetActiveWidgetEntity(reinterpret_cast<WidgetEditorEntity*>(w));
+    }
+    return res;
+}
+
+void WidgetTab::SetActiveWidgetEntity(WidgetEditorEntity * we)
+{
+    for(auto w: _widgetsEntityList)
+    {
+        w->SetActive(false);    // better to set all widgets to inactive and set active only one required
+    }
+    we->SetActive(true);
+    _currentActiveEntity = we;
+}
+
+void WidgetTab::Resize(Rect newRect)
+{
+    Widget::Resize(newRect);
+    _layoutsH[0]->Resize(_widgetRect);
+}
+
 void WidgetTab::SetCursorPosition(Vec2 position)
 {
-    for(auto w: _widgetsEditorList)
+    for(auto w: _widgetsEntityList)
     {
         if(w->IsInWidget(position))
         {
+            if(w != _currentActiveEntity)
+            {
+                SetActiveWidgetEntity(w);
+            }
             w->SetCursorPosition(position);
             break;
         }
@@ -44,7 +113,7 @@ void WidgetTab::SetCursorPosition(Vec2 position)
 
 void WidgetTab::PageScrolling(Vec2 direction, Vec2 mousePosition)
 {
-    for(auto w: _widgetsEditorList)
+    for(auto w: _widgetsEntityList)
     {
         if(w->IsInWidget(mousePosition))
         {

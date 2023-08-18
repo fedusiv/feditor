@@ -17,7 +17,7 @@ class Gui
         ~Gui();
         void Update(void);  // main function of gui process
         void CreateWindow(void);    // create main window
-        void CreateWidgetEditor(Buffer * buffer);  // create empty widget for edititng text
+        void AttachWidgetEditor(Buffer * buffer, bool vertical=true);  // create empty widget for edititng text
         bool NeedExit(void);    // report when application need to be exited
         void RequestExit(void); // request to close app
         void Resize(void);      // resize request
@@ -25,6 +25,7 @@ class Gui
         void UpdateMousePosition(Vec2 mousePosition);   // update mouse position. It's done each frame update
         void AlignCursorPositionByMouse(void);      // this function looking for widget under required coordinates and trying to change cursor position
         void PageScrolling(Vec2 direction); // scroll page of widget under mouse position
+        bool SwitchBuffer(MoveCursorDirection direction);   // change active widget inside active widget tab, in direction used arrow keys. Returns true if switch has happened
 
     private:
         void InitWidgets(void);     // initialize starting widgets
@@ -41,6 +42,7 @@ class Gui
         Vec2 _windowsSize;  // current window size
         int _fontSize;      // current font size
         Vec2 _mousePosition;    // current mouse position
+        GuiLayout * _verticalLayout = nullptr; // vertical layout of main gui
 
 };
 
