@@ -6,8 +6,8 @@ WidgetEditorEntity::WidgetEditorEntity(Rect rect, Buffer * buffer): Widget(rect)
     _layout = new GuiLayout(_widgetRect, LayoutDirection::Vertical);
     _editor = new WidgetEditor(Rect(_widgetRect.x, _widgetRect.y, _widgetRect.w, _widgetRect.h), buffer);
     _bufferLabel = new WidgetLabel(Rect(0,0,0,0), buffer->FileName(), ColorPurpose::ColorWidgetEditorFileName, WIDGET_EDITOR_BUFFER_NAME_WRITE_OFFSET);
-    _layout->Append(_bufferLabel, true);
-    _layout->Append(_editor, false);
+    _layout->Insert(_bufferLabel, true);
+    _layout->Insert(_editor, false);
 }
 
 void WidgetEditorEntity::SetActive(bool status)

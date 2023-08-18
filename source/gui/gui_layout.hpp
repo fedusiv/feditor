@@ -35,13 +35,14 @@ class GuiLayout
         LayoutBase
     };
 
-    typedef std::vector<LayoutElement*> LayoutList;   // pointers to all widgets in layout
+    typedef std::vector<LayoutElement*> LayoutListOfWidgets;   // pointers to all widgets in layout
+    typedef std::vector<GuiLayout*> LayoutListOfLayouts;   // pointers to all layouts in layout
     typedef std::list<IndexingStruct> IndexingQueue;
 
     public:
         GuiLayout(Rect rect, LayoutDirection direction);
-        void Append(Widget* widget, bool hardSize);
-        void Append(GuiLayout* layout);
+        void Insert(Widget* widget, bool hardSize, Widget* nextTo = nullptr); // insert widget after given widget, or just append to the end
+        void Insert(GuiLayout* layout, GuiLayout* nextTo = nullptr);
         void Resize(Rect newRect);
         bool IsInLayout(Widget* w); 
         LayoutDirection GetLayoutDirection();
@@ -53,18 +54,16 @@ class GuiLayout
         LayoutType _layoutType; // type of layout, based on widgets or layouts
         int _glyphHardSizeAdd;   // border width between elements inside layout
         Rect _layoutRect;   // available rect ot operate with
-        LayoutList _layoutWList;
-        std::vector<GuiLayout*> _layoutLList;
+        LayoutListOfWidgets _layoutWList;
+        LayoutListOfLayouts _layoutLList;
         Vec2 _glyphSize;    // size of glyph. Hard size is based on glyph size
 
-        void AppendVerticalWidget(Widget* widget, bool hardSize); // separation for append widget
-        void AppendHorizontalWidget(Widget* widget, bool hardSize); // separation for append widget
-        void AppendHorizontalLayout(GuiLayout * layout);
-        void AppendVerticalLayout(GuiLayout * layout);
+        void InsertVerticalWidget(Widget* widget, Widget* nextTo, bool hardSize); // separation for append widget
+        void InsertHorizontalWidget(Widget* widget, bool hardSize); // separation for append widget
         void CallResize(Widget* widget, Rect rect);
         int CalculateHardSizeOnGlyph(void);    // get size of height or width 
-        void CalculateAndResizeVerticalWidget(LayoutElement * le = nullptr);   // function calculates vertical sizes for widgets to resize it. height
-        void CalculateAndResizeHorizontalWidget(LayoutElement * le = nullptr);   // function calculates horizontal sizes for widgets to resize it. width
+        void CalculateAndResizeVerticalWidget();   // function calculates vertical sizes for widgets to resize it. height
+        void CalculateAndResizeHorizontalWidget();   // function calculates horizontal sizes for widgets to resize it. width
         void CalculateAndResizeVerticalLayout();    // calculates required height for layouts in layout and call resize for them
         void CalculateAndResizeHorizontalLayout();    // calculates required width for layouts in layout and call resize for them
         void IndexingFunc(IndexingQueue * stack, Widget * w);

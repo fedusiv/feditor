@@ -13,7 +13,7 @@ WidgetTab::WidgetTab(Rect rect): Widget(rect)
 void WidgetTab::AttachBuffer(Buffer * buffer, LayoutDirection direction)
 {
     WidgetEditorEntity* ee;    // editor entity
-    int lid;    // layout id
+    GuiLayout *glNew, *glNexto;
     // if direction is vertical it means, that user wants to create vertical widget editor.
     // if direction is horizontal. User wants to create horizontal oriented widget
 
@@ -21,23 +21,31 @@ void WidgetTab::AttachBuffer(Buffer * buffer, LayoutDirection direction)
     if(direction == LayoutDirection::Vertical)
     {
         // Vertical split
-        lid = _layoutsV.size();
-        _layoutsV.push_back(new GuiLayout(_widgetRect, LayoutDirection::Vertical));   // create first column, vertical oriented layout
-        _layoutsH[0]->Append(_layoutsV[lid]);   // _layoutsH[0] is a parent for everyone. Because we need to have a main parent for all layouts and widgets. Maybe need to make it vertical. Problems for futurer me
-        _layoutsV[lid]->Append(ee, false);
-        SetActiveWidgetEntity(ee);
+        glNew = new GuiLayout(_widgetRect, LayoutDirection::Vertical); // create new vertical layout
+        glNew->Insert(ee, false); // just append widget to new created layout
+        glNexto = nullptr;
+        for(auto l : _layoutsV) // looking for layout where is active widget is located
+        {
+            if(l->IsInLayout(_currentActiveEntity))
+            {
+                // found. In this layout current active entity
+                glNexto = l;
+            }
+        }
+        _layoutsV.push_back(glNew); // order in _layoutsH[0], where is _layoutsV stored and different.
+        _layoutsH[0]->Insert(glNew, glNexto);   // _layoutsH[0] is a parent for everyone. Because we need to have a main parent for all layouts and widgets. Maybe need to make it vertical. Problems for futurer me
     }else{
         // horizontal split. Simple split is implemented. Put widget editor into current vertical layout
         for(auto lv: _layoutsV)
         {
             if(lv->IsInLayout(_currentActiveEntity))
             {
-                lv->Append(ee, false);
-                SetActiveWidgetEntity(ee);
+                lv->Insert(ee, false, _currentActiveEntity);
                 break;
             }
         }
     }
+    SetActiveWidgetEntity(ee);
 }
 
 void WidgetTab::Render(void)

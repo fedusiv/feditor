@@ -17,23 +17,6 @@ GuiLayout::GuiLayout(Rect rect, LayoutDirection direction) : _layoutDirection(di
     _glyphSize = Graphics::GlyphMaxSize();
 }
 
-void GuiLayout::AppendHorizontalWidget(Widget *widget, bool hardSize)
-{
-    // TODO: not implemented
-}
-
-void GuiLayout::AppendVerticalWidget(Widget *widget, bool hardSize)
-{
-    LayoutElement *element = new LayoutElement{.hardSize = hardSize, .widget = widget};
-    CalculateAndResizeVerticalWidget(element);
-}
-
-void GuiLayout::AppendHorizontalLayout(GuiLayout * layout)
-{
-    _layoutLList.push_back(layout);
-    CalculateAndResizeHorizontalLayout();
-}
-
 void GuiLayout::CalculateAndResizeHorizontalLayout()
 {
     Rect newRect; 
@@ -45,12 +28,6 @@ void GuiLayout::CalculateAndResizeHorizontalLayout()
         l->Resize(newRect); // resize layout
         newRect.x += newRect.w; // x position will be moved to width of newRect. It's horizontal shift
     }
-}
-
-void GuiLayout::AppendVerticalLayout(GuiLayout * layout)
-{
-    _layoutLList.push_back(layout);
-    CalculateAndResizeVerticalLayout();
 }
 
 void GuiLayout::CalculateAndResizeVerticalLayout()
@@ -96,7 +73,7 @@ void GuiLayout::Resize(Rect newRect)
     }
 }
 
-void GuiLayout::CalculateAndResizeVerticalWidget(LayoutElement * le)
+void GuiLayout::CalculateAndResizeVerticalWidget()
 {
     Rect rect;
     int hardSizedSize = 0;        // size in pixels, what amout of length in width or height is taken by hardcoded size
@@ -115,19 +92,6 @@ void GuiLayout::CalculateAndResizeVerticalWidget(LayoutElement * le)
             flexibleWidgetsAmout++;
         }
     }
-    if(nullptr != le)
-    {
-        _layoutWList.push_back(le);
-        if (le->hardSize)
-        { // request to add hard sized widget
-            hardSizedSize += CalculateHardSizeOnGlyph();
-        }
-        else
-        {
-            flexibleWidgetsAmout++;
-        }
-    }
-
     height = (_layoutRect.h - hardSizedSize)  / flexibleWidgetsAmout;
     rect = _layoutRect; // here we need to get width of layout and first place of widget, mean x and y. height will be configured below
     for (auto e : _layoutWList)
@@ -145,7 +109,7 @@ void GuiLayout::CalculateAndResizeVerticalWidget(LayoutElement * le)
     }
 }
 
-void GuiLayout::CalculateAndResizeHorizontalWidget(LayoutElement * le)
+void GuiLayout::CalculateAndResizeHorizontalWidget()
 {
     Rect rect;
     int hardSizedSize = 0;        // size in pixels, what amout of length in width or width is taken by hardcoded size
@@ -164,19 +128,6 @@ void GuiLayout::CalculateAndResizeHorizontalWidget(LayoutElement * le)
             flexibleWidgetsAmout++;
         }
     }
-    if(nullptr != le)
-    {
-        _layoutWList.push_back(le);
-        if (le->hardSize)
-        { // request to add hard sized widget
-            hardSizedSize += CalculateHardSizeOnGlyph();
-        }
-        else
-        {
-            flexibleWidgetsAmout++;
-        }
-    }
-
     width = (_layoutRect.w - hardSizedSize)  / flexibleWidgetsAmout;
     rect = _layoutRect; // here we need to get width of layout and first place of widget, mean x and y. width will be configured below
     for (auto e : _layoutWList)
@@ -194,33 +145,68 @@ void GuiLayout::CalculateAndResizeHorizontalWidget(LayoutElement * le)
     }
 }
 
-void GuiLayout::Append(Widget *widget, bool hardSize)
+void GuiLayout::Insert(Widget *widget, bool hardSize, Widget* nextTo)
 {
     assert(_layoutLList.size() == 0 && "Guilayout should be only one typed. It was already typed as layouts");
+
+    LayoutListOfWidgets::iterator wIt; 
     _layoutType = LayoutType::WidgetBase;
+
+    LayoutElement *element = new LayoutElement{.hardSize = hardSize, .widget = widget};
+    if(nullptr == nextTo){
+        _layoutWList.push_back(element);
+    }else{
+        for(wIt = _layoutWList.begin(); wIt != _layoutWList.end(); wIt++)
+        {
+            if((*wIt)->widget == nextTo)
+            {
+                // found widget which we need to insert after
+                wIt++;  // std::list::insert putting element before, but we need after, so that's why increase iterator
+                _layoutWList.insert(wIt, element);
+                break;
+            }
+        }
+    }
 
     switch (_layoutDirection) {
         case LayoutDirection::Vertical:
-            AppendVerticalWidget(widget, hardSize);
+            CalculateAndResizeVerticalWidget();
             break;
         case LayoutDirection::Horizontal:
-            AppendVerticalWidget(widget, hardSize);
+            CalculateAndResizeHorizontalWidget();
             break;
         default:
             break;
     }
 }
 
-void GuiLayout::Append(GuiLayout* layout)
+void GuiLayout::Insert(GuiLayout* layout, GuiLayout* nextTo)
 {
     assert(_layoutWList.size() == 0 && "Guilayout should be only one typed. It was already typed as widgets");
+
+    LayoutListOfLayouts::iterator wIt; 
     _layoutType = LayoutType::LayoutBase;
+    if(nullptr == nextTo){
+        _layoutLList.push_back(layout);
+    }else{
+
+        for(wIt = _layoutLList.begin(); wIt != _layoutLList.end(); wIt++)
+        {
+            if((*wIt) == nextTo)
+            {
+                // found widget which we need to insert after
+                wIt++;  // std::list::insert putting element before, but we need after, so that's why increase iterator
+                _layoutLList.insert(wIt, layout);
+                break;
+            }
+        }
+    }
     switch (_layoutDirection) {
         case LayoutDirection::Vertical:
-            AppendVerticalLayout(layout);
+            CalculateAndResizeVerticalLayout();
             break;
         case LayoutDirection::Horizontal:
-            AppendHorizontalLayout(layout);
+            CalculateAndResizeHorizontalLayout();
             break;
         default:
             break;

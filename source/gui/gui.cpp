@@ -75,7 +75,7 @@ void Gui::CreateWidgetTab(void)
     _widgetTabActive = tab;
 
     _widgetsList.push_back(tab);
-    _verticalLayout->Append(tab, false);
+    _verticalLayout->Insert(tab, false);
 }
 
 void Gui::CreateStatusLine(void)
@@ -88,7 +88,7 @@ void Gui::CreateStatusLine(void)
     rect = Rect(0,0,0,0);   // empty rect, this widget is inside layout. so layout will resize it
     statusLine = new WidgetStatusLine(rect);
     _widgetsList.push_back(statusLine);
-    _verticalLayout->Append(statusLine, true);
+    _verticalLayout->Insert(statusLine, true);
 }
 
 void Gui::AttachWidgetEditor(Buffer * buffer, bool vertical)
