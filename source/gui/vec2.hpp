@@ -116,10 +116,25 @@ class Vec2
             y *= mulVec.y;
             return *this;
         }
+
+        Vec2& operator/=(const int& scale)
+        {
+            x /= scale;
+            y /= scale;
+            return *this;
+        }
+
         Vec2& operator* (const Vec2& mulVec)
         {
             x *= mulVec.x;
             y *= mulVec.y;
+            return *this;
+        }
+    
+        Vec2& operator/ (const Vec2& mulVec)
+        {
+            x /= mulVec.x;
+            y /= mulVec.y;
             return *this;
         }
 

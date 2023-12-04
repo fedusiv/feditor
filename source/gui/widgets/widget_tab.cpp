@@ -127,3 +127,13 @@ void WidgetTab::CalculateDrawingOffset(void)
 {
 
 }
+
+Buffer * WidgetTab::GetActiveBuffer()
+{
+    if(_currentActiveEntity == nullptr)
+    {
+        return nullptr;
+    }
+    return _currentActiveEntity->GetWidgetEditor()->GetCurrentBuffer();
+}
+

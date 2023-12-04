@@ -17,6 +17,9 @@ enum ColorPurpose
     ColorWidgetEditorFileName,
     ColorStatusLineModalMode,
     ColorStatusLineInsertMode,
+    ColorTabListBg,
+    ColorTabListText,
+    ColorTabListSelected,
 
     ColorWhite,
     ColorPurposeMax

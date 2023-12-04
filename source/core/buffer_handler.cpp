@@ -32,7 +32,7 @@ void BufferHandler::DeleteAtCursor(DeleteOperations operation)
     _activeBuffer->DeleteAtCursor(operation);
 }
 
-void BufferHandler::UpdateActiveBuffer()
+Buffer * BufferHandler::UpdateActiveBuffer()
 {
     for(auto b: _bufferList)
     {
@@ -41,4 +41,5 @@ void BufferHandler::UpdateActiveBuffer()
             _activeBuffer = b;  // set new active buffer
         }
     }
+    return _activeBuffer;
 }

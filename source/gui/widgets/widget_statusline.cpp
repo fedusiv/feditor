@@ -1,6 +1,7 @@
 #include "widget_statusline.hpp"
 #include "editor_state.hpp"
 #include "vec2.hpp"
+#include <string>
 
 WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
 {
@@ -8,20 +9,20 @@ WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
     
     _widgetType = WidgetType::WidgetTypeStatusLine;
     _drawingOffset = Vec2(_glyphSize.x,0);
+    _currentFileName = "";
+    _infoBorderString = " | ";
 
-    _currentEditorState = EditorState::InsertState;
-    _editorStateName[EditorState::InsertState] = "INSERT";
-    _editorStateName[EditorState::NormalState] = "NORMAL";
 }
 
 WidgetStatusLine::~WidgetStatusLine()
 {
+
 }
 
 void WidgetStatusLine::Render()
 {
     Widget::Render();
-    DrawCurrentMode();
+    DrawInformation();
 }
 
 void WidgetStatusLine::Resize(Rect newRect)
@@ -29,33 +30,43 @@ void WidgetStatusLine::Resize(Rect newRect)
     Widget::Resize(newRect);
 }
 
-void WidgetStatusLine::DrawCurrentMode()
+void WidgetStatusLine::DrawInformation()
 {
-    std::string modeName;
     Vec2 startPos;
     ColorPurpose color;
 
-    modeName = _editorStateName[_currentEditorState];
-    switch (_currentEditorState) {
-        case EditorState::NormalState:
-            color = ColorPurpose::ColorStatusLineModalMode;
-            break;
-        case EditorState::InsertState:
-            color = ColorPurpose::ColorStatusLineInsertMode;
-            break;
-        default:
-            color = ColorPurpose::ColorStatusLineModalMode;
-            break;
-    }
-
+    color = ColorPurpose::ColorStatusLineModalMode;
     // calculate start position. in status line everyhting need to be drawn based on size of font, and drawn in the middle
     int center = _widgetFullRect.h / 2;
     center -= _glyphSize.y / 2;
     startPos.y += center;
 
-    for(auto c: modeName)
+    // draw current filename
+    for(auto c: _currentFileName)
     {
         DrawCharacter(static_cast<int>(c), startPos, color);
         startPos.x+= _glyphSize.x;
     }
+    // draw border
+    for(auto c: _infoBorderString)
+    {
+        DrawCharacter(static_cast<int>(c), startPos, color);
+        startPos.x+= _glyphSize.x;
+    }
+    // draw tab name
+    for(auto c: _currentTabName)
+    {
+        DrawCharacter(static_cast<int>(c), startPos, color);
+        startPos.x+= _glyphSize.x;
+    }
+}
+
+void WidgetStatusLine::UpdateFilename(std::string filename)
+{
+    _currentFileName = filename;
+}
+
+void WidgetStatusLine::UpdateTabName(std::string tabname)
+{
+    _currentTabName = tabname;
 }

@@ -354,3 +354,8 @@ void WidgetEditor::IncreaseLeftLine(int value)
     }
 
 }
+
+Buffer * WidgetEditor::GetCurrentBuffer()
+{
+    return _buffer;
+}

@@ -12,6 +12,7 @@
 
 #include "vec2.hpp"
 #include "colors.hpp"
+#include "gui_configs.hpp"
 
 #define FPS           60
 #define MISSING_GLYPH_SYMBOL_CODE 63

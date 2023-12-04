@@ -15,7 +15,7 @@ Buffer::Buffer(std::string filepath): _filepath(filepath), _largestLineSize(0)
     bufferId = _globalId++;
     if(filepath.empty()){
         _buffer.push_back(BufferLine(0));   // creates empty buffer with one empty line
-        _filename = "Untitled";
+        _filename = "untitled";
     }
     else
     {
@@ -274,6 +274,7 @@ void Buffer::RequestToSetActive(bool status)
     _requestActive = status;
 }
 
+// Also important logic is desctibed for this function in header
 bool Buffer::RequestActive()
 {
     bool status;

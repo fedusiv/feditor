@@ -15,6 +15,9 @@ Colors::Colors()
     _colorsStorage[ColorPurpose::ColorWidgetEditorFileName] = {.r = 67, .g = 205, .b = 240, .a = 255};
     _colorsStorage[ColorPurpose::ColorStatusLineModalMode] = {.r = 0, .g = 240, .b = 0, .a = 255};
     _colorsStorage[ColorPurpose::ColorStatusLineInsertMode] = {.r = 135, .g = 135, .b = 212, .a = 255};
+    _colorsStorage[ColorPurpose::ColorTabListBg] = {.r = 35, .g = 35, .b = 36, .a = 255};
+    _colorsStorage[ColorPurpose::ColorTabListText] = {.r = 124, .g = 122, .b = 125, .a = 255};
+    _colorsStorage[ColorPurpose::ColorTabListSelected] = {.r = 209, .g = 163, .b = 240, .a = 255};
 
 
     _colorsStorage[ColorPurpose::ColorWhite] = {.r = 240, .g = 240, .b = 240, .a = 240};

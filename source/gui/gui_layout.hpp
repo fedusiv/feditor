@@ -43,11 +43,15 @@ class GuiLayout
         GuiLayout(Rect rect, LayoutDirection direction);
         void Insert(Widget* widget, bool hardSize, Widget* nextTo = nullptr); // insert widget after given widget, or just append to the end
         void Insert(GuiLayout* layout, GuiLayout* nextTo = nullptr);
+        void Remove(Widget* widget);    // remove widget from layout
         void Resize(Rect newRect);
         bool IsInLayout(Widget* w); 
         LayoutDirection GetLayoutDirection();
         Widget* GetNextWidget(Widget* source, MoveCursorDirection direction);
         int ElementsAmount();   // amount of elements inside GuiLayout, widgets or other layouts
+        void SetHardSize();
+        bool IsHardSize();
+        Rect GetRect();
 
     private:
         LayoutDirection _layoutDirection; // direction of layout basically the type of layout
@@ -57,9 +61,8 @@ class GuiLayout
         LayoutListOfWidgets _layoutWList;
         LayoutListOfLayouts _layoutLList;
         Vec2 _glyphSize;    // size of glyph. Hard size is based on glyph size
+        bool _isHardSize;   // this is mark for layout. Logic, is that horizontal layout will have determined height size and vertical layout will have determined width
 
-        void InsertVerticalWidget(Widget* widget, Widget* nextTo, bool hardSize); // separation for append widget
-        void InsertHorizontalWidget(Widget* widget, bool hardSize); // separation for append widget
         void CallResize(Widget* widget, Rect rect);
         int CalculateHardSizeOnGlyph(void);    // get size of height or width 
         void CalculateAndResizeVerticalWidget();   // function calculates vertical sizes for widgets to resize it. height
@@ -69,7 +72,7 @@ class GuiLayout
         void IndexingFunc(IndexingQueue * stack, Widget * w);
         bool GetNextWidgetIndexCalculation(IndexingQueue * queue, MoveCursorDirection direction);  // this internal function of GetNextWidget, to separate functionality. This function calculate index position for next widget required by arrow movement
         Widget* GetWidgetByMapIndex(IndexingQueue * queue);
-
+        void CallWidgetResize();    // calls widget resize
 
 };
 

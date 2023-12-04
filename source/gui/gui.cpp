@@ -59,36 +59,35 @@ void Gui::CreateLayout(void)
     // Other widgets goes in hierarchy there.
     CreateWidgetTab();
     CreateStatusLine();
+    Resize();
 }
 
 void Gui::CreateWidgetTab(void)
 {
-    WidgetTab * tab;
     Rect rect;
 
     rect = Rect(0,0, _windowsSize.x, _windowsSize.y);
-    tab = new WidgetTab(rect);
-    if(nullptr != _widgetTabActive)
-    {   // If it's not nullptr, means, there is active tab already. Need to set to inactive for render
-        _widgetTabActive->SetActive(false);
+    // On init stage create first _widgetTabList
+    if(_widgetTabList == nullptr){
+        _widgetTabList = new WidgetTabList(rect);
+        _verticalLayout->Insert(_widgetTabList, false);
+        _widgetsList.push_back(_widgetTabList);
+    }else{
+        // Otherwise tab is already exits
     }
-    _widgetTabActive = tab;
-
-    _widgetsList.push_back(tab);
-    _verticalLayout->Insert(tab, false);
 }
 
 void Gui::CreateStatusLine(void)
 {
     Rect rect;
-    if(statusLine != nullptr)
+    if(_statusLine != nullptr)
     {
-        delete statusLine;
+        delete _statusLine;
     }
     rect = Rect(0,0,0,0);   // empty rect, this widget is inside layout. so layout will resize it
-    statusLine = new WidgetStatusLine(rect);
-    _widgetsList.push_back(statusLine);
-    _verticalLayout->Insert(statusLine, true);
+    _statusLine = new WidgetStatusLine(rect);
+    _widgetsList.push_back(_statusLine);
+    _verticalLayout->Insert(_statusLine, true);
 }
 
 void Gui::AttachWidgetEditor(Buffer * buffer, bool vertical)
@@ -100,7 +99,19 @@ void Gui::AttachWidgetEditor(Buffer * buffer, bool vertical)
     {
         direction = LayoutDirection::Vertical;
     }
-    _widgetTabActive->AttachBuffer(buffer, direction); // attach buffer to tab, and let all functionality there
+    _widgetTabList->AttachBuffer(buffer, direction); // attach buffer to tab, and let all functionality there
+    StatusLineUpdate(buffer->FileName());
+}
+
+void Gui::AttachTab()
+{
+    _widgetTabList->CreateNewTab();
+    // swtich to new created tab
+    if(_widgetTabList->GetActiveBuffer() != nullptr){
+        StatusLineUpdate(_widgetTabList->GetActiveBuffer()->FileName());
+    }else{
+        StatusLineUpdate("---");
+    }
 }
 
 bool Gui::NeedExit(void)
@@ -136,17 +147,8 @@ void Gui::AlignCursorPositionByMouse()
     {
         if(w->IsInWidget(position))
         {
-            switch(w->GetWidgetType())
-            {
-                case WidgetType::WidgetTypeTab:
-                    _widgetTabActive->SetCursorPosition(position);
-                    break;
-                case WidgetType::WidgetTypeStatusLine:
-                    break;
-                default:
-                    w->SetCursorPosition(position);
-                    break;
-            }
+            w->SetCursorPosition(position);
+            break;
         }
     }
 }
@@ -177,10 +179,20 @@ Widget* Gui::GetWidgetUnderMouse(void)
         result = (*wIt);
     }
     return result;
-
 }
 
 bool Gui::SwitchBuffer(MoveCursorDirection direction)
 {
-    return _widgetTabActive->SwitchBuffer(direction);
+    bool res = _widgetTabList->SwitchBuffer(direction);
+    if(res)
+    {
+        StatusLineUpdate(_widgetTabList->GetActiveBuffer()->FileName()); // update status line information
+    }
+    return res;
+}
+
+void Gui::StatusLineUpdate(std::string bufferName)
+{
+    _statusLine->UpdateFilename(bufferName);
+    _statusLine->UpdateTabName(_widgetTabList->NameOfCurrentTab());
 }
