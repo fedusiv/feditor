@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <sys/_types/_u_short.h>
 
 #include "gui.hpp"
 #include "widget.hpp"
@@ -135,6 +136,9 @@ void Gui::UpdateMousePosition(Vec2 mousePosition)
     _mousePosition = mousePosition;
 }
 
+/*
+    This is kind a tricky funciton. It works also as button, it says to widget, what to this location mouse pressed
+*/
 void Gui::AlignCursorPositionByMouse()
 {
     Vec2 position;

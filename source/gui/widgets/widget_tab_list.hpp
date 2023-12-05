@@ -33,7 +33,8 @@ class WidgetTabList: public Widget
 
     private:
         void GenerateNewLabel();    // Generating new label
-        std::list<WidgetTab*> _widgetsTabList; // all tabs entities widgets in list of tabs window
+        void SwitchToTab(int id);   // switch to existing different tab
+        std::vector<WidgetTab*> _widgetsTabList; // all tabs entities widgets in list of tabs window
         std::vector<WidgetLabel*> _widgetsLabelList; // all tabs name  widgets in list
         WidgetTab* _currentTab;
         GuiLayout* _layoutMain; // main layout with vertical orientation

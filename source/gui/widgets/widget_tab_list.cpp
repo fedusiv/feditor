@@ -42,6 +42,14 @@ void WidgetTabList::GenerateNewLabel()
     _layoutH->Insert(label,true);
 }
 
+void WidgetTabList::SwitchToTab(int id)
+{
+    _layoutV->Remove(_currentTab);
+    _currentTab = _widgetsTabList.at(id);
+    _layoutV->Insert(_currentTab, false);
+    _currentTabId = id;
+}
+
 void WidgetTabList::Render(void)
 {
     Widget::Render();
@@ -61,7 +69,24 @@ void WidgetTabList::Resize(Rect newRect)
 
 void WidgetTabList::SetCursorPosition(Vec2 position)
 {
-    _currentTab->SetCursorPosition(position);
+    bool labelPressed = false;
+    int labelId = 0;
+    // First check is it was pressed on label widgets
+    for(auto l: _widgetsLabelList){
+        if(l->IsInWidget(position))
+        {
+            // User pressed on label
+            labelPressed = true;
+            if(labelId != _currentTabId){ // verify, that was pressed not on the same tab label
+                SwitchToTab(labelId);
+                break;
+            }
+        }
+        labelId++;
+    }
+    if(!labelPressed){
+        _currentTab->SetCursorPosition(position);
+    }
 }
 
 void WidgetTabList::PageScrolling(Vec2 direction, Vec2 mousePosition)
