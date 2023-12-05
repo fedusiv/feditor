@@ -9,7 +9,7 @@ WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
     
     _widgetType = WidgetType::WidgetTypeStatusLine;
     _drawingOffset = Vec2(_glyphSize.x,0);
-    _currentFileName = "";
+    _currentFileName = "---";
     _infoBorderString = " | ";
 
 }

@@ -71,6 +71,10 @@ void WidgetTabList::PageScrolling(Vec2 direction, Vec2 mousePosition)
 
 void WidgetTabList::AttachBuffer(Buffer * buffer, LayoutDirection direction)
 {
+    if(_currentTab == nullptr){
+        // if there is no created any tab.
+        CreateNewTab();
+    }
     _currentTab->AttachBuffer(buffer, direction);
 }
 

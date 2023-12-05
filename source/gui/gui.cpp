@@ -10,7 +10,7 @@
 Gui::Gui()
 {
     _needExit = false;
-    _windowsSize = Vec2(800,600);
+    _windowsSize = Vec2(1280,800);
     _fontSize = 16;
 }
 
@@ -88,6 +88,7 @@ void Gui::CreateStatusLine(void)
     _statusLine = new WidgetStatusLine(rect);
     _widgetsList.push_back(_statusLine);
     _verticalLayout->Insert(_statusLine, true);
+    StatusLineUpdate();
 }
 
 void Gui::AttachWidgetEditor(Buffer * buffer, bool vertical)
@@ -100,18 +101,14 @@ void Gui::AttachWidgetEditor(Buffer * buffer, bool vertical)
         direction = LayoutDirection::Vertical;
     }
     _widgetTabList->AttachBuffer(buffer, direction); // attach buffer to tab, and let all functionality there
-    StatusLineUpdate(buffer->FileName());
+    StatusLineUpdate();
 }
 
 void Gui::AttachTab()
 {
     _widgetTabList->CreateNewTab();
+    StatusLineUpdate();
     // swtich to new created tab
-    if(_widgetTabList->GetActiveBuffer() != nullptr){
-        StatusLineUpdate(_widgetTabList->GetActiveBuffer()->FileName());
-    }else{
-        StatusLineUpdate("---");
-    }
 }
 
 bool Gui::NeedExit(void)
@@ -186,13 +183,17 @@ bool Gui::SwitchBuffer(MoveCursorDirection direction)
     bool res = _widgetTabList->SwitchBuffer(direction);
     if(res)
     {
-        StatusLineUpdate(_widgetTabList->GetActiveBuffer()->FileName()); // update status line information
+        StatusLineUpdate(); // update status line information
     }
     return res;
 }
 
-void Gui::StatusLineUpdate(std::string bufferName)
+void Gui::StatusLineUpdate()
 {
-    _statusLine->UpdateFilename(bufferName);
+    if(_widgetTabList->GetActiveBuffer() != nullptr){
+        _statusLine->UpdateFilename(_widgetTabList->GetActiveBuffer()->FileName());
+    }else{
+        _statusLine->UpdateFilename("---");
+    }
     _statusLine->UpdateTabName(_widgetTabList->NameOfCurrentTab());
 }

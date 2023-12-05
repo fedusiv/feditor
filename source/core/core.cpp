@@ -40,8 +40,11 @@ void Core::Init(void)
     }
     else
     {
-        ExecDataTypeCreateBuffer  d = {.filename = _locationPoint, .verticalDirection = true};
-        _executor->CallExecutor(ExecutorOpCode::CreateBuffer, &d);
+        // create buffer from a file only if file is mentioned
+        if(_locationPoint != ""){
+            ExecDataTypeCreateBuffer  d = {.filename = _locationPoint, .verticalDirection = true};
+            _executor->CallExecutor(ExecutorOpCode::CreateBuffer, &d);
+        }
     }
 }
 
