@@ -44,10 +44,19 @@ void WidgetTabList::GenerateNewLabel()
 
 void WidgetTabList::SwitchToTab(int id)
 {
+    if(id == _currentTabId)
+    {
+        return; // no need to make switch
+    }
     _layoutV->Remove(_currentTab);
     _currentTab = _widgetsTabList.at(id);
     _layoutV->Insert(_currentTab, false);
     _currentTabId = id;
+    // notife system, what tab was switched
+    FSignalCell * cell = new FSignalCell();
+    cell->opcode = FSignalOpCode::SwithTabListId;
+    cell->data = _currentTabId;
+    FSignalSend(cell);
 }
 
 void WidgetTabList::Render(void)

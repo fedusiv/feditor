@@ -8,6 +8,7 @@
 #include "core.hpp"
 #include "editor.hpp"
 #include "file_manager.hpp"
+#include "fsignal.hpp"
 
 Core::Core(Gui * gui, Input * input,std::string location) : _guiHandler(gui), _inputHandler(input), _locationPoint(location)
 {
@@ -17,6 +18,7 @@ Core::Core(Gui * gui, Input * input,std::string location) : _guiHandler(gui), _i
 
 void Core::Init(void)
 {
+    FSignalInit();
     _executor = Executor::Instance();
     _bufferHandler = BufferHandler::Instance();
 
@@ -53,6 +55,7 @@ void Core::MainLoop()
 
     while(!_guiHandler->NeedExit())
     {
+        SignalHandling();
         _guiHandler->Update();
         InputHandling();
         _guiHandler->UpdateMousePosition(_inputHandler->CurrentMousePosition());
@@ -98,4 +101,24 @@ void Core::InputHandling()
         _executor->CallExecutor(ExecutorOpCode::TextInsert, &textData);
     }
 
+}
+
+void Core::SignalHandling(void)
+{
+    auto signal = FSignalGet();
+    while(signal){
+
+        switch (signal->opcode)
+        {
+        case FSignalOpCode::SwithTabListId:
+             _executor->CallExecutor(ExecutorOpCode::SwitchToTab, &signal->data);
+            break;
+        
+        default:
+            break;
+        }
+
+
+        signal = FSignalGet();  // read one more
+    }
 }

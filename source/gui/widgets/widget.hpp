@@ -4,6 +4,7 @@
 #include "colors.hpp"
 #include "vec2.hpp"
 #include "editor_state.hpp"
+#include "fsignal.hpp"
 
 enum WidgetType
 {

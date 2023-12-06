@@ -27,13 +27,13 @@ class WidgetTabList: public Widget
         Buffer * GetActiveBuffer(); // returns current active buffer
         void CreateNewTab();    // creates new tab
         std::string NameOfCurrentTab(); // returns name of the current tab
+        void SwitchToTab(int id);   // switch to existing different tab
     
     protected:
         void CalculateDrawingOffset(void) override;
 
     private:
         void GenerateNewLabel();    // Generating new label
-        void SwitchToTab(int id);   // switch to existing different tab
         std::vector<WidgetTab*> _widgetsTabList; // all tabs entities widgets in list of tabs window
         std::vector<WidgetLabel*> _widgetsLabelList; // all tabs name  widgets in list
         WidgetTab* _currentTab;

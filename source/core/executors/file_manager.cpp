@@ -67,9 +67,20 @@ void FileManager::SwitchBetweenEditorsInTab(ExecutorAccess *execA, MoveCursorDir
         execA->bufferHandler->UpdateActiveBuffer();
     }
 }
+
 void FileManager::CreateNewTab(ExecutorAccess *execA, void *data)
 {
+    execA->bufferHandler->CreateNewTab();
     execA->gui->AttachTab();    // attach new tab and swtich to it
+}
+
+void FileManager::SwitchToTab(ExecutorAccess *execA, void *data)
+{
+    int newTabId;
+
+    newTabId = *static_cast<int*>(data);  
+    execA->bufferHandler->SwitchToTab(newTabId); // change current active tab for buffer handler
+    execA->gui->SwitchTab(newTabId);
 }
 
 
@@ -86,4 +97,5 @@ void FileManager::Init()
     exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabRight, ExecutorOpCode::SwitchBetweenEditorsInTabRight, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyRight}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_right", "foo");
     // Create new tab
     exec->AddExecutorElement(FileManager::CreateNewTab, ExecutorOpCode::CreateNewTab, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyT}), std::vector<EditorState>(1, EditorState::InsertState), "create_new_tab", "foo");
+    exec->AddExecutorElement(FileManager::SwitchToTab, ExecutorOpCode::SwitchToTab, std::vector<KeyMap>(), std::vector<EditorState>(1, EditorState::InsertState), "switch_to_tab", "foo");
 }

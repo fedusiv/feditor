@@ -112,6 +112,12 @@ void Gui::AttachTab()
     // swtich to new created tab
 }
 
+void Gui::SwitchTab(int id)
+{
+    _widgetTabList->SwitchToTab(id);
+    StatusLineUpdate();
+}
+
 bool Gui::NeedExit(void)
 {
     return _needExit;
@@ -201,3 +207,4 @@ void Gui::StatusLineUpdate()
     }
     _statusLine->UpdateTabName(_widgetTabList->NameOfCurrentTab());
 }
+

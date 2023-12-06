@@ -27,6 +27,7 @@ enum class ExecutorOpCode
     SwitchBetweenEditorsInTabLeft,
     SwitchBetweenEditorsInTabRight,
     CreateNewTab,
+    SwitchToTab,
 
     ExitApp,
     GuiResize,

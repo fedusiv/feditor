@@ -16,6 +16,7 @@ class Core
         void Init(void);
         void MainLoop(void);
         void InputHandling(void);
+        void SignalHandling(void);
 
         Gui * _guiHandler;
         Input * _inputHandler;
