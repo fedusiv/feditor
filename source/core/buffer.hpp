@@ -34,6 +34,8 @@ class Buffer
         std::string FileName();
         void RequestToSetActive(bool status);  // this method called around buffer handler, so that's why it's request. Buffer handler in required time will change current active buffer
         bool RequestActive();   // return status to be active. If it's active it will set immidiately flag to false
+        bool IsFake();          // here is logic: fake buffer does not have any output and will be deleted once normal will be created
+        void MarkFake();
 
     private:
         static int _globalId;
@@ -43,6 +45,7 @@ class Buffer
         std::string _filepath;
         int _largestLineSize;   // amount of characaters (symbols) in one line. Maximum amount for whole file
         bool _requestActive;    // flag is set when some widget or other object in around of bufferhandler wants to set this buffer active
+        bool _isFake;           // this flag, which buffer as  fake, means, that no one expect any information from this buffer. Do not be sad my little buffer, you are very brave kiddo and we are glad to have you
 };
 
 #endif // __BUFFER_HPP__

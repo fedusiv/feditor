@@ -31,6 +31,7 @@ class BufferHandler
         Buffer * UpdateActiveBuffer();  // function go over all created buffers, looks for buffer, which is requested to be active, and makes decision
 
     private:
+        void CreateFakeBuffer();    // logic for fake buffers
         static BufferHandler* _handler;
         std::vector<BufferList> _bufferList;    // list of created buffers
         BufferList _activeBuffer;     // list of current active buffers. depend of tab

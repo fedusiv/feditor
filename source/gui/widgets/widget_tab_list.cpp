@@ -3,6 +3,7 @@
 
 WidgetTabList::WidgetTabList(Rect rect): Widget(rect)
 {
+    _currentTabId = -1; // There is no tabs!
     // Creating layout
     _layoutMain = new GuiLayout( _widgetRect, LayoutDirection::Vertical);
     // Creating layout for tab names
@@ -21,12 +22,7 @@ void WidgetTabList::CreateNewTab()
     GenerateNewLabel();
     auto tab = new WidgetTab(_widgetRect);
     _widgetsTabList.push_back(tab);
-    if(_currentTab != nullptr){
-        _layoutV->Remove(_currentTab);
-    }
-    _layoutV->Insert(tab, false);
-    _currentTab = tab;
-    _currentTabId = _widgetsTabList.size()-1;
+    SwitchToTab(_widgetsTabList.size()-1);
 }
 
 void WidgetTabList::GenerateNewLabel()
@@ -48,14 +44,20 @@ void WidgetTabList::SwitchToTab(int id)
     {
         return; // no need to make switch
     }
-    _layoutV->Remove(_currentTab);
+    if(_currentTabId > -1){
+        _widgetsLabelList[_currentTabId]->SetTextColor(ColorPurpose::ColorTabListText);
+    }
+    if(_currentTab != nullptr){
+        _layoutV->Remove(_currentTab);
+    }
     _currentTab = _widgetsTabList.at(id);
     _layoutV->Insert(_currentTab, false);
     _currentTabId = id;
-    // notife system, what tab was switched
+    // notify system, what tab was switched
     FSignalCell * cell = new FSignalCell();
     cell->opcode = FSignalOpCode::SwithTabListId;
     cell->data = _currentTabId;
+    _widgetsLabelList[id]->SetTextColor(ColorPurpose::ColorTabListSelected);
     FSignalSend(cell);
 }
 

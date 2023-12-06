@@ -286,3 +286,12 @@ bool Buffer::RequestActive()
     return status;
 }
 
+void Buffer::MarkFake()
+{
+    _isFake = true;
+}
+
+bool Buffer::IsFake()
+{
+    return _isFake;
+}
