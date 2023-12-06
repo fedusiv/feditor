@@ -25,7 +25,8 @@ class WidgetTab: public Widget
         void PageScrolling(Vec2 direction, Vec2 mousePosition) override; // moving editor page based on explicit commands to scroll page
         void AttachBuffer(Buffer * buffer, LayoutDirection direction);         // attaching buffer to tab. Creates widget editor
         bool SwitchBuffer(MoveCursorDirection direction);   // if swtich happened return true
-
+        Buffer * GetActiveBuffer(); // returns current active buffer
+    
     protected:
         void CalculateDrawingOffset(void) override;
         WidgetEditorEntity* CreateEditorEntity(Buffer * buffer);
@@ -35,7 +36,7 @@ class WidgetTab: public Widget
         std::list<WidgetEditorEntity*> _widgetsEntityList; // all editor entities widgets in gui window
         std::vector<GuiLayout*> _layoutsV; // vertical layouts inside widget tab
         std::vector<GuiLayout*> _layoutsH; // horizontal layouts inside widget tab
-        WidgetEditorEntity* _currentActiveEntity; // pointer to current active editor entity
+        WidgetEditorEntity* _currentActiveEntity = nullptr; // pointer to current active editor entity
 
 };
 

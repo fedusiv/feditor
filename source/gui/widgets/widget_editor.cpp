@@ -11,6 +11,7 @@ WidgetEditor::WidgetEditor(Rect rect, Buffer *buffer) : Widget(rect), _buffer(bu
     _linesPageMoveOffset = 1;
     _currentLeftLine = 0;
     _linesPageShiftOffset = 1;
+    _widgetBorderThick = 1;
     CalculateAvaliableLines();
     CalculateAvaliableColumns();
     CalculateDrawingOffset();
@@ -353,4 +354,9 @@ void WidgetEditor::IncreaseLeftLine(int value)
         _currentLeftLine  = columnsNumber;
     }
 
+}
+
+Buffer * WidgetEditor::GetCurrentBuffer()
+{
+    return _buffer;
 }

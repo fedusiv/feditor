@@ -13,9 +13,14 @@ class WidgetStatusLine: public Widget
         void Render(void) override;
         void Resize(Rect newRect) override;
 
+        void UpdateFilename(std::string filename);
+        void UpdateTabName(std::string tabname);
+
     private:
-        void DrawCurrentMode(void);
-        std::string _editorStateName[EditorState::EditorStateMax];
+        void DrawInformation(void);
+        std::string _currentFileName;
+        std::string _currentTabName;
+        std::string _infoBorderString;
 
 };
 

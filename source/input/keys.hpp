@@ -56,6 +56,7 @@ class KeyAction
                 case SDL_SCANCODE_N:         {keyMap = KeyMap::KeyN; break;}
                 case SDL_SCANCODE_H:         {keyMap = KeyMap::KeyH; break;}
                 case SDL_SCANCODE_V:         {keyMap = KeyMap::KeyV; break;}
+                case SDL_SCANCODE_T:         {keyMap = KeyMap::KeyT; break;}
 
                 default:
                     keyMap = KeyMap::KeyZero;

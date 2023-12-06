@@ -38,6 +38,7 @@ enum KeyMap
     KeyN,
     KeyH,
     KeyV,
+    KeyT,
     KeysMax
 };
 

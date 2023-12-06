@@ -4,6 +4,7 @@
 #include "colors.hpp"
 #include "vec2.hpp"
 #include "editor_state.hpp"
+#include "fsignal.hpp"
 
 enum WidgetType
 {
@@ -31,7 +32,7 @@ class Widget
         virtual void SetCursorPosition(Vec2 position); // if widget has functionality for cursor, it will update position. Inherited widget class need to override this. By default it does nothing
         virtual void PageScrolling(Vec2 direction, Vec2 mousePosition); // moving page based on explicit commands to scroll page
         WidgetType GetWidgetType(void);     // get widget type
-
+        void SetBackgroundColor(ColorPurpose color);
         Rect GetRect();
 
 

@@ -1,5 +1,6 @@
 #include "widget_tab.hpp"
 #include "gui_configs.hpp"
+#include "gui_layout.hpp"
 #include "macros.h"
 #include "widget_editorentity.hpp"
 
@@ -17,6 +18,12 @@ void WidgetTab::AttachBuffer(Buffer * buffer, LayoutDirection direction)
     // if direction is vertical it means, that user wants to create vertical widget editor.
     // if direction is horizontal. User wants to create horizontal oriented widget
 
+    // In tab main layout is vertical based. If first will be called horizontal split or will be with horizontal direction. It kind of will break logic.
+    // So with this if we make this logic more stable
+    if(direction == LayoutDirection::Horizontal && _layoutsV.size() == 0){
+        direction = LayoutDirection::Vertical;
+    }
+    
     ee = CreateEditorEntity(buffer);
     if(direction == LayoutDirection::Vertical)
     {
@@ -127,3 +134,13 @@ void WidgetTab::CalculateDrawingOffset(void)
 {
 
 }
+
+Buffer * WidgetTab::GetActiveBuffer()
+{
+    if(_currentActiveEntity == nullptr)
+    {
+        return nullptr;
+    }
+    return _currentActiveEntity->GetWidgetEditor()->GetCurrentBuffer();
+}
+

@@ -6,7 +6,7 @@ Widget::Widget(Rect rect): _widgetFullRect(rect)
 {
     _widgetType = WidgetType::WidgetTypeBase;
     _active = true;
-    _widgetBorderThick = 2;
+    _widgetBorderThick = WIDGET_BORDER_THICK;
     _drawingOffset = Vec2(0,0);
     _cursorWidth = 4;
     _cursorHeightAdd = 2;
@@ -128,4 +128,9 @@ void Widget::SetCursorPosition(Vec2 position)
 void Widget::PageScrolling(Vec2 direction, Vec2 mousePosition)
 {
     // no functionality
+}
+
+void Widget::SetBackgroundColor(ColorPurpose color)
+{
+    _colorBgWidget = color;
 }

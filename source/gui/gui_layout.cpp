@@ -10,16 +10,23 @@
 #include "widget_editor.hpp"
 #include "widget_statusline.hpp"
 
+/*
+    Shortly. I hate this piece of code
+    everyhting look like one dirty hack
+    Apologize for this. Maybe will come one day, when I will get motivation to fix all these mess
+*/
+
 GuiLayout::GuiLayout(Rect rect, LayoutDirection direction) : _layoutDirection(direction), _layoutRect(rect)
 {
     _layoutType = LayoutType::WidgetBase;
     _glyphHardSizeAdd = 2;
     _glyphSize = Graphics::GlyphMaxSize();
+    _isHardSize = false;
 }
 
 void GuiLayout::CalculateAndResizeHorizontalLayout()
 {
-    Rect newRect; 
+    Rect newRect;
 
     newRect = _layoutRect;
     newRect.w = _layoutRect.w /  _layoutLList.size();   // for now equal size for all layouts
@@ -34,22 +41,39 @@ void GuiLayout::CalculateAndResizeVerticalLayout()
 {
     Rect newRect; 
     newRect = _layoutRect;
-    newRect.h = _layoutRect.h /  _layoutLList.size();   // for now equal size for all layouts
+    int height;
+
+    int flexibleWidgetsAmout = 0;
+    for(auto l: _layoutLList)
+    {
+        if(l->IsHardSize())
+        {
+            newRect.h -= l->GetRect().h;
+        }else{
+            flexibleWidgetsAmout++;
+        }
+    }
+
+    newRect.h = newRect.h /  flexibleWidgetsAmout;   // for now equal size for all layouts
     for(auto l : _layoutLList)
     {
-        l->Resize(newRect); // resize layout
-        newRect.y += newRect.h; // x position will be moved to width of newRect. It's horizontal shift
+        if(l->IsHardSize()){
+            auto r = newRect;
+            r.h = l->GetRect().h;
+            l->Resize(r);
+            height = r.h;
+        }else{
+            l->Resize(newRect); // resize layout
+            height = newRect.h;
+        }
+        newRect.y += height; // x position will be moved to width of newRect. It's horizontal shift
     }
 }
 
 int GuiLayout::CalculateHardSizeOnGlyph()
 {
-    if(_layoutDirection == LayoutDirection::Vertical)
-    {
-        return _glyphSize.y + _glyphHardSizeAdd;
-    }
-    // For now I can say, that hardcoded widgets of horizontal orientation is not yet implemented. It's kind of temp plug 
-    return _glyphSize.x + _glyphHardSizeAdd;
+
+    return _glyphSize.y + _glyphHardSizeAdd;
 }
 
 void GuiLayout::Resize(Rect newRect)
@@ -112,34 +136,32 @@ void GuiLayout::CalculateAndResizeVerticalWidget()
 void GuiLayout::CalculateAndResizeHorizontalWidget()
 {
     Rect rect;
-    int hardSizedSize = 0;        // size in pixels, what amout of length in width or width is taken by hardcoded size
-    int flexibleWidgetsAmout = 0; // amount of flexible size
+    // int hardSizedSize = 0;        // size in pixels, what amout of length in width or width is taken by hardcoded size
+    // int flexibleWidgetsAmout = 0; // amount of flexible size
     int width = 0;
 
     // calculate width for widgets
-    for (auto e : _layoutWList)
-    {
-        if (e->hardSize)
-        {
-            hardSizedSize += e->widget->GetRect().w;
-        }
-        else
-        {
-            flexibleWidgetsAmout++;
-        }
-    }
-    width = (_layoutRect.w - hardSizedSize)  / flexibleWidgetsAmout;
+    // for (auto e : _layoutWList)
+    // {
+    //     if (e->hardSize)
+    //     {
+    //         hardSizedSize += e->widget->GetRect().w;
+    //     }
+    //     else
+    //     {
+    //         flexibleWidgetsAmout++;
+    //     }
+    // }
+    // width = (_layoutRect.w - hardSizedSize)  / flexibleWidgetsAmout;
+    width = _layoutRect.w  / _layoutWList.size();
     rect = _layoutRect; // here we need to get width of layout and first place of widget, mean x and y. width will be configured below
     for (auto e : _layoutWList)
     {
         if (e->hardSize)
         {
-            rect.w = CalculateHardSizeOnGlyph();
+            rect.h = CalculateHardSizeOnGlyph();
         }
-        else
-        {
-            rect.w = width; // required width for widget
-        }
+        rect.w = width; // required width for widget
         CallResize(e->widget, rect);
         rect.x +=  e->widget->GetRect().w; // change x coordinate for futher columns
     }
@@ -167,7 +189,23 @@ void GuiLayout::Insert(Widget *widget, bool hardSize, Widget* nextTo)
             }
         }
     }
+    CallWidgetResize();
+}
 
+void GuiLayout::Remove(Widget* widget)
+{
+    _layoutWList.erase(std::remove_if(
+    _layoutWList.begin(),
+    _layoutWList.end(),
+    [widget](LayoutElement* elem) {
+        return elem->widget == widget;
+    }),
+    _layoutWList.end());
+    CallWidgetResize();
+}
+
+void GuiLayout::CallWidgetResize()
+{
     switch (_layoutDirection) {
         case LayoutDirection::Vertical:
             CalculateAndResizeVerticalWidget();
@@ -416,4 +454,19 @@ int GuiLayout::ElementsAmount()
     }else{
         return _layoutWList.size();
     }
+}
+
+void GuiLayout::SetHardSize()
+{
+    _isHardSize = true;
+}
+
+bool GuiLayout::IsHardSize()
+{
+    return _isHardSize;
+}
+
+Rect GuiLayout::GetRect()
+{
+    return _layoutRect;
 }

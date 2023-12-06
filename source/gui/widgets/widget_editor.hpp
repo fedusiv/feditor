@@ -18,6 +18,7 @@ class WidgetEditor: public Widget
         void SetCursorPosition(Vec2 position) override; // setting cursor position of widget editor
         void PageScrolling(Vec2 direction, Vec2 mousePosition) override; // moving editor page based on explicit commands to scroll page
         void SetActive(bool status) override;
+        Buffer * GetCurrentBuffer();
 
     protected:
         void CalculateDrawingOffset(void) override;

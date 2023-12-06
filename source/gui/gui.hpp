@@ -7,6 +7,7 @@
 #include "widget_statusline.hpp"
 #include "widget_editor.hpp"
 #include "widget_tab.hpp"
+#include "widget_tab_list.hpp"
 
 
 class Gui
@@ -18,6 +19,7 @@ class Gui
         void Update(void);  // main function of gui process
         void CreateWindow(void);    // create main window
         void AttachWidgetEditor(Buffer * buffer, bool vertical=true);  // create empty widget for edititng text
+        void AttachTab();   // creates new tab in tab list
         bool NeedExit(void);    // report when application need to be exited
         void RequestExit(void); // request to close app
         void Resize(void);      // resize request
@@ -26,7 +28,9 @@ class Gui
         void AlignCursorPositionByMouse(void);      // this function looking for widget under required coordinates and trying to change cursor position
         void PageScrolling(Vec2 direction); // scroll page of widget under mouse position
         bool SwitchBuffer(MoveCursorDirection direction);   // change active widget inside active widget tab, in direction used arrow keys. Returns true if switch has happened
-
+        void SwitchTab(int id);  // set current tab to given tab id
+        void StatusLineUpdate();   // update status line with the new buffer name
+        
     private:
         void InitWidgets(void);     // initialize starting widgets
         void CreateLayout(void);    // making init layout for all widgets.
@@ -35,9 +39,8 @@ class Gui
         Widget* GetWidgetUnderMouse(void);  // get pointer to widget, under which is mouse position right now
 
         std::list<Widget*> _widgetsList; // all widgets in gui window
-        std::list<WidgetTab*> _widgetsTabsList; // all widget tabs
-        WidgetStatusLine * statusLine = nullptr;  // pointer to status line widget
-        WidgetTab * _widgetTabActive = nullptr;   // pointer to active tab widget
+        WidgetTabList * _widgetTabList = nullptr; // control for tabs
+        WidgetStatusLine * _statusLine = nullptr;  // pointer to status line widget
         bool _needExit;     // flag if need to exit
         Vec2 _windowsSize;  // current window size
         int _fontSize;      // current font size

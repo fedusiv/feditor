@@ -18,6 +18,9 @@ class FileManager
         static void SwitchBetweenEditorsInTabLeft(ExecutorAccess * execA, void * data);
         static void SwitchBetweenEditorsInTabRight(ExecutorAccess * execA, void * data);
         static void SwitchBetweenEditorsInTab(ExecutorAccess * execA, MoveCursorDirection direction);
+        static void CreateNewTab(ExecutorAccess * execA, void * data);  // creates new tab
+        static void SwitchToTab(ExecutorAccess * execA, void * data);  // user requested go to specific tab
+
 };
 
 #endif // __FILE_MANAGER_HPP__

@@ -92,6 +92,8 @@
         "codecvt": "cpp",
         "__verbose_abort": "cpp",
         "condition_variable": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "charconv": "cpp",
+        "span": "cpp"
     }
 }

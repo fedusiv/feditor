@@ -25,6 +25,8 @@ class WidgetEditorEntity: public Widget
         void SetCursorPosition(Vec2 position) override; // setting cursor position of widget
         void PageScrolling(Vec2 direction, Vec2 mousePosition) override; // moving editor page based on explicit commands to scroll page
 
+        WidgetEditor * GetWidgetEditor(); // return widget editor of editor entity
+    
     private:
         GuiLayout* _layout;
         WidgetEditor* _editor;
