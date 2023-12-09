@@ -42,6 +42,10 @@ void Gui::Resize(void)
     newSize = Graphics::GetAppSize();   // get new size from gprahic API
     newRect = Rect(0,0, newSize.x, newSize.y);
     _verticalLayout->Resize(newRect);
+
+    if(nullptr != floatWidget){
+        floatWidget->Resize(newRect);
+    }
 }
 
 void Gui::CreateWindow(void)
