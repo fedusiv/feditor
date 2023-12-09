@@ -57,6 +57,8 @@ class Widget
 
         void DrawCharacter(int character, Vec2 pos, ColorPurpose color);
         void DrawBackground();
+        void DrawRect(Rect rect, ColorPurpose color);// fill given rect with the color
+        void DrawRect(Rect rect, int thickness, ColorPurpose colorBorder, ColorPurpose colorBg);// fill given rect with the color and draw borders
         void DrawCursor(Vec2 pos); // draw cursor at given position
         void UpdateWidgetRect(Rect fullRect);
         virtual void CalculateDrawingOffset(void);

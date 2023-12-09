@@ -6,6 +6,7 @@
 #include "widget.hpp"
 #include "graphics.hpp"
 #include "gui_layout.hpp"
+#include "widget_float.hpp"
 
 
 Gui::Gui()
@@ -26,6 +27,9 @@ void Gui::Update(void)
         for(auto w: _widgetsList)
         {
             w->Render();
+        }
+        if(nullptr != floatWidget){
+            floatWidget->Render();
         }
     Graphics::RenderEnd();
 }
@@ -60,6 +64,7 @@ void Gui::CreateLayout(void)
     // Other widgets goes in hierarchy there.
     CreateWidgetTab();
     CreateStatusLine();
+    floatWidget = new WidgetFloat(Rect(0,0, _windowsSize.x, _windowsSize.y), "Cmd");
     Resize();
 }
 

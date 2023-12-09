@@ -20,6 +20,9 @@ enum ColorPurpose
     ColorTabListBg,
     ColorTabListText,
     ColorTabListSelected,
+    ColorFloatWidgetText,
+    ColorFloatWidgetBg,
+    ColorFloatWidgetBorderLine,
 
     ColorWhite,
     ColorPurposeMax

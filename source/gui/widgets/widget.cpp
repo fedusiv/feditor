@@ -1,4 +1,5 @@
 #include "widget.hpp"
+#include "colors.hpp"
 #include "graphics.hpp"
 #include "vec2.hpp"
 
@@ -38,6 +39,19 @@ void Widget::DrawBackground()
     Graphics::DrawRect(_widgetRect,_colorBgWidget);
 }
 
+void Widget::DrawRect(Rect rect, ColorPurpose color)
+{
+    Graphics::DrawRect(rect,color);
+}
+
+void Widget::DrawRect(Rect rect, int thickness, ColorPurpose colorBorder, ColorPurpose colorBg)
+{
+    Rect bgRect;
+    bgRect = rect;
+    bgRect -= 1;
+    Graphics::DrawRect(rect,colorBorder);
+    Graphics::DrawRect(bgRect,colorBg);
+}
 /*
 *   x and y are relative pixel place
 */

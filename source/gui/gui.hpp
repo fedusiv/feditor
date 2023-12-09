@@ -8,6 +8,7 @@
 #include "widget_editor.hpp"
 #include "widget_tab.hpp"
 #include "widget_tab_list.hpp"
+#include "widget_float.hpp"
 
 
 class Gui
@@ -41,6 +42,7 @@ class Gui
         std::list<Widget*> _widgetsList; // all widgets in gui window
         WidgetTabList * _widgetTabList = nullptr; // control for tabs
         WidgetStatusLine * _statusLine = nullptr;  // pointer to status line widget
+        WidgetFloat * floatWidget = nullptr;   // current float widget
         bool _needExit;     // flag if need to exit
         Vec2 _windowsSize;  // current window size
         int _fontSize;      // current font size

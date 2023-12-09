@@ -18,6 +18,9 @@ Colors::Colors()
     _colorsStorage[ColorPurpose::ColorTabListBg] = {.r = 35, .g = 35, .b = 36, .a = 255};
     _colorsStorage[ColorPurpose::ColorTabListText] = {.r = 124, .g = 122, .b = 125, .a = 255};
     _colorsStorage[ColorPurpose::ColorTabListSelected] = {.r = 209, .g = 163, .b = 240, .a = 255};
+    _colorsStorage[ColorPurpose::ColorFloatWidgetText] = {.r = 240, .g = 238, .b = 206, .a = 255};
+    _colorsStorage[ColorPurpose::ColorFloatWidgetBg] = {.r = 20, .g = 17, .b = 20, .a = 255};
+    _colorsStorage[ColorPurpose::ColorFloatWidgetBorderLine] = {.r = 237, .g = 129, .b = 92, .a = 255};
 
 
     _colorsStorage[ColorPurpose::ColorWhite] = {.r = 240, .g = 240, .b = 240, .a = 240};
