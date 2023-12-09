@@ -16,6 +16,10 @@ WidgetFloat::WidgetFloat(Rect rect, std::string name): Widget(rect)
   Resize(rect);
 }
 
+WidgetFloat::~WidgetFloat()
+{
+    
+}
 
 void WidgetFloat::Render(void)
 {

@@ -8,6 +8,7 @@ class WidgetFloat : Widget
 {
   public:
     WidgetFloat(Rect rect, std::string name); // Receive size as window's size, name of the widget, which will be displayed
+    ~WidgetFloat();
     void Render(void) override;
     void Resize(Rect newRect) override;
     void SetCursorPosition(Vec2 position) override; // setting cursor position of widget

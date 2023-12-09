@@ -68,7 +68,6 @@ void Gui::CreateLayout(void)
     // Other widgets goes in hierarchy there.
     CreateWidgetTab();
     CreateStatusLine();
-    floatWidget = new WidgetFloat(Rect(0,0, _windowsSize.x, _windowsSize.y), "Cmd");
     Resize();
 }
 
@@ -87,12 +86,28 @@ void Gui::CreateWidgetTab(void)
     }
 }
 
+void Gui::CreateFloatWidget()
+{
+    DeleteFloatWidget();
+    floatWidget = new WidgetFloat(Rect(0,0, _windowsSize.x, _windowsSize.y), "Cmd");
+}
+
+void Gui::DeleteFloatWidget()
+{
+    if(nullptr == floatWidget){
+        return;
+    }
+    delete floatWidget;
+    floatWidget = nullptr;
+}
+
 void Gui::CreateStatusLine(void)
 {
     Rect rect;
     if(_statusLine != nullptr)
     {
         delete _statusLine;
+        _statusLine = nullptr;
     }
     rect = Rect(0,0,0,0);   // empty rect, this widget is inside layout. so layout will resize it
     _statusLine = new WidgetStatusLine(rect);
@@ -140,6 +155,17 @@ void Gui::RequestExit(void)
 
 void Gui::SetEditorState(EditorState state)
 {
+    switch (state)
+    {
+        case EditorState::InsertState:
+            DeleteFloatWidget();
+            break;
+        case EditorState::CmdState:
+            CreateFloatWidget();
+            break;
+        default:
+            break;
+    }
     for(auto w: _widgetsList)
     {
         w->SetEditorState(state);

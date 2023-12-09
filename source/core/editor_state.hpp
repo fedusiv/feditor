@@ -6,8 +6,8 @@
 */
 enum EditorState
 {
-    NormalState,
     InsertState,
+    CmdState,
     EditorStateMax
 };
 

@@ -16,7 +16,6 @@ Widget::Widget(Rect rect): _widgetFullRect(rect)
     UpdateWidgetRect(_widgetFullRect);
     _colorBgWidget = ColorPurpose::ColorWidgetBg;
     _colorBorderWidget = ColorPurpose::ColorWidgetBorder;
-    _currentEditorState = EditorState::NormalState;
 }
 
 Widget::~Widget()

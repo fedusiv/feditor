@@ -38,6 +38,8 @@ class Gui
         void CreateStatusLine(void);// create status line. Status line can be only once
         void CreateWidgetTab(void);// creates new widget tab
         Widget* GetWidgetUnderMouse(void);  // get pointer to widget, under which is mouse position right now
+        void CreateFloatWidget();  // instantiate flaot widget
+        void DeleteFloatWidget();   // delete current float widget
 
         std::list<Widget*> _widgetsList; // all widgets in gui window
         WidgetTabList * _widgetTabList = nullptr; // control for tabs
