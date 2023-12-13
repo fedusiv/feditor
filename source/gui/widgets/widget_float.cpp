@@ -13,6 +13,8 @@ WidgetFloat::WidgetFloat(Rect rect, std::string name): Widget(rect)
   _borderOffset = Vec2(2,1);
   _widthProportion = 0.4;
   _heightProportion = 0.3;
+  _cursorHeightAdd = 0;
+  _cursorWidth = 1;
   Resize(rect);
 }
 
@@ -36,10 +38,13 @@ void WidgetFloat::Render(void)
   DrawRect(_userFieldRect, _borderLineThickness, ColorPurpose::ColorFloatWidgetBorderLine, ColorPurpose::ColorFloatWidgetBg);
   // Draw content of user
   dataPos = _borderOffset + Vec2(_borderLineThickness, _glyphSize.y + _borderLineThickness);
+  // We draw only first line
   for(auto c: *(_buffer->LineData(0))){
     DrawCharacter(c, dataPos, ColorPurpose::ColorFloatWidgetText);
     dataPos.x += _glyphSize.x;
   }
+  // DrawCursor for user input
+  DrawCursor(CalculateRealPosForCursor());
   
 }
 
@@ -70,6 +75,18 @@ void WidgetFloat::Resize(Rect newRect)
   _userFieldRect.w = baseRect.w - 2 * _borderLineThickness; // so we have only thickness of line which we need to consider
 
   Widget::Resize(baseRect);
+}
+
+Vec2 WidgetFloat::CalculateRealPosForCursor(void)
+{
+    Vec2 logicPos, relativePos;
+
+    logicPos = _buffer->CursorPosition();
+    logicPos.y = 0; // this is one line. Cursor is only at line 0
+    // It's basically taken from widget editor. We are taking _borderOffset and + x based on glyphs. And y offset which is used for drawing user input rect
+    relativePos = _borderOffset + Vec2( logicPos.x * _glyphSize.x , _glyphSize.y + _borderLineThickness );
+
+    return relativePos;
 }
 
 void WidgetFloat::SetCursorPosition(Vec2 position)

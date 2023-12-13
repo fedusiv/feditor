@@ -18,6 +18,7 @@ class WidgetFloat : Widget
   protected:
     void CalculateDrawingOffset(void) override;
   private:
+    Vec2 CalculateRealPosForCursor(void);
     int _rowDataAmount; // amount of row for data, ny default it's two: name of widget and user input, after there should be autocompletion
     int _borderLineThickness; // thickness of border line, which is border line for printing and drawing characters
     Vec2 _borderOffset;  // This is offset for drawing characters from border line. Also it's size between name of float widget and borders of user input

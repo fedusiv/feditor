@@ -1,4 +1,6 @@
 #include "widget_tab_list.hpp"
+#include "editor_state.hpp"
+#include "widget.hpp"
 #include "widget_label.hpp"
 
 WidgetTabList::WidgetTabList(Rect rect): Widget(rect)
@@ -132,4 +134,14 @@ void WidgetTabList::CalculateDrawingOffset(void)
 std::string WidgetTabList::NameOfCurrentTab()
 {
     return _widgetsLabelList.at(_currentTabId)->GetText();
+}
+
+void WidgetTabList::SetEditorState(EditorState state)
+{
+    Widget::SetEditorState(state);
+    // set only for widget tab, which havwe functionality in compare with label widget.
+    // At least for now
+    for(auto w: _widgetsTabList){
+        w->SetEditorState(state);
+    }
 }

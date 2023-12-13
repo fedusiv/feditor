@@ -1,5 +1,6 @@
 #include <math.h>
 
+#include "editor_state.hpp"
 #include "vec2.hpp"
 #include "widget_editor.hpp"
 #include "macros.h"
@@ -32,7 +33,10 @@ void WidgetEditor::Render(void)
     if(_active)
     {
         // widget is active, need to draw cursor for it
-        DrawCursor(CalculateRealPosForCursor());
+        if(_currentEditorState == EditorState::InsertState){
+            // Draw only is insert mode, i.e. edtiro mode
+            DrawCursor(CalculateRealPosForCursor());
+        }
     }
 
 }

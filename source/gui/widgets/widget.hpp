@@ -27,7 +27,7 @@ class Widget
 
         bool Active();
         virtual void SetActive(bool status);
-        void SetEditorState(EditorState state);
+        virtual void SetEditorState(EditorState state);
         bool IsInWidget(Vec2 position);  // check if given position coordinates is related to this widget
         virtual void SetCursorPosition(Vec2 position); // if widget has functionality for cursor, it will update position. Inherited widget class need to override this. By default it does nothing
         virtual void PageScrolling(Vec2 direction, Vec2 mousePosition); // moving page based on explicit commands to scroll page

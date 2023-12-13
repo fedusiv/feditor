@@ -1,7 +1,9 @@
 #include "widget_tab.hpp"
+#include "editor_state.hpp"
 #include "gui_configs.hpp"
 #include "gui_layout.hpp"
 #include "macros.h"
+#include "widget.hpp"
 #include "widget_editorentity.hpp"
 
 WidgetTab::WidgetTab(Rect rect): Widget(rect)
@@ -144,3 +146,10 @@ Buffer * WidgetTab::GetActiveBuffer()
     return _currentActiveEntity->GetWidgetEditor()->GetCurrentBuffer();
 }
 
+void WidgetTab::SetEditorState(EditorState state)
+{
+    Widget::SetEditorState(state);
+    for(auto w: _widgetsEntityList){
+        w->SetEditorState(state);
+    }
+}
