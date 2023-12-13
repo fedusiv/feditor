@@ -20,6 +20,7 @@ class Gui
         void Update(void);  // main function of gui process
         void CreateWindow(void);    // create main window
         void AttachWidgetEditor(Buffer * buffer, bool vertical=true);  // create empty widget for edititng text
+        void AttachFloatBuffer(Buffer * buffer);  // attach float buffer to currernt float widget
         void AttachTab();   // creates new tab in tab list
         bool NeedExit(void);    // report when application need to be exited
         void RequestExit(void); // request to close app
@@ -44,7 +45,7 @@ class Gui
         std::list<Widget*> _widgetsList; // all widgets in gui window
         WidgetTabList * _widgetTabList = nullptr; // control for tabs
         WidgetStatusLine * _statusLine = nullptr;  // pointer to status line widget
-        WidgetFloat * floatWidget = nullptr;   // current float widget
+        WidgetFloat * _floatWidget = nullptr;   // current float widget
         bool _needExit;     // flag if need to exit
         Vec2 _windowsSize;  // current window size
         int _fontSize;      // current font size

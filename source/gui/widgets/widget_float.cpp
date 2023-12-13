@@ -1,6 +1,6 @@
-#include "widget_float.hpp"
-#include "colors.hpp"
-#include "vec2.hpp"
+#include <widget_float.hpp>
+#include <colors.hpp>
+#include <vec2.hpp>
 #include <string>
 
 
@@ -23,16 +23,24 @@ WidgetFloat::~WidgetFloat()
 
 void WidgetFloat::Render(void)
 {
-  Vec2 namePos;
+  Vec2 dataPos;
 
-  namePos = _borderOffset;
+  // Draw name of widget
+  dataPos = _borderOffset;
   for(auto c: _name){
-    DrawCharacter(c, namePos, ColorPurpose::ColorFloatWidgetText);
-    namePos.x += _glyphSize.x;
+    DrawCharacter(c, dataPos, ColorPurpose::ColorFloatWidgetText);
+    dataPos.x += _glyphSize.x;
   }
   // Draw name of the widget
   // Float widget has background not for whole widget size
   DrawRect(_userFieldRect, _borderLineThickness, ColorPurpose::ColorFloatWidgetBorderLine, ColorPurpose::ColorFloatWidgetBg);
+  // Draw content of user
+  dataPos = _borderOffset + Vec2(_borderLineThickness, _glyphSize.y + _borderLineThickness);
+  for(auto c: *(_buffer->LineData(0))){
+    DrawCharacter(c, dataPos, ColorPurpose::ColorFloatWidgetText);
+    dataPos.x += _glyphSize.x;
+  }
+  
 }
 
 void WidgetFloat::Resize(Rect newRect)
@@ -77,4 +85,9 @@ void WidgetFloat::PageScrolling(Vec2 direction, Vec2 mousePosition)
 void WidgetFloat::CalculateDrawingOffset(void)
 {
   
+}
+
+void WidgetFloat::AttachBuffer(Buffer * buffer)
+{
+  _buffer = buffer;
 }

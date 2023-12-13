@@ -72,12 +72,7 @@ void Core::InputHandling()
 
     editorState = Editor::GetEditorState();
 
-    insertText = false;
-    if(editorState  == EditorState::InsertState)
-    {
-        insertText = true;
-    }
-
+    insertText = true;
     executorResult = false;
     _inputHandler->Update(insertText);
 

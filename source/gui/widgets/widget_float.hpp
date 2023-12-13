@@ -1,8 +1,9 @@
 #ifndef __WIDGET_FLOAT_HPP__
 #define __WIDGET_FLOAT_HPP__
 
-#include "vec2.hpp"
+#include <vec2.hpp>
 #include <widget.hpp>
+#include <buffer.hpp>
 
 class WidgetFloat : Widget
 {
@@ -13,6 +14,7 @@ class WidgetFloat : Widget
     void Resize(Rect newRect) override;
     void SetCursorPosition(Vec2 position) override; // setting cursor position of widget
     void PageScrolling(Vec2 direction, Vec2 mousePosition) override; // moving editor page based on explicit commands to scroll page
+    void AttachBuffer(Buffer * buffer);  // attach buffer to float widget
   protected:
     void CalculateDrawingOffset(void) override;
   private:
@@ -24,6 +26,7 @@ class WidgetFloat : Widget
     Rect _userFieldRect; // rect, which should be covered by borders where is user input and name of widget flaot
     Rect _complFieldRect; // rect, which should be covered by borders where is auto completion. Given variants
     std::string _name; // name of the widget
+    Buffer * _buffer;  // buffer with data
 };
 
 #endif // __WIDGET_FLOAT_HPP__

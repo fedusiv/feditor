@@ -28,8 +28,8 @@ void Gui::Update(void)
         {
             w->Render();
         }
-        if(nullptr != floatWidget){
-            floatWidget->Render();
+        if(nullptr != _floatWidget){
+            _floatWidget->Render();
         }
     Graphics::RenderEnd();
 }
@@ -43,8 +43,8 @@ void Gui::Resize(void)
     newRect = Rect(0,0, newSize.x, newSize.y);
     _verticalLayout->Resize(newRect);
 
-    if(nullptr != floatWidget){
-        floatWidget->Resize(newRect);
+    if(nullptr != _floatWidget){
+        _floatWidget->Resize(newRect);
     }
 }
 
@@ -89,16 +89,16 @@ void Gui::CreateWidgetTab(void)
 void Gui::CreateFloatWidget()
 {
     DeleteFloatWidget();
-    floatWidget = new WidgetFloat(Rect(0,0, _windowsSize.x, _windowsSize.y), "Cmd");
+    _floatWidget = new WidgetFloat(Rect(0,0, _windowsSize.x, _windowsSize.y), "Cmd");
 }
 
 void Gui::DeleteFloatWidget()
 {
-    if(nullptr == floatWidget){
+    if(nullptr == _floatWidget){
         return;
     }
-    delete floatWidget;
-    floatWidget = nullptr;
+    delete _floatWidget;
+    _floatWidget = nullptr;
 }
 
 void Gui::CreateStatusLine(void)
@@ -127,6 +127,11 @@ void Gui::AttachWidgetEditor(Buffer * buffer, bool vertical)
     }
     _widgetTabList->AttachBuffer(buffer, direction); // attach buffer to tab, and let all functionality there
     StatusLineUpdate();
+}
+
+void Gui::AttachFloatBuffer(Buffer * buffer)
+{
+    _floatWidget->AttachBuffer(buffer);
 }
 
 void Gui::AttachTab()

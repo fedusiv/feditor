@@ -68,6 +68,8 @@ void Editor::ChangeEditorModeToCmd(ExecutorAccess * execA, void * data)
 {
     _editorState = EditorState::CmdState;
     execA->gui->SetEditorState(EditorState::CmdState);
+    auto buffer = execA->bufferHandler->InstantiateFloatBuffer();
+    execA->gui->AttachFloatBuffer(buffer);
 }
 
 void Editor::ChangeEditorModeToInsert(ExecutorAccess * execA, void * data)
@@ -108,10 +110,10 @@ void Editor::Init()
 {
     Executor * exec = Executor::Instance();
     // Inserting, editirng text
-    exec->AddExecutorElement(Editor::InsertText, ExecutorOpCode::TextInsert, std::vector<KeyMap>(0), std::vector<EditorState>(1, EditorState::InsertState), "insert_text", "foo");
+    exec->AddExecutorElement(Editor::InsertText, ExecutorOpCode::TextInsert, std::vector<KeyMap>(0), std::vector<EditorState>(1, EditorState::EditorStateMax), "insert_text", "foo");
     exec->AddExecutorElement(Editor::InsertNewLine, ExecutorOpCode::TextInsertNewLine, std::vector<KeyMap>(1, {KeyMap::KeyEnter}), std::vector<EditorState>(1, EditorState::InsertState), "insert_new_line", "foo");
-    exec->AddExecutorElement(Editor::DeleteBeforeCursor, ExecutorOpCode::DeleteBeforeCursor, std::vector<KeyMap>(1, {KeyMap::KeyBackspace}), std::vector<EditorState>(1, EditorState::InsertState), "delete_before_cursor", "foo");
-    exec->AddExecutorElement(Editor::DeleteAfterCursor, ExecutorOpCode::DeleteAfterCursor, std::vector<KeyMap>(1, {KeyMap::KeyDelete}), std::vector<EditorState>(1, EditorState::InsertState), "delete_after_cursor", "foo");
+    exec->AddExecutorElement(Editor::DeleteBeforeCursor, ExecutorOpCode::DeleteBeforeCursor, std::vector<KeyMap>(1, {KeyMap::KeyBackspace}), std::vector<EditorState>({EditorState::InsertState, EditorState::CmdState}), "delete_before_cursor", "foo");
+    exec->AddExecutorElement(Editor::DeleteAfterCursor, ExecutorOpCode::DeleteAfterCursor, std::vector<KeyMap>(1, {KeyMap::KeyDelete}), std::vector<EditorState>({EditorState::InsertState, EditorState::CmdState}), "delete_after_cursor", "foo");
 
     // Moving cursor by arrows
     exec->AddExecutorElement(Editor::MoveCursorStepUp, ExecutorOpCode::MoveCursorUp, std::vector<KeyMap>(1, {KeyMap::KeyUp}), std::vector<EditorState>{EditorState::EditorStateMax}, "move_cursor_up", "foo");

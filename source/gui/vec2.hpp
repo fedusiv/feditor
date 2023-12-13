@@ -103,6 +103,10 @@ class Vec2
             return *this;
         }
 
+        Vec2 operator+(const Vec2& addVec) const {
+            return Vec2(x + addVec.x, y + addVec.y);
+        }
+
         Vec2& operator*=(const int& scale)
         {
             x *= scale;
