@@ -25,6 +25,7 @@ class Buffer
         int ColumnsNumber(void); // maximum amount of characters in one line
         int bufferId;
         void Append(KeysInsertedText data); // append text data on current cursor position
+        void Append(std::string data, int line); // append data to buffer. This is kind of debug function
         void InsertNewLine(void);   // insert new line.
         BufferLine * LineData(int lineNumber);
         Vec2 CursorPosition(); // return cursor position

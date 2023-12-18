@@ -19,8 +19,10 @@ class WidgetFloat : Widget
     void CalculateDrawingOffset(void) override;
   private:
     Vec2 CalculateRealPosForCursor(void);
+    void ResizeAutoCompl(void);  // calculate new size for autocompelition field
     int _rowDataAmount; // amount of row for data, ny default it's two: name of widget and user input, after there should be autocompletion
     int _borderLineThickness; // thickness of border line, which is border line for printing and drawing characters
+    float _complRectHeightGap; // coefficient of distance between user input rect and _completion rect. Coefficient if based on glyph size
     Vec2 _borderOffset;  // This is offset for drawing characters from border line. Also it's size between name of float widget and borders of user input
     float _widthProportion; // proportion of widgth to compare with window's size
     float _heightProportion; // beginning of drawing flaat widget in compare to whole window size
@@ -28,6 +30,7 @@ class WidgetFloat : Widget
     Rect _complFieldRect; // rect, which should be covered by borders where is auto completion. Given variants
     std::string _name; // name of the widget
     Buffer * _buffer;  // buffer with data
+    int _completionLinesAmount; // latest known completion lines amount.
 };
 
 #endif // __WIDGET_FLOAT_HPP__

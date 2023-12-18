@@ -1,3 +1,4 @@
+#include <gui_configs.hpp>
 #include <widget_float.hpp>
 #include <colors.hpp>
 #include <vec2.hpp>
@@ -10,11 +11,13 @@ WidgetFloat::WidgetFloat(Rect rect, std::string name): Widget(rect)
   _rowDataAmount = 2;
   _widgetBorderThick = 0; // this widget does not use this logic here
   _borderLineThickness = 1;
-  _borderOffset = Vec2(2,1);
+  _borderOffset = WIDGET_FLOAT_DATA_DRAW_OFFSET;
   _widthProportion = 0.4;
   _heightProportion = 0.3;
   _cursorHeightAdd = 0;
   _cursorWidth = 1;
+  _completionLinesAmount = 0; // by default no completeion is provided
+  _complRectHeightGap = WIDGET_FLOAT_GAP_BETWEEN_USER_COMPL;
   Resize(rect);
 }
 
@@ -25,7 +28,15 @@ WidgetFloat::~WidgetFloat()
 
 void WidgetFloat::Render(void)
 {
-  Vec2 dataPos;
+  Vec2 dataPos; // point to draw data, symbols
+  int heightPoint; // point of height to draw also
+
+  // More rect for autocompletion or whatever should be there
+  // Render function is called each update frame. Here check if there is new data.
+  if( (_buffer->LinesNumber() - 1) !=  _completionLinesAmount ){
+    _completionLinesAmount = _buffer->LinesNumber() - 1;
+    ResizeAutoCompl();
+  }
 
   // Draw name of widget
   dataPos = _borderOffset;
@@ -45,6 +56,20 @@ void WidgetFloat::Render(void)
   }
   // DrawCursor for user input
   DrawCursor(CalculateRealPosForCursor());
+  // Draw completion field
+  if(_completionLinesAmount){
+    // Draw rect first
+    DrawRect(_complFieldRect, _borderLineThickness, ColorPurpose::ColorFloatWidgetBorderLine, ColorPurpose::ColorFloatWidgetBg);
+    for(int i = 0; i < _completionLinesAmount; i++){
+      heightPoint = _complFieldRect.y - _widgetRect.y + i * (_glyphSize.y + _borderLineThickness); 
+      dataPos = _borderOffset + Vec2(_borderLineThickness, heightPoint);
+      for(auto c: *(_buffer->LineData(i+1))){
+        DrawCharacter(c, dataPos, ColorPurpose::ColorFloatWidgetText);
+        dataPos.x += _glyphSize.x;
+      }
+    }
+
+  }
   
 }
 
@@ -73,8 +98,19 @@ void WidgetFloat::Resize(Rect newRect)
   _userFieldRect.x = baseRect.x + _borderLineThickness;
   _userFieldRect.h = _glyphSize.y + _borderOffset.y * 2; // userinput files is permament size of one glyph height and two gaps
   _userFieldRect.w = baseRect.w - 2 * _borderLineThickness; // so we have only thickness of line which we need to consider
-
+  // Recalculate size of _complFieldRect
+  ResizeAutoCompl();
   Widget::Resize(baseRect);
+}
+
+void WidgetFloat::ResizeAutoCompl(void)
+{
+  // we have already calculated _userFieldRect.
+  // x and w will be same.
+  _complFieldRect.x = _userFieldRect.x;
+  _complFieldRect.w = _userFieldRect.w;
+  _complFieldRect.y = _userFieldRect.y + _userFieldRect.h + ( _complRectHeightGap * _glyphSize.y);
+  _complFieldRect.h = _completionLinesAmount * (_glyphSize.y + _borderOffset.y);
 }
 
 Vec2 WidgetFloat::CalculateRealPosForCursor(void)
@@ -107,4 +143,10 @@ void WidgetFloat::CalculateDrawingOffset(void)
 void WidgetFloat::AttachBuffer(Buffer * buffer)
 {
   _buffer = buffer;
+
+  // Next code is only for dev.
+  _buffer->Append("line 1", 1);
+  _buffer->Append("line 2", 2);
+  _buffer->Append("line 3", 3);
+  _buffer->Append("line 4", 4);
 }

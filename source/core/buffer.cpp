@@ -51,6 +51,12 @@ Buffer::Buffer(void): _largestLineSize(0)
 {
     DefaultInit();
     _buffer.push_back(BufferLine(0));
+
+    // // this is temporary only for float widget cmd test
+    // _buffer.push_back(BufferLine({49,104,105,106}));
+    // _buffer.push_back(BufferLine({50,107,108,109}));
+    // _buffer.push_back(BufferLine({51,102,103,104}));
+    // _buffer.push_back(BufferLine({52,105,106,107}));
 }
 
 void Buffer::DefaultInit()
@@ -90,6 +96,21 @@ void Buffer::Append(KeysInsertedText data)
     if((*it).size() > _largestLineSize)
     {
         _largestLineSize = (*it).size();
+    }
+}
+
+void Buffer::Append(std::string data, int line)
+{
+    int curSize;
+
+    curSize = _buffer.size();
+    curSize = line - curSize + 1; // amount of line, which need to be added
+    while(curSize > 0){
+        _buffer.push_back(BufferLine(0));
+        curSize--;
+    }
+    for(auto c: data){
+        _buffer[line].push_back(c);
     }
 }
 
