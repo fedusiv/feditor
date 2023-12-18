@@ -43,6 +43,7 @@ class Buffer
     private:
         void DefaultInit(void); // default init operation on creating buffer object
         void DeleteAtCursorOneLine(DeleteOperations operation); // just a wpar for one line logic of deleting
+        void CopyOneLineToAnother(int srcId, int dstId); // copy content of one buffer line id to another. Hard copy with replace
         static int _globalId;
         Vec2 _cursorPosition;
         BufferData _buffer;

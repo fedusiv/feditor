@@ -30,6 +30,8 @@ void WidgetFloat::Render(void)
 {
   Vec2 dataPos; // point to draw data, symbols
   int heightPoint; // point of height to draw also
+  int currentLine; // for drawing what is the current variant to choose
+  ColorPurpose color;
 
   // More rect for autocompletion or whatever should be there
   // Render function is called each update frame. Here check if there is new data.
@@ -60,11 +62,18 @@ void WidgetFloat::Render(void)
   if(_completionLinesAmount){
     // Draw rect first
     DrawRect(_complFieldRect, _borderLineThickness, ColorPurpose::ColorFloatWidgetBorderLine, ColorPurpose::ColorFloatWidgetBg);
+    currentLine = _buffer->CursorPosition().y - 1;
     for(int i = 0; i < _completionLinesAmount; i++){
-      heightPoint = _complFieldRect.y - _widgetRect.y + i * (_glyphSize.y + _borderLineThickness); 
+      // height point - calculate current height to draw line
+      heightPoint = _complFieldRect.y - _widgetRect.y + i * (_glyphSize.y + _borderLineThickness);
+      // Calculate position of first symbol to draw
       dataPos = _borderOffset + Vec2(_borderLineThickness, heightPoint);
       for(auto c: *(_buffer->LineData(i+1))){
-        DrawCharacter(c, dataPos, ColorPurpose::ColorFloatWidgetText);
+        color = ColorPurpose::ColorFloatWidgetText;
+        if(i == currentLine){
+          color = ColorPurpose::ColorFloatWidgetTextSelected;
+        }
+        DrawCharacter(c, dataPos, color);
         dataPos.x += _glyphSize.x;
       }
     }
@@ -145,8 +154,8 @@ void WidgetFloat::AttachBuffer(Buffer * buffer)
   _buffer = buffer;
 
   // Next code is only for dev.
-  _buffer->Append("line 1", 1);
-  _buffer->Append("line 2", 2);
-  _buffer->Append("line 3", 3);
-  _buffer->Append("line 4", 4);
+  _buffer->Append("wine 1", 1);
+  _buffer->Append("beer 2", 2);
+  _buffer->Append("whiskey 3", 3);
+  _buffer->Append("vodka 4", 4);
 }

@@ -51,12 +51,6 @@ Buffer::Buffer(void): _largestLineSize(0)
 {
     DefaultInit();
     _buffer.push_back(BufferLine(0));
-
-    // // this is temporary only for float widget cmd test
-    // _buffer.push_back(BufferLine({49,104,105,106}));
-    // _buffer.push_back(BufferLine({50,107,108,109}));
-    // _buffer.push_back(BufferLine({51,102,103,104}));
-    // _buffer.push_back(BufferLine({52,105,106,107}));
 }
 
 void Buffer::DefaultInit()
@@ -81,7 +75,8 @@ void Buffer::Append(KeysInsertedText data)
     }
     // One of the OneLine logic manifestation. User append only to line 0.
     if(_isOneLine){
-        yPos = 0;
+        yPos = _cursorPosition.y = 0; // Okay better to write here. Here is logic for autocompletion, where there is changes in userinput content.
+                                      // We reset completion variant and variant choose for it
     }else{
         yPos = _cursorPosition.y;
     }
@@ -99,6 +94,9 @@ void Buffer::Append(KeysInsertedText data)
     }
 }
 
+/*
+    This function has no cursor operation, because it kind of function of internal editor calls
+*/
 void Buffer::Append(std::string data, int line)
 {
     int curSize;
@@ -155,6 +153,9 @@ void Buffer::MoveCursor(MoveCursorDirection direction)
         {
             if(_cursorPosition.y + 1 >= _buffer.size()) // cursor position from 0, buffer size is from 1.
             {
+                if(_isOneLine){
+                    _cursorPosition.y = 1; // It will make cycle for oneLineBuffer. from last line to the the first line with variants.
+                }
                 break;  // can not go more down, than amount of lines
             }
             _cursorPosition.y += 1; // move cursor up
@@ -211,6 +212,8 @@ void Buffer::MoveCursor(MoveCursorDirection direction)
     }
 
     if(_isOneLine){
+        // Cursor moved, it means, that need to update content
+        CopyOneLineToAnother(_cursorPosition.y, 0);
         return; // Exit function. OneLine logic ends here
     }
     // if move cursor to line where is less characters when in previous need to align with it
@@ -386,4 +389,13 @@ bool Buffer::IsFake()
 void Buffer::MarkOneLine()
 {
     _isOneLine = true;
+}
+
+void Buffer::CopyOneLineToAnother(int srcId, int dstId)
+{
+    // There is no check of content assuming, that you aware of size. This is not external api    
+    _buffer[dstId].clear();
+    _buffer[dstId] = _buffer[srcId];
+    // Now need update cursor x position, because words with different size
+    _cursorPosition.x = _buffer[dstId].size();
 }

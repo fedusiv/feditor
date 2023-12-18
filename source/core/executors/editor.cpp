@@ -75,6 +75,7 @@ void Editor::ChangeEditorModeToCmd(ExecutorAccess * execA, void * data)
 void Editor::ChangeEditorModeToInsert(ExecutorAccess * execA, void * data)
 {
     _editorState = EditorState::InsertState;
+    execA->bufferHandler->RemoveFloatBuffer();
     execA->gui->SetEditorState(EditorState::InsertState);
 }
 

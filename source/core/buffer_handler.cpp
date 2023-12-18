@@ -42,7 +42,6 @@ void BufferHandler::CreateNewTab(void)
     _bufferTabId = _bufferList.size()-1;    // get current tab id, means new tab's id
     _activeBuffer.resize(_activeBuffer.size()+1); // for active buffer holder increse capacity
     CreateFakeBuffer();
-
 }
 
 void BufferHandler::SwitchToTab(int id)
@@ -103,4 +102,10 @@ Buffer* BufferHandler::InstantiateFloatBuffer()
     _floatBuffer = new Buffer();
     _floatBuffer->MarkOneLine();
     return _floatBuffer;
+}
+
+void BufferHandler::RemoveFloatBuffer()
+{
+    delete _floatBuffer;
+    _floatBuffer = nullptr;
 }

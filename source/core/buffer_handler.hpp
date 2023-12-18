@@ -30,6 +30,7 @@ class BufferHandler
         void DeleteAtCursor(DeleteOperations operation);
         Buffer * UpdateActiveBuffer();  // function go over all created buffers, looks for buffer, which is requested to be active, and makes decision
         Buffer * InstantiateFloatBuffer();  // creates new float buffer
+        void RemoveFloatBuffer(); // delete and remove current used flaot buffer
 
     private:
         void CreateFakeBuffer();    // logic for fake buffers
