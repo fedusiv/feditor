@@ -5,10 +5,10 @@
 #include <string>
 
 
-WidgetFloat::WidgetFloat(Rect rect, std::string name): Widget(rect)
+WidgetFloat::WidgetFloat(Rect rect, std::string name, int renderLayer): Widget(rect)
 {
   _name = name;
-  _rowDataAmount = 2;
+  _rowDataAmount = WIDGET_FLOAT_DEFAULT_ROW_AMOUNT;
   _widgetBorderThick = 0; // this widget does not use this logic here
   _borderLineThickness = 1;
   _borderOffset = WIDGET_FLOAT_DATA_DRAW_OFFSET;
@@ -18,12 +18,26 @@ WidgetFloat::WidgetFloat(Rect rect, std::string name): Widget(rect)
   _cursorWidth = 1;
   _completionLinesAmount = 0; // by default no completeion is provided
   _complRectHeightGap = WIDGET_FLOAT_GAP_BETWEEN_USER_COMPL;
+  _layerRender = renderLayer;
   Resize(rect);
 }
 
 WidgetFloat::~WidgetFloat()
 {
     
+}
+
+void WidgetFloat::Update()
+{
+  // More rect for autocompletion or whatever should be there
+  // Render function is called each update frame. Here check if there is new data.
+  if( (_buffer->LinesNumber() - 1) !=  _completionLinesAmount ){
+    // This is basically update function. So if update function will exist and have separate logic of render, this code need to be moved there
+    _completionLinesAmount = _buffer->LinesNumber() - 1; // update amount
+    _rowDataAmount = WIDGET_FLOAT_DEFAULT_ROW_AMOUNT + _completionLinesAmount;
+    // This is called the auto resize. Float widget is special widget and it has ability to cal self resize.
+    Resize(_latestWindowRect);
+  }
 }
 
 void WidgetFloat::Render(void)
@@ -33,13 +47,8 @@ void WidgetFloat::Render(void)
   int currentLine; // for drawing what is the current variant to choose
   ColorPurpose color;
 
-  // More rect for autocompletion or whatever should be there
-  // Render function is called each update frame. Here check if there is new data.
-  if( (_buffer->LinesNumber() - 1) !=  _completionLinesAmount ){
-    _completionLinesAmount = _buffer->LinesNumber() - 1;
-    ResizeAutoCompl();
-  }
-
+  // This part of the code is not expliciplty related to render functionality.
+  Update();
   // Draw name of widget
   dataPos = _borderOffset;
   for(auto c: _name){
@@ -50,7 +59,7 @@ void WidgetFloat::Render(void)
   // Float widget has background not for whole widget size
   DrawRect(_userFieldRect, _borderLineThickness, ColorPurpose::ColorFloatWidgetBorderLine, ColorPurpose::ColorFloatWidgetBg);
   // Draw content of user
-  dataPos = _borderOffset + Vec2(_borderLineThickness, _glyphSize.y + _borderLineThickness);
+  dataPos = _userInputDrawStartPoint;
   // We draw only first line
   for(auto c: *(_buffer->LineData(0))){
     DrawCharacter(c, dataPos, ColorPurpose::ColorFloatWidgetText);
@@ -89,6 +98,7 @@ void WidgetFloat::Resize(Rect newRect)
   // Float widget received size of full windows rect size
   // Float widget will calculate self size based on window full size
   baseRect = newRect; // first copy the windows size
+  _latestWindowRect = newRect; // store latest used window rect
   // baseRect.h:
   // Need to calculate amount of row for glyphs which need to be drawn. By default, it's name and user input. In process it also will be autocompletion variants.
   // Next need to make some gaps between rows, so this gap is based on borderOffset. Permanent gaps are:
@@ -110,6 +120,8 @@ void WidgetFloat::Resize(Rect newRect)
   // Recalculate size of _complFieldRect
   ResizeAutoCompl();
   Widget::Resize(baseRect);
+  // Update data for each frame drawing
+  _userInputDrawStartPoint =  _borderOffset + Vec2(_borderLineThickness, _glyphSize.y + _borderLineThickness);
 }
 
 void WidgetFloat::ResizeAutoCompl(void)
@@ -136,7 +148,50 @@ Vec2 WidgetFloat::CalculateRealPosForCursor(void)
 
 void WidgetFloat::SetCursorPosition(Vec2 position)
 {
-  
+  int cursor; // working cursor of operation
+  Vec2 curPos;
+  // we only update one axis
+  curPos = _buffer->CursorPosition();
+  // There is two logic sides there.
+  // First line, user input is a default, like in editor. But since we have only one line, it only variants on x axis
+  // Other part is related to completion rect is only to choose from y axis.
+  if( _userFieldRect.x < position.x && (_userFieldRect.x + _userFieldRect.w) > position.x ){
+    if(_userFieldRect.y < position.y && (_userFieldRect.y + _userFieldRect.h) > position.y){
+      // inside user input
+      curPos.x = 0; // we will change cursor position x. We are starting to look for it. That's why set it to 0
+      cursor = _widgetRect.x + _userInputDrawStartPoint.x + _glyphSize.x; // we need to calculate where on x axis starts cursor after first symbol
+      while(cursor < _userFieldRect.x + _userFieldRect.w){
+        if(position.x < cursor){
+          // found position
+          break;
+        }
+        // next iteration
+        curPos.x += 1;
+        cursor+= _glyphSize.x;
+      }
+      goto setCursorFunctionEnd;  // yeah, goto is not better practice. it will lead to the end of function. where will be set cursor position. avoidi y axis
+    }
+  }
+
+  if( _complFieldRect.x < position.x && (_complFieldRect.x + _complFieldRect.w) > position.x ){
+    if(_complFieldRect.y < position.y && (_complFieldRect.y + _complFieldRect.h) > position.y){
+      // inside completion. look for y axis
+      curPos.y = 1; // We are starting to look for cursor position on y axis. And will do it step by step. Starting from step 1
+      cursor = _complFieldRect.y + _glyphSize.y + _borderOffset.y;
+      while(cursor < _complFieldRect.y + _complFieldRect.h){
+        if(position.y < cursor){
+          break; // y position is found.
+        }
+        // increment for next iteration
+        curPos.y += 1;
+        cursor += _glyphSize.y;
+      }
+    }
+  }
+
+
+setCursorFunctionEnd:
+  _buffer->SetCursorPosition(curPos);
 }
 
 void WidgetFloat::PageScrolling(Vec2 direction, Vec2 mousePosition)

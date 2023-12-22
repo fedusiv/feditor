@@ -34,6 +34,11 @@ class Widget
         WidgetType GetWidgetType(void);     // get widget type
         void SetBackgroundColor(ColorPurpose color);
         Rect GetRect();
+        int GetRenderLayer() const ; // it's obvious from the naming I think
+        void SetRenderLayer(int layerLevel); // I assume for this function it's also obvious.
+
+
+        static bool LayerComparator(const Widget* w1, const Widget* w2);
 
 
     protected:
@@ -54,6 +59,8 @@ class Widget
 
         EditorState _currentEditorState;
         WidgetType _widgetType;
+
+        int _layerRender; // this is priority of rendering. Or basically layer of render. The higher number, the more later layer will appear in the rendering
 
         void DrawCharacter(int character, Vec2 pos, ColorPurpose color);
         void DrawBackground();

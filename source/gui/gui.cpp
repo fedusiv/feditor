@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <sys/_types/_pid_t.h>
 #include <sys/_types/_u_short.h>
 
 #include "gui.hpp"
@@ -27,9 +28,6 @@ void Gui::Update(void)
         for(auto w: _widgetsList)
         {
             w->Render();
-        }
-        if(nullptr != _floatWidget){
-            _floatWidget->Render();
         }
     Graphics::RenderEnd();
 }
@@ -80,7 +78,7 @@ void Gui::CreateWidgetTab(void)
     if(_widgetTabList == nullptr){
         _widgetTabList = new WidgetTabList(rect);
         _verticalLayout->Insert(_widgetTabList, false);
-        _widgetsList.push_back(_widgetTabList);
+        UpdateWidgetList(_widgetTabList);
     }else{
         // Otherwise tab is already exits
     }
@@ -90,6 +88,7 @@ void Gui::CreateFloatWidget()
 {
     DeleteFloatWidget();
     _floatWidget = new WidgetFloat(Rect(0,0, _windowsSize.x, _windowsSize.y), "Cmd");
+    UpdateWidgetList(_floatWidget);
 }
 
 void Gui::DeleteFloatWidget()
@@ -97,6 +96,7 @@ void Gui::DeleteFloatWidget()
     if(nullptr == _floatWidget){
         return;
     }
+    _widgetsList.remove(_floatWidget); // remove from the list of widgets
     delete _floatWidget;
     _floatWidget = nullptr;
 }
@@ -111,7 +111,7 @@ void Gui::CreateStatusLine(void)
     }
     rect = Rect(0,0,0,0);   // empty rect, this widget is inside layout. so layout will resize it
     _statusLine = new WidgetStatusLine(rect);
-    _widgetsList.push_back(_statusLine);
+    UpdateWidgetList(_statusLine);
     _verticalLayout->Insert(_statusLine, true);
     StatusLineUpdate();
 }
@@ -127,6 +127,17 @@ void Gui::AttachWidgetEditor(Buffer * buffer, bool vertical)
     }
     _widgetTabList->AttachBuffer(buffer, direction); // attach buffer to tab, and let all functionality there
     StatusLineUpdate();
+}
+
+/*
+* This function sort by priority widgets to render
+*/
+void Gui::UpdateWidgetList(Widget* w)
+{
+    if(nullptr != w){
+        _widgetsList.push_back(w);
+    }
+    _widgetsList.sort(Widget::LayerComparator);
 }
 
 void Gui::AttachFloatBuffer(Buffer * buffer)
@@ -190,11 +201,11 @@ void Gui::AlignCursorPositionByMouse()
     Vec2 position;
 
     position = _mousePosition;
-    for(auto w: _widgetsList)
-    {
-        if(w->IsInWidget(position))
-        {
-            w->SetCursorPosition(position);
+    // _widgetsList is sorted for  render list. And mouse position should be also applied in hierarchy call
+    // that's why we go in reverse mode.
+    for(auto it = _widgetsList.rbegin(); it != _widgetsList.rend(); it++){
+        if( (*it)->IsInWidget(position) ){
+            (*it)->SetCursorPosition(position);
             break;
         }
     }

@@ -12,6 +12,7 @@ Widget::Widget(Rect rect): _widgetFullRect(rect)
     _cursorWidth = 4;
     _cursorHeightAdd = 2;
     _glyphSize = Graphics::GlyphMaxSize();
+    _layerRender = WIDGET_LAYER_DEFAULT ; // default render layer level
  
     UpdateWidgetRect(_widgetFullRect);
     _colorBgWidget = ColorPurpose::ColorWidgetBg;
@@ -38,6 +39,9 @@ void Widget::DrawBackground()
     Graphics::DrawRect(_widgetRect,_colorBgWidget);
 }
 
+/*
+* DrawRect is in obsolete coordinates
+*/
 void Widget::DrawRect(Rect rect, ColorPurpose color)
 {
     Graphics::DrawRect(rect,color);
@@ -147,3 +151,19 @@ void Widget::SetBackgroundColor(ColorPurpose color)
 {
     _colorBgWidget = color;
 }
+
+int Widget::GetRenderLayer() const
+{
+    return _layerRender;
+}
+
+void Widget::SetRenderLayer(int layerLevel)
+{
+    _layerRender = layerLevel;
+}
+
+bool Widget::LayerComparator(const Widget* w1, const Widget* w2)
+{
+    return w1->GetRenderLayer() < w2->GetRenderLayer();
+}
+

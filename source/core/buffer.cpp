@@ -302,6 +302,8 @@ void Buffer::DeleteAtCursorOneLine(DeleteOperations operation)
         it = line->begin() + _cursorPosition.x;
         line->erase(it);
     }
+    // After delete operation.Focus are moving to line 0
+    _cursorPosition.y = 0;
     
 }
 
@@ -322,6 +324,10 @@ void Buffer::SetCursorPosition(Vec2 position)
         position.x = 0;
     }
     _cursorPosition = position;
+    if(_isOneLine){
+        // Cursor moved, it means, that need to update content
+        CopyOneLineToAnother(_cursorPosition.y, 0);
+    }
 }
 
 BufferLine * Buffer::LineData(int lineNumber)

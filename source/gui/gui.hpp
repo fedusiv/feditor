@@ -41,8 +41,10 @@ class Gui
         Widget* GetWidgetUnderMouse(void);  // get pointer to widget, under which is mouse position right now
         void CreateFloatWidget();  // instantiate flaot widget
         void DeleteFloatWidget();   // delete current float widget
-
-        std::list<Widget*> _widgetsList; // all widgets in gui window
+        void UpdateWidgetList(Widget* w = nullptr);  // append widget to the list of widgets. It's needed for the render layers.
+                                                    // Also need to use, when widget changes render layer
+    
+        std::list<Widget*> _widgetsList; // sorted by render layer all widgets in gui window
         WidgetTabList * _widgetTabList = nullptr; // control for tabs
         WidgetStatusLine * _statusLine = nullptr;  // pointer to status line widget
         WidgetFloat * _floatWidget = nullptr;   // current float widget
