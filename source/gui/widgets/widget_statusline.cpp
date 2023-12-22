@@ -1,6 +1,7 @@
 #include "widget_statusline.hpp"
 #include "editor_state.hpp"
-#include "vec2.hpp"
+#include <gui_configs.hpp>
+#include <vec2.hpp>
 #include <string>
 
 WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
@@ -41,23 +42,16 @@ void WidgetStatusLine::DrawInformation()
     center -= _glyphSize.y / 2;
     startPos.y += center;
 
-    // draw current filename
-    for(auto c: _currentFileName)
-    {
-        DrawCharacter(static_cast<int>(c), startPos, color);
-        startPos.x+= _glyphSize.x;
-    }
-    // draw border
-    for(auto c: _infoBorderString)
-    {
-        DrawCharacter(static_cast<int>(c), startPos, color);
-        startPos.x+= _glyphSize.x;
-    }
-    // draw tab name
-    for(auto c: _currentTabName)
-    {
-        DrawCharacter(static_cast<int>(c), startPos, color);
-        startPos.x+= _glyphSize.x;
+    if(_currentEditorState == EditorState::InsertState){
+        // draw current filename
+        DrawOneLine(startPos, _currentFileName, color);
+        // draw border
+        DrawOneLine(startPos, _infoBorderString, color);
+        // draw tab name
+        DrawOneLine(startPos, _currentTabName, color);
+    }else
+    if(_currentEditorState == EditorState::CmdState){
+        DrawOneLine(startPos, GuiConstants::CMD_STRING, color);
     }
 }
 
@@ -69,4 +63,12 @@ void WidgetStatusLine::UpdateFilename(std::string filename)
 void WidgetStatusLine::UpdateTabName(std::string tabname)
 {
     _currentTabName = tabname;
+}
+
+void WidgetStatusLine::DrawOneLine(Vec2& pos, std::string line, ColorPurpose color)
+{
+    for(auto c: line){
+        DrawCharacter(static_cast<int>(c), pos, color);
+        pos.x+= _glyphSize.x;
+    }
 }

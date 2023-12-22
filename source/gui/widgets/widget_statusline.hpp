@@ -18,6 +18,7 @@ class WidgetStatusLine: public Widget
 
     private:
         void DrawInformation(void);
+        void DrawOneLine(Vec2& pos, std::string line, ColorPurpose color);
         std::string _currentFileName;
         std::string _currentTabName;
         std::string _infoBorderString;

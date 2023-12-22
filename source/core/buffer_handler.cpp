@@ -6,6 +6,7 @@ BufferHandler * BufferHandler::_handler;   // need because of static
 BufferHandler::BufferHandler()
 {
     _bufferTabId = 0;
+    _floatBuffer = nullptr;
     CreateNewTab();
 }
 
@@ -41,7 +42,6 @@ void BufferHandler::CreateNewTab(void)
     _bufferTabId = _bufferList.size()-1;    // get current tab id, means new tab's id
     _activeBuffer.resize(_activeBuffer.size()+1); // for active buffer holder increse capacity
     CreateFakeBuffer();
-
 }
 
 void BufferHandler::SwitchToTab(int id)
@@ -51,7 +51,11 @@ void BufferHandler::SwitchToTab(int id)
 
 void BufferHandler::AppendToActiveBuffer(KeysInsertedText text)
 {
-    _activeBuffer[_bufferTabId]->Append(text);
+    if(_floatBuffer != nullptr){
+        _floatBuffer->Append(text);
+    }else{
+        _activeBuffer[_bufferTabId]->Append(text);
+    }
 }
 
 void BufferHandler::InsertNewLine()
@@ -61,12 +65,20 @@ void BufferHandler::InsertNewLine()
 
 void BufferHandler::MoveCursor(MoveCursorDirection direction)
 {
-    _activeBuffer[_bufferTabId]->MoveCursor(direction);
+    if(nullptr != _floatBuffer){
+        _floatBuffer->MoveCursor(direction);
+    }else{
+        _activeBuffer[_bufferTabId]->MoveCursor(direction);
+    }
 }
 
 void BufferHandler::DeleteAtCursor(DeleteOperations operation)
 {
-    _activeBuffer[_bufferTabId]->DeleteAtCursor(operation);
+    if(nullptr != _floatBuffer){
+        _floatBuffer->DeleteAtCursor(operation);
+    }else{
+        _activeBuffer[_bufferTabId]->DeleteAtCursor(operation);
+    }
 }
 
 Buffer * BufferHandler::UpdateActiveBuffer()
@@ -79,4 +91,21 @@ Buffer * BufferHandler::UpdateActiveBuffer()
         }
     }
     return _activeBuffer[_bufferTabId];
+}
+
+Buffer* BufferHandler::InstantiateFloatBuffer()
+{
+    if(nullptr != _floatBuffer){
+        delete _floatBuffer;
+        _floatBuffer = nullptr;
+    }
+    _floatBuffer = new Buffer();
+    _floatBuffer->MarkOneLine();
+    return _floatBuffer;
+}
+
+void BufferHandler::RemoveFloatBuffer()
+{
+    delete _floatBuffer;
+    _floatBuffer = nullptr;
 }

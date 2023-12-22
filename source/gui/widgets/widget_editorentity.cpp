@@ -1,5 +1,7 @@
 #include "widget_editorentity.hpp"
+#include "editor_state.hpp"
 #include "gui_configs.hpp"
+#include "widget.hpp"
 #include "widget_editor.hpp"
 
 WidgetEditorEntity::WidgetEditorEntity(Rect rect, Buffer * buffer): Widget(rect)
@@ -47,5 +49,12 @@ void WidgetEditorEntity::PageScrolling(Vec2 direction, Vec2 mousePosition)
 WidgetEditor * WidgetEditorEntity::GetWidgetEditor()
 {
     return _editor;
+}
+
+void WidgetEditorEntity::SetEditorState(EditorState state)
+{
+    Widget::SetEditorState(state);
+    _editor->SetEditorState(state);
+    _bufferLabel->SetEditorState(state);
 }
 

@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 #include <utility>
+#include "editor_state.hpp"
 #include "graphics.hpp"
 #include "vec2.hpp"
 #include "widget.hpp"
@@ -23,6 +24,7 @@ class WidgetTab: public Widget
         void Resize(Rect newRect) override;
         void SetCursorPosition(Vec2 position) override; // setting cursor position of widget
         void PageScrolling(Vec2 direction, Vec2 mousePosition) override; // moving editor page based on explicit commands to scroll page
+        void SetEditorState(EditorState state) override;
         void AttachBuffer(Buffer * buffer, LayoutDirection direction);         // attaching buffer to tab. Creates widget editor
         bool SwitchBuffer(MoveCursorDirection direction);   // if swtich happened return true
         Buffer * GetActiveBuffer(); // returns current active buffer

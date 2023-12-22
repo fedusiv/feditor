@@ -29,12 +29,15 @@ class BufferHandler
         void MoveCursor(MoveCursorDirection direction); // moving cursor by one step
         void DeleteAtCursor(DeleteOperations operation);
         Buffer * UpdateActiveBuffer();  // function go over all created buffers, looks for buffer, which is requested to be active, and makes decision
+        Buffer * InstantiateFloatBuffer();  // creates new float buffer
+        void RemoveFloatBuffer(); // delete and remove current used flaot buffer
 
     private:
         void CreateFakeBuffer();    // logic for fake buffers
         static BufferHandler* _handler;
         std::vector<BufferList> _bufferList;    // list of created buffers
         BufferList _activeBuffer;     // list of current active buffers. depend of tab
+        Buffer* _floatBuffer;
         int _bufferTabId;  // id of the current buffer tab
 };
 

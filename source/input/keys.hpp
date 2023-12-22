@@ -46,8 +46,8 @@ class KeyAction
                 case SDL_SCANCODE_DELETE:    {keyMap = KeyMap::KeyDelete; break;}
                 case SDL_SCANCODE_ESCAPE:    {keyMap = KeyMap::KeyEsc; break;}
                 case SDL_SCANCODE_SEMICOLON: {keyMap = KeyMap::KeySemicolon; break;}
-                case SDL_SCANCODE_APOSTROPHE:     {keyMap = KeyMap::KeyQuotes; break;}
-                case SDL_SCANCODE_LCTRL:      {keyMap = KeyMap::KeyCtrl; break;}
+                case SDL_SCANCODE_APOSTROPHE:{keyMap = KeyMap::KeyQuotes; break;}
+                case SDL_SCANCODE_LCTRL:     {keyMap = KeyMap::KeyCtrl; break;}
                 case SDL_SCANCODE_LALT:      {keyMap = KeyMap::KeyAlt; break;}
 
                 case SDL_SCANCODE_L:         {keyMap = KeyMap::KeyL; break;}
@@ -57,6 +57,7 @@ class KeyAction
                 case SDL_SCANCODE_H:         {keyMap = KeyMap::KeyH; break;}
                 case SDL_SCANCODE_V:         {keyMap = KeyMap::KeyV; break;}
                 case SDL_SCANCODE_T:         {keyMap = KeyMap::KeyT; break;}
+                case SDL_SCANCODE_X:         {keyMap = KeyMap::KeyX; break;}
 
                 default:
                     keyMap = KeyMap::KeyZero;

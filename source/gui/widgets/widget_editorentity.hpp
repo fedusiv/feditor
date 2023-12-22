@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 #include <utility>
+#include "editor_state.hpp"
 #include "graphics.hpp"
 #include "vec2.hpp"
 #include "widget.hpp"
@@ -24,7 +25,7 @@ class WidgetEditorEntity: public Widget
         void Resize(Rect newRect) override;
         void SetCursorPosition(Vec2 position) override; // setting cursor position of widget
         void PageScrolling(Vec2 direction, Vec2 mousePosition) override; // moving editor page based on explicit commands to scroll page
-
+        void SetEditorState(EditorState state) override;
         WidgetEditor * GetWidgetEditor(); // return widget editor of editor entity
     
     private:

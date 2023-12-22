@@ -8,6 +8,7 @@
 #include "widget_editor.hpp"
 #include "widget_tab.hpp"
 #include "widget_tab_list.hpp"
+#include "widget_float.hpp"
 
 
 class Gui
@@ -19,6 +20,7 @@ class Gui
         void Update(void);  // main function of gui process
         void CreateWindow(void);    // create main window
         void AttachWidgetEditor(Buffer * buffer, bool vertical=true);  // create empty widget for edititng text
+        void AttachFloatBuffer(Buffer * buffer);  // attach float buffer to currernt float widget
         void AttachTab();   // creates new tab in tab list
         bool NeedExit(void);    // report when application need to be exited
         void RequestExit(void); // request to close app
@@ -37,10 +39,15 @@ class Gui
         void CreateStatusLine(void);// create status line. Status line can be only once
         void CreateWidgetTab(void);// creates new widget tab
         Widget* GetWidgetUnderMouse(void);  // get pointer to widget, under which is mouse position right now
-
-        std::list<Widget*> _widgetsList; // all widgets in gui window
+        void CreateFloatWidget();  // instantiate flaot widget
+        void DeleteFloatWidget();   // delete current float widget
+        void UpdateWidgetList(Widget* w = nullptr);  // append widget to the list of widgets. It's needed for the render layers.
+                                                    // Also need to use, when widget changes render layer
+    
+        std::list<Widget*> _widgetsList; // sorted by render layer all widgets in gui window
         WidgetTabList * _widgetTabList = nullptr; // control for tabs
         WidgetStatusLine * _statusLine = nullptr;  // pointer to status line widget
+        WidgetFloat * _floatWidget = nullptr;   // current float widget
         bool _needExit;     // flag if need to exit
         Vec2 _windowsSize;  // current window size
         int _fontSize;      // current font size

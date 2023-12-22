@@ -32,8 +32,8 @@ enum class ExecutorOpCode
     ExitApp,
     GuiResize,
 
-    ChangeEditorModeToNormal,
     ChangeEditorModeToInsert,
+    ChangeEditorModeToCmd,
 
     ExecutorOpCodeMax
 };
