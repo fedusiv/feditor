@@ -1,5 +1,6 @@
 #include "file_manager.hpp"
 #include "editor_state.hpp"
+#include <executor_description.hpp>
 #include "executor.hpp"
 #include "keymap.hpp"
 #include <iostream>
@@ -87,15 +88,88 @@ void FileManager::SwitchToTab(ExecutorAccess *execA, void *data)
 void FileManager::Init()
 {
     Executor * exec = Executor::Instance();
+    using namespace ExecutorsDescriptions;
 
-    exec->AddExecutorElement(FileManager::CreateBuffer, ExecutorOpCode::CreateBuffer, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyV}), std::vector<EditorState>(1, EditorState::InsertState), "new_file", "foo");
-    exec->AddExecutorElement(FileManager::CreateBufferHorizontal, ExecutorOpCode::CreateBufferHorizontal, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyH}), std::vector<EditorState>(1, EditorState::InsertState), "new_file_horizontal", "foo");
-    // Switch widget in tab widget
-    exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabUp, ExecutorOpCode::SwitchBetweenEditorsInTabUp, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyUp}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_up", "foo");
-    exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabDown, ExecutorOpCode::SwitchBetweenEditorsInTabDown, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyDown}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_down", "foo");
-    exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabLeft, ExecutorOpCode::SwitchBetweenEditorsInTabLeft, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyLeft}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_left", "foo");
-    exec->AddExecutorElement(FileManager::SwitchBetweenEditorsInTabRight, ExecutorOpCode::SwitchBetweenEditorsInTabRight, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyRight}), std::vector<EditorState>(1, EditorState::InsertState), "sw_editor_right", "foo");
-    // Create new tab
-    exec->AddExecutorElement(FileManager::CreateNewTab, ExecutorOpCode::CreateNewTab, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyT}), std::vector<EditorState>(1, EditorState::InsertState), "create_new_tab", "foo");
-    exec->AddExecutorElement(FileManager::SwitchToTab, ExecutorOpCode::SwitchToTab, std::vector<KeyMap>(), std::vector<EditorState>(1, EditorState::InsertState), "switch_to_tab", "foo");
+        ExecutorElementStorage storage[]={
+        {
+            FileManager::CreateBuffer,
+            ExecutorOpCode::CreateBuffer,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyV}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "new_file",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::CreateBuffer)]),
+        },
+        {
+            FileManager::CreateBufferHorizontal,
+            ExecutorOpCode::CreateBufferHorizontal,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyH}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "new_file_horizontal",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::CreateBufferHorizontal)]),
+        },
+        //Switch widget in tab widget
+        {
+            FileManager::SwitchBetweenEditorsInTabUp,
+            ExecutorOpCode::SwitchBetweenEditorsInTabUp,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyUp}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "sw_editor_up",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabUp)]),
+        },
+        {
+            FileManager::SwitchBetweenEditorsInTabUp,
+            ExecutorOpCode::SwitchBetweenEditorsInTabUp,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyUp}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "sw_editor_up",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabUp)]),
+        },
+        {
+            FileManager::SwitchBetweenEditorsInTabDown,
+            ExecutorOpCode::SwitchBetweenEditorsInTabDown,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyDown}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "sw_editor_down",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabDown)]),
+        },
+        {
+            FileManager::SwitchBetweenEditorsInTabLeft,
+            ExecutorOpCode::SwitchBetweenEditorsInTabLeft,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyLeft}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "sw_editor_left",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabLeft)]),
+        },
+        {
+            FileManager::SwitchBetweenEditorsInTabRight,
+            ExecutorOpCode::SwitchBetweenEditorsInTabRight,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyRight}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "sw_editor_left",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabRight)]),
+        },
+        // Create new tab
+        {
+            FileManager::CreateNewTab,
+            ExecutorOpCode::CreateNewTab,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyT}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "create_new_tab",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::CreateNewTab)]),
+        },
+        // Swtich to tab
+        {
+            FileManager::SwitchToTab,
+            ExecutorOpCode::SwitchToTab,
+            std::vector<KeyMap>(),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "switch_to_tab",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchToTab)]),
+        },
+    };
+    
+    // This function will add all executors to executors element list
+    for(auto e: storage){
+        exec->AddExecutorElement(&e);
+    }
 }

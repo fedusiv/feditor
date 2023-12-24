@@ -1,8 +1,11 @@
 #include "editor.hpp"
 #include "editor_state.hpp"
 #include "executor.hpp"
+#include "executor_description.hpp"
+#include "executoroc.hpp"
 #include "keymap.hpp"
 #include <iostream>
+#include <memory>
 #include <vector>
 
 EditorState Editor::_editorState;
@@ -105,34 +108,163 @@ void Editor::ScrollRight(ExecutorAccess * execA, void * data)
     execA->gui->PageScrolling(Vec2(1,0));
 }
 
-
-
 void Editor::Init()
 {
     Executor * exec = Executor::Instance();
-    // Inserting, editirng text
-    exec->AddExecutorElement(Editor::InsertText, ExecutorOpCode::TextInsert, std::vector<KeyMap>(0), std::vector<EditorState>(1, EditorState::EditorStateMax), "insert_text", "foo");
-    exec->AddExecutorElement(Editor::InsertNewLine, ExecutorOpCode::TextInsertNewLine, std::vector<KeyMap>(1, {KeyMap::KeyEnter}), std::vector<EditorState>(1, EditorState::InsertState), "insert_new_line", "foo");
-    exec->AddExecutorElement(Editor::DeleteBeforeCursor, ExecutorOpCode::DeleteBeforeCursor, std::vector<KeyMap>(1, {KeyMap::KeyBackspace}), std::vector<EditorState>({EditorState::InsertState, EditorState::CmdState}), "delete_before_cursor", "foo");
-    exec->AddExecutorElement(Editor::DeleteAfterCursor, ExecutorOpCode::DeleteAfterCursor, std::vector<KeyMap>(1, {KeyMap::KeyDelete}), std::vector<EditorState>({EditorState::InsertState, EditorState::CmdState}), "delete_after_cursor", "foo");
+    using namespace ExecutorsDescriptions;
 
-    // Moving cursor by arrows
-    exec->AddExecutorElement(Editor::MoveCursorStepUp, ExecutorOpCode::MoveCursorUp, std::vector<KeyMap>(1, {KeyMap::KeyUp}), std::vector<EditorState>{EditorState::EditorStateMax}, "move_cursor_up", "foo");
-    exec->AddExecutorElement(Editor::MoveCursorStepDown, ExecutorOpCode::MoveCursorDown, std::vector<KeyMap>(1, {KeyMap::KeyDown}), std::vector<EditorState>{EditorState::EditorStateMax}, "move_cursor_down", "foo");
-    exec->AddExecutorElement(Editor::MoveCursorStepLeft, ExecutorOpCode::MoveCursorLeft, std::vector<KeyMap>(1, {KeyMap::KeyLeft}), std::vector<EditorState>{EditorState::EditorStateMax}, "move_cursor_left", "foo");
-    exec->AddExecutorElement(Editor::MoveCursorStepRight, ExecutorOpCode::MoveCursorRight, std::vector<KeyMap>(1, {KeyMap::KeyRight}), std::vector<EditorState>{EditorState::EditorStateMax}, "move_cursor_right", "foo");
-    // Move cursor by mouse
-    exec->AddExecutorElement(Editor::MoveCursorTo, ExecutorOpCode::MoveCursorTo, std::vector<KeyMap>(1, {KeyMap::KeyMouseL}), std::vector<EditorState>{EditorState::EditorStateMax}, "move_cursor_to", "foo");
-    // Scroll widget
-    exec->AddExecutorElement(Editor::ScrollUp, ExecutorOpCode::ScrollUp, std::vector<KeyMap>(1, {KeyMap::KeyWheelUp}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_up", "foo");
-    exec->AddExecutorElement(Editor::ScrollDown, ExecutorOpCode::ScrollDown, std::vector<KeyMap>(1, {KeyMap::KeyWheelDown}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_down", "foo");
-    exec->AddExecutorElement(Editor::ScrollLeft, ExecutorOpCode::ScrollLeft, std::vector<KeyMap>(1, {KeyMap::KeyWheelLeft}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_left", "foo");
-    exec->AddExecutorElement(Editor::ScrollRight, ExecutorOpCode::ScrollRight, std::vector<KeyMap>(1, {KeyMap::KeyWheelRight}), std::vector<EditorState>{EditorState::EditorStateMax}, "scroll_right", "foo");
+    // It's a bulcky function because of this storage variable.
+    // There is option where to keep or delcared it.
+    // For now I decided to keep it in the stack of function call.
+    // This storage is not need after this function, because it used for simplicitly the code reading, it much more clearly to edit and see executors elements  
+    ExecutorElementStorage storage[]={
+        // Inserting, editing text
+        {
+            Editor::InsertText,
+            ExecutorOpCode::TextInsert,
+            std::vector<KeyMap>(0),
+            std::vector<EditorState>(1, EditorState::EditorStateMax),
+            "insert_text",
+            &Descriptions[static_cast<int>(ExecutorOpCode::TextInsert)],
+        },
+        {
+            Editor::InsertNewLine,
+            ExecutorOpCode::TextInsertNewLine,
+            std::vector<KeyMap>(1, {KeyMap::KeyEnter}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "insert_new_line",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::TextInsertNewLine)]),
+        },
+        {
+            Editor::DeleteBeforeCursor,
+            ExecutorOpCode::DeleteBeforeCursor,
+            std::vector<KeyMap>(1, {KeyMap::KeyBackspace}),
+            std::vector<EditorState>({EditorState::InsertState,
+            EditorState::CmdState}),
+            "delete_before_cursor",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::DeleteBeforeCursor)]),
+        },
+        {
+            Editor::DeleteAfterCursor,
+            ExecutorOpCode::DeleteAfterCursor,
+            std::vector<KeyMap>(1, {KeyMap::KeyDelete}),
+            std::vector<EditorState>({EditorState::InsertState, EditorState::CmdState}),
+            "delete_after_cursor",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::DeleteAfterCursor)]),
+        },
+        // Moving cursor by arrows
+        {
+            Editor::MoveCursorStepUp,
+            ExecutorOpCode::MoveCursorUp,
+            std::vector<KeyMap>(1, {KeyMap::KeyUp}),
+            std::vector<EditorState>{EditorState::EditorStateMax},
+            "move_cursor_up",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorUp)]),
+        },
+        {
+            Editor::MoveCursorStepDown,
+            ExecutorOpCode::MoveCursorDown,
+            std::vector<KeyMap>(1, {KeyMap::KeyDown}),
+            std::vector<EditorState>{EditorState::EditorStateMax},
+            "move_cursor_down",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorDown)]),
+        },
+        {
+            Editor::MoveCursorStepLeft,
+            ExecutorOpCode::MoveCursorLeft,
+            std::vector<KeyMap>(1, {KeyMap::KeyLeft}),
+            std::vector<EditorState>{EditorState::EditorStateMax},
+            "move_cursor_left",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorLeft)]),
+        },
+        {
+            Editor::MoveCursorStepRight,
+            ExecutorOpCode::MoveCursorRight,
+            std::vector<KeyMap>(1, {KeyMap::KeyRight}),
+            std::vector<EditorState>{EditorState::EditorStateMax},
+            "move_cursor_right",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorRight)]),
+        },
+        // Move cursor by mouse
+        {
+            Editor::MoveCursorTo,
+            ExecutorOpCode::MoveCursorTo,
+            std::vector<KeyMap>(1, {KeyMap::KeyMouseL}),
+            std::vector<EditorState>{EditorState::EditorStateMax},
+            "move_cursor_to",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorTo)]),
+        },
+        // Scroll widget
+        {
+             Editor::ScrollUp,
+             ExecutorOpCode::ScrollUp,
+             std::vector<KeyMap>(1, {KeyMap::KeyWheelUp}),
+             std::vector<EditorState>{EditorState::EditorStateMax},
+             "scroll_up",
+             &(Descriptions[static_cast<int>(ExecutorOpCode::ScrollUp)]),
+        },
+        {
+             Editor::ScrollDown,
+             ExecutorOpCode::ScrollDown,
+             std::vector<KeyMap>(1, {KeyMap::KeyWheelDown}),
+             std::vector<EditorState>{EditorState::EditorStateMax},
+             "scroll_down",
+             &(Descriptions[static_cast<int>(ExecutorOpCode::ScrollDown)]),
+        },
+        {
+             Editor::ScrollLeft,
+             ExecutorOpCode::ScrollLeft,
+             std::vector<KeyMap>(1, {KeyMap::KeyWheelLeft}),
+             std::vector<EditorState>{EditorState::EditorStateMax},
+             "scroll_left",
+             &(Descriptions[static_cast<int>(ExecutorOpCode::ScrollLeft)]),
+        },
+        {
+             Editor::ScrollRight,
+             ExecutorOpCode::ScrollRight,
+             std::vector<KeyMap>(1, {KeyMap::KeyWheelRight}),
+             std::vector<EditorState>{EditorState::EditorStateMax},
+             "scroll_right",
+             &(Descriptions[static_cast<int>(ExecutorOpCode::ScrollRight)]),
+        },
+        // App control
+        {
+            Editor::Exit,
+            ExecutorOpCode::ExitApp,
+            std::vector<KeyMap>(1, {KeyMap::KeyExit}),
+            std::vector<EditorState>(1, EditorState::EditorStateMax),
+            "exit",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::ExitApp)]),
+        },
+        {
+            Editor::GuiResize,
+            ExecutorOpCode::GuiResize,
+            std::vector<KeyMap>(1, {KeyMap::KeyResize}),
+            std::vector<EditorState>(1, EditorState::EditorStateMax),
+            "resize_app",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::GuiResize)]),
+        },
+        // Change modes
+        {
+            Editor::ChangeEditorModeToInsert,
+            ExecutorOpCode::ChangeEditorModeToInsert,
+            std::vector<KeyMap>(1, {KeyMap::KeyEsc}),
+            std::vector<EditorState>(1, EditorState::EditorStateMax),
+            "set_mode_insert",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::ChangeEditorModeToInsert)]),
+        },
+        {
+            Editor::ChangeEditorModeToCmd,
+            ExecutorOpCode::ChangeEditorModeToCmd,
+            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyX}),
+            std::vector<EditorState>(1, EditorState::InsertState),
+            "set_mode_cmd",
+            &(Descriptions[static_cast<int>(ExecutorOpCode::ChangeEditorModeToCmd)]),
+         },
+    };
+    // This function will add all executors to executors element list
+    for(auto c: storage){
+        exec->AddExecutorElement(&c);
+    }
 
-    exec->AddExecutorElement(Editor::Exit, ExecutorOpCode::ExitApp, std::vector<KeyMap>(1, {KeyMap::KeyExit}), std::vector<EditorState>(1, EditorState::EditorStateMax), "exit", "foo");
-    exec->AddExecutorElement(Editor::GuiResize, ExecutorOpCode::GuiResize, std::vector<KeyMap>(1, {KeyMap::KeyResize}), std::vector<EditorState>(1, EditorState::EditorStateMax), "resize_app", "foo");
-
-    // Change modes
-    exec->AddExecutorElement(Editor::ChangeEditorModeToInsert, ExecutorOpCode::ChangeEditorModeToInsert, std::vector<KeyMap>(1, {KeyMap::KeyEsc}), std::vector<EditorState>(1, EditorState::EditorStateMax), "set_mode_insert", "foo");
-    exec->AddExecutorElement(Editor::ChangeEditorModeToCmd, ExecutorOpCode::ChangeEditorModeToCmd, std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyX}), std::vector<EditorState>(1, EditorState::InsertState), "set_mode_cmd", "foo");
 }
