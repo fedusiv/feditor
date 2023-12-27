@@ -174,7 +174,7 @@ void GuiLayout::Insert(Widget *widget, bool hardSize, Widget* nextTo)
     LayoutListOfWidgets::iterator wIt; 
     _layoutType = LayoutType::WidgetBase;
 
-    LayoutElement *element = new LayoutElement{.hardSize = hardSize, .widget = widget};
+    LayoutElement *element = new LayoutElement{.widget = widget, .hardSize = hardSize};
     if(nullptr == nextTo){
         _layoutWList.push_back(element);
     }else{

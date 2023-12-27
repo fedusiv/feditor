@@ -3,6 +3,10 @@
 
 #include <SDL.h>
 
+#ifdef WIN32
+#include  <algorithm>   // somehow it's arguing only in Windows
+#endif
+
 // This code area need because entire class is static
 SDL_Window *Graphics::_sdlWindow;     // sdl window is related to OS driver
 SDL_Renderer *Graphics::_sdlRenderer; // sdl renderer is related to sdl driver functionality itself
@@ -103,7 +107,7 @@ void Graphics::CreateFont(int fontSize, std::string fontName)
     _font = TTF_OpenFont(fontName.c_str(), fontSize);
     if (_font == NULL)
     {
-        SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_CRITICAL, "Can not open provided font by filename");
+        SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_CRITICAL, "Can not open provided font by filename %s",fontName.c_str() );
     }
 
     TTF_SetFontHinting(_font, TTF_HINTING_LIGHT_SUBPIXEL);

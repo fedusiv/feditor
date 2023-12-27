@@ -146,8 +146,9 @@ because not all systems place things in SDL/ (see FreeBSD).
 #]=======================================================================]
 
 # Define options for searching SDL2 Library in a custom path
-
-set(SDL2_PATH "" CACHE STRING "Custom SDL2 Library path")
+if(NOT DEFINED SDL2_PATH)
+  set(SDL2_PATH "" CACHE STRING "Custom SDL2 Library path")
+endif()
 
 set(_SDL2_NO_DEFAULT_PATH OFF)
 if(SDL2_PATH)

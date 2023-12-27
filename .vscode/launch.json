@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
        {
-        "name": "Debug task",
+        "name": "Debug task (Mac)",
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/build/feditor",
@@ -15,7 +15,21 @@
         "environment": [],
         "externalConsole": false,
         "MIMode": "lldb",
-        "preLaunchTask": "build"
-      }
+        "preLaunchTask": "build-unix"
+      },
+      {
+        "name": "Debug task (Windows)",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/feditor",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
+        "preLaunchTask": "build-windows"
+    }
     ]
 }

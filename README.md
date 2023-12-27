@@ -20,13 +20,13 @@ sdl2
 
 sdl2_ttf
 
-On mac:
+###On mac:
 ```
 brew install sdl2
 brew install sdl2_ttf
 ```
 
-On wsl2 and linux:
+###On wsl2 and linux:
 
 apt-get has older version of sdl2 lib. And seems it won't be updated. You can use homebrew as in OSX, but you need to configure CMake paths correctly, which I failed to did.
 
@@ -40,3 +40,18 @@ I'm not suggesting to using wsl2, it has few problems with graphics, but you can
 Newest SDL2 can be obtain via homebrew(brew), but after that it has issue with linking glibc and using pthread.
 
 Project has cmake scripts to search for sdl libs.
+
+###On Windows:
+
+Most intuitive platfrom to build )))0)
+
+* Instal Visual Studio Compiler and all these stuff.
+
+* Install mingw. (You may try to do it with cl.exe or how it's called default compiler. I failed)
+
+* Download SDL2 release smth like SDL2-devel-2.28.5-mingw.zip from official github repo https://github.com/libsdl-org/SDL/ 
+
+* Extract it to c:\\Libs\\SDL2 (folder with sdl files should be called SDL2, not SDL2-bla-lba-version-number) Or you can change it in the cmake file
+
+* Do the same for SDL-ttf from https://github.com/libsdl-org/SDL_ttf and install to c:\\Libs\\
+
