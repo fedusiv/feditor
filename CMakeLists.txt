@@ -26,6 +26,18 @@ if(UNIX)
     endif()
 endif()
 
+if(WIN32)
+    set(CMAKE_CXX_COMPILER "g++")
+    set(CMAKE_C_COMPILER "gcc")
+    set(SDL2_NO_DEFAULT_PATH OFF)
+    set(SDL2_PATH "c:\\Libs\\SDL2\\")
+    set(SDL2_TTF_PATH "c:\\Libs\\SDL2_ttf")
+    add_compile_definitions(WIN32)
+    add_compile_definitions(SDL_MAIN_HANDLED)
+    message("Runnning on Windows machine")
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
+
 project(feditor)
 
 # Generate compile_commands.json
@@ -33,10 +45,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-Wall)
 
-if(UNIX)
-endif()
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/sdl2)
+
 find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
