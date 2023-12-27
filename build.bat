@@ -21,11 +21,11 @@ IF %COMPILE% EQU 1 (
     CALL :make_func
 ) ELSE (
     ECHO Rebuilding..
-    RD /S /Q build1
-    mkdir build1 && cd build1
+    RD /S /Q build
+    mkdir build && cd build
     CALL :cmake_func
     CALL :make_func
-    XCOPY /E /I ..\assets .
+    XCOPY /E ..\assets\ .
     XCOPY /S c:\sdl2\SDL2.dll .
     XCOPY /S c:\sdl2\SDL2_ttf.dll .
 )

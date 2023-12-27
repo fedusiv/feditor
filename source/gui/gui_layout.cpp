@@ -53,8 +53,12 @@ void GuiLayout::CalculateAndResizeVerticalLayout()
             flexibleWidgetsAmout++;
         }
     }
-
-    newRect.h = newRect.h /  flexibleWidgetsAmout;   // for now equal size for all layouts
+    // On Windows architecture division on zero calls Fault. Under llvm in unix it's undefined behavior.
+    if(flexibleWidgetsAmout == 0){
+        newRect.h = 0;
+    }else{
+        newRect.h = newRect.h /  flexibleWidgetsAmout;   // for now equal size for all layouts
+    }
     for(auto l : _layoutLList)
     {
         if(l->IsHardSize()){
@@ -116,7 +120,12 @@ void GuiLayout::CalculateAndResizeVerticalWidget()
             flexibleWidgetsAmout++;
         }
     }
-    height = (_layoutRect.h - hardSizedSize)  / flexibleWidgetsAmout;
+    // On Windows architecture division on zero calls Fault. Under llvm in unix it's undefined behavior.
+    if(flexibleWidgetsAmout == 0){
+        height = 0;
+    }else{
+        height = (_layoutRect.h - hardSizedSize)  / flexibleWidgetsAmout;
+    }
     rect = _layoutRect; // here we need to get width of layout and first place of widget, mean x and y. height will be configured below
     for (auto e : _layoutWList)
     {
@@ -153,7 +162,13 @@ void GuiLayout::CalculateAndResizeHorizontalWidget()
     //     }
     // }
     // width = (_layoutRect.w - hardSizedSize)  / flexibleWidgetsAmout;
-    width = _layoutRect.w  / _layoutWList.size();
+
+    // On Windows architecture division on zero calls Fault. Under llvm in unix it's undefined behavior.
+    if( _layoutWList.size() == 0){
+        width = _layoutRect.w;
+    }else{
+        width = _layoutRect.w  / _layoutWList.size();
+    }
     rect = _layoutRect; // here we need to get width of layout and first place of widget, mean x and y. width will be configured below
     for (auto e : _layoutWList)
     {

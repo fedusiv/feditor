@@ -1,7 +1,5 @@
 #include <iostream>
 #include <algorithm>
-#include <sys/_types/_pid_t.h>
-#include <sys/_types/_u_short.h>
 
 #include "gui.hpp"
 #include "widget.hpp"
