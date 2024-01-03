@@ -8,6 +8,7 @@
 
 #include "executoraccess.hpp"
 #include "executoroc.hpp"
+#include <executor_trie.hpp>
 #include <executor_description.hpp>
 #include "keymap.hpp"
 #include "editor_state.hpp"
@@ -242,6 +243,7 @@ class Executor
         void AttachAccess(ExecutorAccess * access)
         {
             _execAccess = access;
+            _execAccess->eTrie = new ExecutorTrie(); // creates tree
         }
 
         // Create and add executor element.

@@ -1,5 +1,5 @@
 #include "executor.hpp"
-
+#include <utility>
 #include <iostream>
 Executor * Executor::_executorSingleton = nullptr;
 
@@ -10,6 +10,7 @@ void Executor::AddExecutorElement(ExecutorElementStorage * e)
 {
     auto element = new ExecutorElement(e); // create executor element
     _executorList.insert({element->opCode,element}); // insert element to storage of all opcodes executors
+    _execAccess->eTrie->Insert(element->name,element->opCode);
     if(!element->keyMap.empty())
     {   // insert only if not empty
         _executorKeyMapTree->AddNode(element);  // insert element into storage tree, based on keymap and execution state when this keymap can be executed

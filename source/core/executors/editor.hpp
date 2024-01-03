@@ -14,7 +14,7 @@ class Editor
         static void InsertNewLine(ExecutorAccess * execA, void * data);    // insert new line
         static void DeleteBeforeCursor(ExecutorAccess * execA, void * data);    // Backspace delete, or delete before cursor
         static void DeleteAfterCursor(ExecutorAccess * execA, void * data);    // delete by pressing Delete key as default, or delete after cursor
-
+        static void TextHasEdited(); // function is called when any text changes are done
 
         static void MoveCursorStepUp(ExecutorAccess * execA, void * data);      // moving cursor by one step to the up
         static void MoveCursorStepDown(ExecutorAccess * execA, void * data);    // moving cursor by one step to the down

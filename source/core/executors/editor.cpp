@@ -20,6 +20,14 @@ void Editor::InsertText(ExecutorAccess * execA, void * data)
     KeysInsertedText text;
     text = *((KeysInsertedText*)(data));
     execA->bufferHandler->AppendToActiveBuffer(text);
+    Editor::TextHasEdited();
+}
+
+void Editor::TextHasEdited()
+{
+    if(_editorState == EditorState::CmdState){
+        // need to update autocompletion variants
+    }
 }
 
 void Editor::InsertNewLine(ExecutorAccess * execA, void * data)
@@ -50,11 +58,13 @@ void Editor::MoveCursorStepRight(ExecutorAccess * execA, void * data)
 void Editor::DeleteBeforeCursor(ExecutorAccess * execA, void * data)
 {
     execA->bufferHandler->DeleteAtCursor(DeleteOperations::BeforeCursor);
+    Editor::TextHasEdited();
 }
 
 void Editor::DeleteAfterCursor(ExecutorAccess * execA, void * data)
 {
     execA->bufferHandler->DeleteAtCursor(DeleteOperations::AfterCursor);
+    Editor::TextHasEdited();
 }
 
 void Editor::Exit(ExecutorAccess * execA, void * data)
