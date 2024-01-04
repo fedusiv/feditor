@@ -26,8 +26,8 @@ IF %COMPILE% EQU 1 (
     CALL :cmake_func
     CALL :make_func
     xcopy /e /i ..\assets\ assets\
-    XCOPY /S c:\sdl2\SDL2.dll .
-    XCOPY /S c:\sdl2\SDL2_ttf.dll .
+    XCOPY c:\sdl2\SDL2.dll .
+    XCOPY c:\sdl2\SDL2_ttf.dll .
 )
 
 REM run only if needed
