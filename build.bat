@@ -25,7 +25,7 @@ IF %COMPILE% EQU 1 (
     mkdir build && cd build
     CALL :cmake_func
     CALL :make_func
-    XCOPY /E ..\assets\ .
+    xcopy /e /i ..\assets\ assets\
     XCOPY /S c:\sdl2\SDL2.dll .
     XCOPY /S c:\sdl2\SDL2_ttf.dll .
 )
