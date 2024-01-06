@@ -208,9 +208,9 @@ void WidgetFloat::AttachBuffer(Buffer * buffer)
 {
   _buffer = buffer;
 
-  // Next code is only for dev.
-  _buffer->Append("wine 1", 1);
-  _buffer->Append("beer 2", 2);
-  _buffer->Append("whiskey 3", 3);
-  _buffer->Append("vodka 4", 4);
+  // // Next code is only for dev.
+  // _buffer->Append("wine 1", 1);
+  // _buffer->Append("beer 2", 2);
+  // _buffer->Append("whiskey 3", 3);
+  // _buffer->Append("vodka 4", 4);
 }

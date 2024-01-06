@@ -133,6 +133,22 @@ void Buffer::InsertNewLine(void)
     _cursorPosition.y += 1;
 }
 
+void Buffer::CleanLine(int lineId)
+{
+    if(lineId > _buffer.size() - 1){
+        return; // there is no such a line
+    }
+    _buffer.at(lineId).clear();
+}
+
+void Buffer::DeleteLine(int lineId)
+{
+    if(lineId > _buffer.size() - 1){
+        return; // there is no such a line
+    }
+    _buffer.erase(_buffer.begin()+lineId);
+}
+
 // This method moves cursor one step
 void Buffer::MoveCursor(MoveCursorDirection direction)
 {

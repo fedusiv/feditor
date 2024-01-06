@@ -1,7 +1,9 @@
 #include "editor.hpp"
+#include "buffer_handler.hpp"
 #include "editor_state.hpp"
 #include "executor.hpp"
 #include "executor_description.hpp"
+#include "executor_trie.hpp"
 #include "executoroc.hpp"
 #include "keymap.hpp"
 #include <iostream>
@@ -20,13 +22,28 @@ void Editor::InsertText(ExecutorAccess * execA, void * data)
     KeysInsertedText text;
     text = *((KeysInsertedText*)(data));
     execA->bufferHandler->AppendToActiveBuffer(text);
-    Editor::TextHasEdited();
+    Editor::TextHasEdited(execA);
 }
 
-void Editor::TextHasEdited()
+void Editor::TextHasEdited(ExecutorAccess * execA)
 {
+    int completeVarants = 5; // TODO: move it to settings parameter
+    int currentVariantsSize;
+    BufferHandler* handler;
+
     if(_editorState == EditorState::CmdState){
         // need to update autocompletion variants
+        ExecutorCompleteVariants variants;
+        execA->eTrie->Search(execA->bufferHandler->GetLine(0),variants);
+        handler = execA->bufferHandler;
+        currentVariantsSize = variants.size();
+        // Lines of autocompletion begins from 1 index. That's why i starts from 1.
+        for(int i = 1; i <= completeVarants; i++){
+            handler->DeleteLine(i);
+            if(i <= currentVariantsSize){
+                handler->SetLine(i, std::get<0>(variants.at(i-1)));
+            }
+        }
     }
 }
 
@@ -58,13 +75,13 @@ void Editor::MoveCursorStepRight(ExecutorAccess * execA, void * data)
 void Editor::DeleteBeforeCursor(ExecutorAccess * execA, void * data)
 {
     execA->bufferHandler->DeleteAtCursor(DeleteOperations::BeforeCursor);
-    Editor::TextHasEdited();
+    Editor::TextHasEdited(execA);
 }
 
 void Editor::DeleteAfterCursor(ExecutorAccess * execA, void * data)
 {
     execA->bufferHandler->DeleteAtCursor(DeleteOperations::AfterCursor);
-    Editor::TextHasEdited();
+    Editor::TextHasEdited(execA);
 }
 
 void Editor::Exit(ExecutorAccess * execA, void * data)

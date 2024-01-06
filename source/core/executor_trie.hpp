@@ -3,12 +3,13 @@
 
 #include <executoroc.hpp>
 #include <string>
-#include <list>
+#include <vector>
+#include <buffer.hpp>
 
 #define TRIE_ALPHABET 27 // this is size of the trie data structure alphabet. 26 letters + '_' symbol
 
 typedef std::pair<std::string, ExecutorOpCode> ExecutorCompleteVariant;
-typedef std::list<ExecutorCompleteVariant> ExecutorCompleteVariants;
+typedef std::vector<ExecutorCompleteVariant> ExecutorCompleteVariants;
 /*
 * Executor Trie is container of all names of executors. It's needed to call executor by it's name
 * Names of executor cmds and opcode are stored in trie. or Prefix Tree
@@ -39,7 +40,10 @@ class ExecutorTrie{
 
         // Function definitions are in cpp file
         void Insert(std::string word, ExecutorOpCode opCode);
-        void Search(std::string prefix, ExecutorCompleteVariants& variants);
+        void Search(BufferLine* prefixData, ExecutorCompleteVariants& variants);
+#ifdef DEBUG_INFO
+        void PrintTrieContent(void);
+#endif // DEBUG_INFO
 };
 
 #endif // __EXECUTOR_TRIE_HPP__

@@ -27,6 +27,8 @@ class Buffer
         void Append(KeysInsertedText data); // append text data on current cursor position
         void Append(std::string data, int line); // append data to buffer. This is kind of debug function
         void InsertNewLine(void);   // insert new line.
+        void CleanLine(int lineId); // delete content of whole line
+        void DeleteLine(int lineId); // deletes whole line
         BufferLine * LineData(int lineNumber);
         Vec2 CursorPosition(); // return cursor position
         void DeleteAtCursor(DeleteOperations operation);

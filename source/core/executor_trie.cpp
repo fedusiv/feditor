@@ -27,17 +27,26 @@ void ExecutorTrie::Insert(std::string word, ExecutorOpCode opCode){
     curNode->opCode = opCode;   // store opcode to call executor
 }
 
-void ExecutorTrie::Search(std::string prefix, ExecutorCompleteVariants& variants)
+void ExecutorTrie::Search(BufferLine* prefixData, ExecutorCompleteVariants& variants)
 {
     ExecutorTrieNode *node, *searchNode;
     std::stack<ExecutorCompleteVariantSearch> stack;
     ExecutorCompleteVariantSearch searchPair;
+    std::string prefix;
     std::string opName;
     int index;
     int variantCount = 5; // TODO: take it from configs??
 
     node = _root;
-    for(auto c: prefix){
+    for(auto c: *prefixData){
+        // let's convert from ints to string. But we need to check symbols first. Because this autocomplete will work only for cmds
+        // 0x61 is 'a' symbol is ASCII 0x5f is '_' symbol in ASCII
+        if(c < 0x61 && c != 0x5f){
+          return; // Finish execution, suggest symbol not in the variant
+        }
+        if(c > 0x7a){ // 0x7a is 'z' symbol
+          return; // Finish execution, suggest symbol not in the variant
+        }
         index = ExecutorTrie::CalculateIndex(c);
         if(node->childrens[index]==nullptr){
             // no children exists
@@ -45,6 +54,7 @@ void ExecutorTrie::Search(std::string prefix, ExecutorCompleteVariants& variants
         }else{
             // children exists
             node = node->childrens[index];
+            prefix.push_back(c);
         }
     }
     if(node == _root){
@@ -72,10 +82,63 @@ void ExecutorTrie::Search(std::string prefix, ExecutorCompleteVariants& variants
             searchNode = std::get<0>(searchPair);
             if(nullptr != searchNode->childrens[i]){
                 opName = std::get<1>(searchPair);
-                opName.push_back('a'+i);
-                stack.push(std::make_pair(searchNode, opName));
+                if(i == TRIE_ALPHABET -1){
+                  opName.push_back('_');
+                }else{
+                  opName.push_back(static_cast<char>('a'+i));
+                }
+                stack.push(std::make_pair(searchNode->childrens[i], opName));
             }
         }
     }
 }
 
+
+#ifdef DEBUG_INFO
+#include <iostream>
+
+void ExecutorTrie::PrintTrieContent(void)
+{
+  ExecutorTrieNode *node;
+  std::stack<ExecutorCompleteVariantSearch> stack;
+  ExecutorCompleteVariants variants;
+  ExecutorCompleteVariantSearch pair;
+  std::string call;
+  
+  node = _root;
+  call = "";
+  stack.push({node, call});
+
+    while(!stack.empty()){
+        pair = stack.top();
+        stack.pop();
+        node = std::get<0>(pair);
+        if(node->isEndOfWord){
+            variants.push_back({
+                std::get<1>(pair),
+                node->opCode
+            });
+            continue;
+        }
+        
+        for(int i = 0; i < TRIE_ALPHABET; i++){
+            node = std::get<0>(pair);
+            if(nullptr != node->childrens[i]){
+                call= std::get<1>(pair);
+                if(i == TRIE_ALPHABET -1){
+                  call.push_back('_');
+                }else{
+                  call.push_back(static_cast<char>('a'+i));
+                }
+                stack.push(std::make_pair(node->childrens[i], call));
+            }
+        }
+    }
+
+  std::cout << "List of executor cmd's name" << std::endl;
+  for(auto v: variants){
+    std::cout << "name: " << std::get<0>(v) << std::endl;
+  }
+  
+}
+#endif // DEBUG_INFO

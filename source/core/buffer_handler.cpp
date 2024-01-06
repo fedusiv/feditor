@@ -109,3 +109,34 @@ void BufferHandler::RemoveFloatBuffer()
     delete _floatBuffer;
     _floatBuffer = nullptr;
 }
+
+BufferLine* BufferHandler::GetLine(int lineId)
+{
+    return GetActiveBuffer()->LineData(lineId);
+}
+
+void BufferHandler::SetLine(int lineId, std::string lineData)
+{
+    Buffer* buf;
+
+    buf = GetActiveBuffer();
+    buf->CleanLine(lineId);
+    buf->Append(lineData, lineId);
+}
+
+Buffer* BufferHandler::GetActiveBuffer()
+{
+    Buffer* buf;
+
+    if(nullptr != _floatBuffer){
+        buf = _floatBuffer;
+    }else{
+        buf = _activeBuffer[_bufferTabId];
+    }
+    return buf;
+}
+
+void BufferHandler::DeleteLine(int lineId)
+{
+    GetActiveBuffer()->DeleteLine(lineId);
+}

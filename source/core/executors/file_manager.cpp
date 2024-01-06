@@ -117,14 +117,6 @@ void FileManager::Init()
             &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabUp)]),
         },
         {
-            FileManager::SwitchBetweenEditorsInTabUp,
-            ExecutorOpCode::SwitchBetweenEditorsInTabUp,
-            std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyUp}),
-            std::vector<EditorState>(1, EditorState::InsertState),
-            "sw_editor_up",
-            &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabUp)]),
-        },
-        {
             FileManager::SwitchBetweenEditorsInTabDown,
             ExecutorOpCode::SwitchBetweenEditorsInTabDown,
             std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyDown}),
@@ -145,7 +137,7 @@ void FileManager::Init()
             ExecutorOpCode::SwitchBetweenEditorsInTabRight,
             std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyRight}),
             std::vector<EditorState>(1, EditorState::InsertState),
-            "sw_editor_left",
+            "sw_editor_right",
             &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabRight)]),
         },
         // Create new tab
