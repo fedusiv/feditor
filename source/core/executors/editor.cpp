@@ -27,7 +27,7 @@ void Editor::InsertText(ExecutorAccess * execA, void * data)
 
 void Editor::TextHasEdited(ExecutorAccess * execA)
 {
-    int completeVarants = 5; // TODO: move it to settings parameter
+    int completeVariants = 5; // TODO: move it to settings parameter
     int currentVariantsSize;
     BufferHandler* handler;
 
@@ -38,11 +38,11 @@ void Editor::TextHasEdited(ExecutorAccess * execA)
         handler = execA->bufferHandler;
         currentVariantsSize = variants.size();
         // Lines of autocompletion begins from 1 index. That's why i starts from 1.
-        for(int i = 1; i <= completeVarants; i++){
+        for(int i = completeVariants; i >= 1; i--){ // Clear first
             handler->DeleteLine(i);
-            if(i <= currentVariantsSize){
-                handler->SetLine(i, std::get<0>(variants.at(i-1)));
-            }
+        }
+        for(int i = 1; i <= currentVariantsSize; i++){ // Now set new variants
+            handler->SetLine(i, std::get<0>(variants.at(i-1)));
         }
     }
 }
