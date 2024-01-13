@@ -98,6 +98,7 @@ void FileManager::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "new_file",
             &(Descriptions[static_cast<int>(ExecutorOpCode::CreateBuffer)]),
+            true,
         },
         {
             FileManager::CreateBufferHorizontal,
@@ -106,6 +107,7 @@ void FileManager::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "new_file_horizontal",
             &(Descriptions[static_cast<int>(ExecutorOpCode::CreateBufferHorizontal)]),
+            true,
         },
         //Switch widget in tab widget
         {
@@ -115,6 +117,7 @@ void FileManager::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "sw_editor_up",
             &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabUp)]),
+            false,
         },
         {
             FileManager::SwitchBetweenEditorsInTabDown,
@@ -123,6 +126,7 @@ void FileManager::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "sw_editor_down",
             &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabDown)]),
+            false,
         },
         {
             FileManager::SwitchBetweenEditorsInTabLeft,
@@ -131,6 +135,7 @@ void FileManager::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "sw_editor_left",
             &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabLeft)]),
+            false,
         },
         {
             FileManager::SwitchBetweenEditorsInTabRight,
@@ -139,6 +144,7 @@ void FileManager::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "sw_editor_right",
             &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchBetweenEditorsInTabRight)]),
+            false,
         },
         // Create new tab
         {
@@ -148,6 +154,7 @@ void FileManager::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "create_new_tab",
             &(Descriptions[static_cast<int>(ExecutorOpCode::CreateNewTab)]),
+            true,
         },
         // Swtich to tab
         {
@@ -157,6 +164,7 @@ void FileManager::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "switch_to_tab",
             &(Descriptions[static_cast<int>(ExecutorOpCode::SwitchToTab)]),
+            true,
         },
     };
     

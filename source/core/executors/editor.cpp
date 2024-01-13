@@ -1,11 +1,13 @@
 #include "editor.hpp"
 #include "buffer_handler.hpp"
+#include "common.hpp"
 #include "editor_state.hpp"
 #include "executor.hpp"
 #include "executor_description.hpp"
 #include "executor_trie.hpp"
 #include "executoroc.hpp"
 #include "keymap.hpp"
+#include <common.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -15,6 +17,38 @@ EditorState Editor::_editorState;
 EditorState Editor::GetEditorState(void)
 {
     return _editorState;
+}
+
+void Editor::ExecuteCmd(ExecutorAccess * execA, void * data)
+{
+    BufferData cmds;
+    BufferHandler* bh;
+    ExecutorTrie* trie;
+    ExecutorOpCode opCode;
+    Executor * exec;
+
+    opCode = ExecutorOpCode::ExecutorOpCodeMax; // mark, that there is no set of opCode
+    bh = execA->bufferHandler;
+    trie = execA->eTrie;
+    BufferLineSplit(bh->GetLine(0),cmds); // fill cmds with all arguments
+    for(int i = 0; i < trie->activedOpCodes.size(); i++){
+        if(BufferLinesCompare(bh->GetLine(i+1),&cmds.at(0))){
+            // if equal cmd, that we want to insert is equal to one, which is in the autocompletion list
+            opCode = trie->activedOpCodes.at(i);
+        }
+    }
+    if(opCode == ExecutorOpCode::ExecutorOpCodeMax){
+        // find opcode by cmds
+        opCode = trie->SearchCmd(&cmds.at(0));
+    }
+    if( opCode == ExecutorOpCode::ExecutorOpCodeMax){
+        return; // exit function
+    }
+    exec = Executor::Instance();
+    BufferDataDeleteLine(cmds,0);
+    exec->CallExecutor(opCode, &cmds);
+    exec->CallExecutor(ExecutorOpCode::ChangeEditorModeToInsert, &cmds);
+    
 }
 
 void Editor::InsertText(ExecutorAccess * execA, void * data)
@@ -41,15 +75,22 @@ void Editor::TextHasEdited(ExecutorAccess * execA)
         for(int i = completeVariants; i >= 1; i--){ // Clear first
             handler->DeleteLine(i);
         }
+        execA->eTrie->activedOpCodes.clear();
         for(int i = 1; i <= currentVariantsSize; i++){ // Now set new variants
             handler->SetLine(i, std::get<0>(variants.at(i-1)));
+            execA->eTrie->activedOpCodes.push_back(std::get<1>(variants.at(i-1)));
         }
     }
 }
 
 void Editor::InsertNewLine(ExecutorAccess * execA, void * data)
 {
-    execA->bufferHandler->InsertNewLine();
+    if(_editorState == EditorState::CmdState)
+    {
+        Editor::ExecuteCmd(execA,data);
+    }else{
+        execA->bufferHandler->InsertNewLine();
+    }
 }
 
 void Editor::MoveCursorStepUp(ExecutorAccess * execA, void * data)
@@ -153,14 +194,16 @@ void Editor::Init()
             std::vector<EditorState>(1, EditorState::EditorStateMax),
             "insert_text",
             &Descriptions[static_cast<int>(ExecutorOpCode::TextInsert)],
+            false,
         },
         {
             Editor::InsertNewLine,
             ExecutorOpCode::TextInsertNewLine,
             std::vector<KeyMap>(1, {KeyMap::KeyEnter}),
-            std::vector<EditorState>(1, EditorState::InsertState),
+            std::vector<EditorState>(1, EditorState::EditorStateMax),
             "insert_new_line",
             &(Descriptions[static_cast<int>(ExecutorOpCode::TextInsertNewLine)]),
+            false,
         },
         {
             Editor::DeleteBeforeCursor,
@@ -170,6 +213,7 @@ void Editor::Init()
             EditorState::CmdState}),
             "delete_before_cursor",
             &(Descriptions[static_cast<int>(ExecutorOpCode::DeleteBeforeCursor)]),
+            false,
         },
         {
             Editor::DeleteAfterCursor,
@@ -178,6 +222,7 @@ void Editor::Init()
             std::vector<EditorState>({EditorState::InsertState, EditorState::CmdState}),
             "delete_after_cursor",
             &(Descriptions[static_cast<int>(ExecutorOpCode::DeleteAfterCursor)]),
+            false,
         },
         // Moving cursor by arrows
         {
@@ -187,6 +232,7 @@ void Editor::Init()
             std::vector<EditorState>{EditorState::EditorStateMax},
             "move_cursor_up",
             &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorUp)]),
+            false,
         },
         {
             Editor::MoveCursorStepDown,
@@ -195,6 +241,7 @@ void Editor::Init()
             std::vector<EditorState>{EditorState::EditorStateMax},
             "move_cursor_down",
             &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorDown)]),
+            false,
         },
         {
             Editor::MoveCursorStepLeft,
@@ -203,6 +250,7 @@ void Editor::Init()
             std::vector<EditorState>{EditorState::EditorStateMax},
             "move_cursor_left",
             &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorLeft)]),
+            false,
         },
         {
             Editor::MoveCursorStepRight,
@@ -211,6 +259,7 @@ void Editor::Init()
             std::vector<EditorState>{EditorState::EditorStateMax},
             "move_cursor_right",
             &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorRight)]),
+            false,
         },
         // Move cursor by mouse
         {
@@ -220,6 +269,7 @@ void Editor::Init()
             std::vector<EditorState>{EditorState::EditorStateMax},
             "move_cursor_to",
             &(Descriptions[static_cast<int>(ExecutorOpCode::MoveCursorTo)]),
+            false,
         },
         // Scroll widget
         {
@@ -229,6 +279,7 @@ void Editor::Init()
              std::vector<EditorState>{EditorState::EditorStateMax},
              "scroll_up",
              &(Descriptions[static_cast<int>(ExecutorOpCode::ScrollUp)]),
+             false,
         },
         {
              Editor::ScrollDown,
@@ -237,6 +288,7 @@ void Editor::Init()
              std::vector<EditorState>{EditorState::EditorStateMax},
              "scroll_down",
              &(Descriptions[static_cast<int>(ExecutorOpCode::ScrollDown)]),
+             false,
         },
         {
              Editor::ScrollLeft,
@@ -245,6 +297,7 @@ void Editor::Init()
              std::vector<EditorState>{EditorState::EditorStateMax},
              "scroll_left",
              &(Descriptions[static_cast<int>(ExecutorOpCode::ScrollLeft)]),
+             false,
         },
         {
              Editor::ScrollRight,
@@ -253,6 +306,7 @@ void Editor::Init()
              std::vector<EditorState>{EditorState::EditorStateMax},
              "scroll_right",
              &(Descriptions[static_cast<int>(ExecutorOpCode::ScrollRight)]),
+             false,
         },
         // App control
         {
@@ -262,6 +316,7 @@ void Editor::Init()
             std::vector<EditorState>(1, EditorState::EditorStateMax),
             "exit",
             &(Descriptions[static_cast<int>(ExecutorOpCode::ExitApp)]),
+            true,
         },
         {
             Editor::GuiResize,
@@ -270,6 +325,7 @@ void Editor::Init()
             std::vector<EditorState>(1, EditorState::EditorStateMax),
             "resize_app",
             &(Descriptions[static_cast<int>(ExecutorOpCode::GuiResize)]),
+            true,
         },
         // Change modes
         {
@@ -279,6 +335,7 @@ void Editor::Init()
             std::vector<EditorState>(1, EditorState::EditorStateMax),
             "set_mode_insert",
             &(Descriptions[static_cast<int>(ExecutorOpCode::ChangeEditorModeToInsert)]),
+            true,
         },
         {
             Editor::ChangeEditorModeToCmd,
@@ -287,6 +344,7 @@ void Editor::Init()
             std::vector<EditorState>(1, EditorState::InsertState),
             "set_mode_cmd",
             &(Descriptions[static_cast<int>(ExecutorOpCode::ChangeEditorModeToCmd)]),
+            true,
          },
     };
     // This function will add all executors to executors element list

@@ -1,10 +1,29 @@
+#include "executoroc.hpp"
 #include <executor_trie.hpp>
 #include <stack>
 
 int ExecutorTrie::CalculateIndex(char c)
 {
-    return c - 'a'; // since childrens are just array of symbols, we need to count index from 0 to TRIE_ALPHABET. 
-                     // and we know, that all cmd are lowercase letters. only one exception is '_'     
+    // since childrens are just array of symbols, we need to count index from 0 to TRIE_ALPHABET. 
+    // and we know, that all cmd are lowercase letters. only one exception is '_'     
+    int index = c - 'a';
+    if(index < 0 ){
+      // index can be less, than 0 only in one case, when there is '_'. because it's 0x5f and 'a' is 0x61 
+      index = TRIE_ALPHABET - 1;
+    }
+    return index;
+}
+
+bool ExecutorTrie::IsSymbolAcceptable(int symbol)
+{
+    // 0x61 is 'a' symbol is ASCII 0x5f is '_' symbol in ASCII
+    if(symbol < 0x61 && symbol != 0x5f){
+      return false; // Finish execution, suggest symbol not in the variant
+    }
+    if(symbol > 0x7a){ // 0x7a is 'z' symbol
+      return false; // Finish execution, suggest symbol not in the variant
+    }
+    return true;
 }
 
 void ExecutorTrie::Insert(std::string word, ExecutorOpCode opCode){
@@ -14,10 +33,6 @@ void ExecutorTrie::Insert(std::string word, ExecutorOpCode opCode){
     curNode = _root;
     for(auto c: word){
         index = ExecutorTrie::CalculateIndex(c);
-        if(index < 0){
-            // index can be less, than 0 only in one case, when there is '_'. because it's 0x5f and 'a' is 0x61 
-            index = TRIE_ALPHABET-1; // last element
-        }
         if(nullptr == curNode->childrens[index]){
             curNode->childrens[index] = new ExecutorTrieNode(); // children is missing, creating new one
         }
@@ -40,12 +55,8 @@ void ExecutorTrie::Search(BufferLine* prefixData, ExecutorCompleteVariants& vari
     node = _root;
     for(auto c: *prefixData){
         // let's convert from ints to string. But we need to check symbols first. Because this autocomplete will work only for cmds
-        // 0x61 is 'a' symbol is ASCII 0x5f is '_' symbol in ASCII
-        if(c < 0x61 && c != 0x5f){
-          return; // Finish execution, suggest symbol not in the variant
-        }
-        if(c > 0x7a){ // 0x7a is 'z' symbol
-          return; // Finish execution, suggest symbol not in the variant
+        if(!IsSymbolAcceptable(c)){
+          return;
         }
         index = ExecutorTrie::CalculateIndex(c);
         if(node->childrens[index]==nullptr){
@@ -93,6 +104,30 @@ void ExecutorTrie::Search(BufferLine* prefixData, ExecutorCompleteVariants& vari
     }
 }
 
+
+ExecutorOpCode ExecutorTrie::SearchCmd(BufferLine* name)
+{
+  ExecutorTrieNode* node;
+  ExecutorOpCode opCode;
+  int index;
+
+  opCode = ExecutorOpCode::ExecutorOpCodeMax;
+  node = _root;
+  for(auto c: *name){
+    if(!IsSymbolAcceptable(c)){
+      break;
+    }
+    index = ExecutorTrie::CalculateIndex(c);
+    node = node->childrens[index];
+    if(nullptr == node){
+      break; // no such node or we reached end
+    }
+  }
+  if(node->isEndOfWord){
+    opCode = node->opCode;
+  }
+  return opCode;
+}
 
 #ifdef DEBUG_INFO
 #include <iostream>

@@ -4,11 +4,10 @@
 #include <vector>
 #include <string>
 
+#include <common.hpp>
 #include "vec2.hpp"
 #include "keymap.hpp"
 
-typedef typename std::vector<int> BufferLine;
-typedef typename std::vector<BufferLine> BufferData;
 
 enum DeleteOperations
 {

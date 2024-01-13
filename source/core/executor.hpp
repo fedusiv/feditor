@@ -25,6 +25,7 @@ typedef struct{
     std::vector<EditorState> states;
     std::string name; 
     const std::string* desc; // it will points to only one storage place.
+    bool userVisible; // is this cmd is visible for user
 }ExecutorElementStorage;
 
 
