@@ -77,8 +77,8 @@ void WidgetEditor::DrawData(void)
     int lineNumber; // current lineNumber
     int columnSize; // amount of possible characters in one line
     Vec2 pos;    // position to draw
-    BufferLine * lineData;  // data of current line
-    BufferLine::iterator iL; // iterator of line
+    FString* lineData;  // data of current line
+    FString::iterator iL; // iterator of line
 
     pos.x = _textStartX * _glyphSize.x;
     pos.y = 0;

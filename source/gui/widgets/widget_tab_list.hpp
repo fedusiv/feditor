@@ -2,8 +2,8 @@
 #define __WIDGET_TAB_LIST_HPP__
 
 #include <list>
-#include <vector>
 #include <utility>
+#include <fstring.hpp>
 #include "editor_state.hpp"
 #include "graphics.hpp"
 #include "vec2.hpp"
@@ -28,7 +28,7 @@ class WidgetTabList: public Widget
         bool SwitchBuffer(MoveCursorDirection direction);   // if swtich happened return true
         Buffer * GetActiveBuffer(); // returns current active buffer
         void CreateNewTab();    // creates new tab
-        std::string NameOfCurrentTab(); // returns name of the current tab
+        FString  NameOfCurrentTab(); // returns name of the current tab
         void SwitchToTab(int id);   // switch to existing different tab
     
     protected:

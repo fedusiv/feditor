@@ -131,7 +131,7 @@ void WidgetTabList::CalculateDrawingOffset(void)
 
 }
 
-std::string WidgetTabList::NameOfCurrentTab()
+FString WidgetTabList::NameOfCurrentTab()
 {
     return _widgetsLabelList.at(_currentTabId)->GetText();
 }

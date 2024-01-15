@@ -2,7 +2,6 @@
 #include "editor_state.hpp"
 #include <gui_configs.hpp>
 #include <vec2.hpp>
-#include <string>
 
 WidgetStatusLine::WidgetStatusLine(Rect rect): Widget(rect)
 {
@@ -55,20 +54,20 @@ void WidgetStatusLine::DrawInformation()
     }
 }
 
-void WidgetStatusLine::UpdateFilename(std::string filename)
+void WidgetStatusLine::UpdateFilename(FString filename)
 {
     _currentFileName = filename;
 }
 
-void WidgetStatusLine::UpdateTabName(std::string tabname)
+void WidgetStatusLine::UpdateTabName(FString tabname)
 {
     _currentTabName = tabname;
 }
 
-void WidgetStatusLine::DrawOneLine(Vec2& pos, std::string line, ColorPurpose color)
+void WidgetStatusLine::DrawOneLine(Vec2& pos, FString line, ColorPurpose color)
 {
     for(auto c: line){
-        DrawCharacter(static_cast<int>(c), pos, color);
+        DrawCharacter(c, pos, color);
         pos.x+= _glyphSize.x;
     }
 }

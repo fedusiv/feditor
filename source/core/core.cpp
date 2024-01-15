@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <vector>
 
+#include <fstring.hpp>
 #include "editor_state.hpp"
 #include "executoroc.hpp"
 
@@ -39,12 +40,11 @@ void Core::Init(void)
         // it's directory, we can not do anything
         std::cout << "Can not open directory for now. Work in progress.." << std::endl;
         return;
-    }
-    else
-    {
+    }else{
         // create buffer from a file only if file is mentioned
         if(_locationPoint != ""){
-            ExecDataTypeCreateBuffer  d = {.filename = _locationPoint, .verticalDirection = true};
+            auto convertedLine = FString(_locationPoint);
+            ExecDataTypeCreateBuffer  d = {.filename = convertedLine , .verticalDirection = true};
             _executor->CallExecutor(ExecutorOpCode::CreateBuffer, &d);
         }
     }

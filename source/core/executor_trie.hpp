@@ -42,8 +42,8 @@ class ExecutorTrie{
         std::vector<ExecutorOpCode> activedOpCodes; // this vector store OpCodes of provided for latest search for autocompletion variants
         // Function definitions are in cpp file
         void Insert(std::string word, ExecutorOpCode opCode);
-        void Search(BufferLine* prefixData, ExecutorCompleteVariants& variants);
-        ExecutorOpCode SearchCmd(BufferLine* name); // find opcode of cmd by providing it's name
+        void Search(FString* prefixData, ExecutorCompleteVariants& variants);
+        ExecutorOpCode SearchCmd(FString* name); // find opcode of cmd by providing it's name
 #ifdef DEBUG_INFO
         void PrintTrieContent(void);
 #endif // DEBUG_INFO

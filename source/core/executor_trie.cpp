@@ -42,7 +42,7 @@ void ExecutorTrie::Insert(std::string word, ExecutorOpCode opCode){
     curNode->opCode = opCode;   // store opcode to call executor
 }
 
-void ExecutorTrie::Search(BufferLine* prefixData, ExecutorCompleteVariants& variants)
+void ExecutorTrie::Search(FString* prefixData, ExecutorCompleteVariants& variants)
 {
     ExecutorTrieNode *node, *searchNode;
     std::stack<ExecutorCompleteVariantSearch> stack;
@@ -105,7 +105,7 @@ void ExecutorTrie::Search(BufferLine* prefixData, ExecutorCompleteVariants& vari
 }
 
 
-ExecutorOpCode ExecutorTrie::SearchCmd(BufferLine* name)
+ExecutorOpCode ExecutorTrie::SearchCmd(FString* name)
 {
   ExecutorTrieNode* node;
   ExecutorOpCode opCode;

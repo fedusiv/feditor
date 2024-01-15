@@ -1,7 +1,7 @@
 #ifndef __EXECUTOROC_HPP__
 #define __EXECUTOROC_HPP__
 
-#include <string>
+#include <fstring.hpp>
 
 // Opcode of all Executors
 enum class ExecutorOpCode
@@ -40,7 +40,7 @@ enum class ExecutorOpCode
 
 struct ExecDataTypeCreateBuffer_t
 {
-    std::string filename;
+    FString filename;
     bool verticalDirection;
 };
 using ExecDataTypeCreateBuffer = ExecDataTypeCreateBuffer_t;

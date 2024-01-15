@@ -1,13 +1,12 @@
 #include "editor.hpp"
 #include "buffer_handler.hpp"
-#include "common.hpp"
 #include "editor_state.hpp"
 #include "executor.hpp"
 #include "executor_description.hpp"
 #include "executor_trie.hpp"
 #include "executoroc.hpp"
 #include "keymap.hpp"
-#include <common.hpp>
+#include <fstring.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -32,7 +31,7 @@ void Editor::ExecuteCmd(ExecutorAccess * execA, void * data)
     trie = execA->eTrie;
     BufferLineSplit(bh->GetLine(0),cmds); // fill cmds with all arguments
     for(int i = 0; i < trie->activedOpCodes.size(); i++){
-        if(BufferLinesCompare(bh->GetLine(i+1),&cmds.at(0))){
+        if(bh->GetLine(i+1) == &cmds.at(0)){
             // if equal cmd, that we want to insert is equal to one, which is in the autocompletion list
             opCode = trie->activedOpCodes.at(i);
         }
