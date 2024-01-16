@@ -3,6 +3,7 @@
 
 #include "gui.hpp"
 #include "buffer_handler.hpp"
+#include <executor_trie.hpp>
 
 
 /*
@@ -12,12 +13,14 @@
 class ExecutorAccess
 {
     public:
+        // As arguments used obj which are created outside of executor focus
         ExecutorAccess(Gui * gui, BufferHandler * bH) : gui(gui), bufferHandler(bH)
         {}
 
 
         Gui * gui;
         BufferHandler * bufferHandler;
+        ExecutorTrie * eTrie; // eTrie can be created in executor's focus
 
 };
 

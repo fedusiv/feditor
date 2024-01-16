@@ -6,21 +6,21 @@
 
 int Buffer::_globalId = 1;
 
-Buffer::Buffer(std::string filepath): _filepath(filepath), _largestLineSize(0)
+Buffer::Buffer(FString filepath): _filepath(filepath), _largestLineSize(0)
 {
     std::ifstream file;
 
     DefaultInit();
 
     if(filepath.empty()){
-        _buffer.push_back(BufferLine(0));   // creates empty buffer with one empty line
+        _buffer.push_back(FString());   // creates empty buffer with one empty line
         _filename = "untitled";
     }
     else
     {
         auto pos = filepath.find_last_of('/');  // get position of begin filename
         _filename = filepath.substr(pos + 1);   // substring filename
-        file.open(_filepath,std::fstream::in|std::fstream::out);
+        file.open(_filepath.to_string(),std::fstream::in|std::fstream::out);
         if(file.fail())
         {
             // fail to open the file
@@ -30,7 +30,7 @@ Buffer::Buffer(std::string filepath): _filepath(filepath), _largestLineSize(0)
         {   // file is opened successfully, fill buffer with file
             for (std::string line; std::getline(file, line); ) 
             {
-                BufferLine bufferline;
+                FString bufferline;
                 // opened one line.
                 for(auto c: line)
                 {
@@ -50,7 +50,7 @@ Buffer::Buffer(std::string filepath): _filepath(filepath), _largestLineSize(0)
 Buffer::Buffer(void): _largestLineSize(0)
 {
     DefaultInit();
-    _buffer.push_back(BufferLine(0));
+    _buffer.push_back(FString());
 }
 
 void Buffer::DefaultInit()
@@ -64,14 +64,14 @@ void Buffer::DefaultInit()
 
 void Buffer::Append(KeysInsertedText data)
 {
-    BufferLine line;
+    FString line;
     BufferData::iterator it;
     int yPos;
 
     if(_buffer.empty())
     {
         // if buffer empty we need to create new line there
-        _buffer.push_back(BufferLine(0));
+        _buffer.push_back(FString());
     }
     // One of the OneLine logic manifestation. User append only to line 0.
     if(_isOneLine){
@@ -104,7 +104,7 @@ void Buffer::Append(std::string data, int line)
     curSize = _buffer.size();
     curSize = line - curSize + 1; // amount of line, which need to be added
     while(curSize > 0){
-        _buffer.push_back(BufferLine(0));
+        _buffer.push_back(FString());
         curSize--;
     }
     for(auto c: data){
@@ -119,10 +119,10 @@ void Buffer::InsertNewLine(void)
     if(_buffer.empty())
     {
         // if buffer empty we need to create new line there
-        _buffer.push_back(BufferLine(0));
+        _buffer.push_back(FString());
     }
     it = ( _buffer.begin() + _cursorPosition.y + 1 );
-    it = _buffer.insert(it, (BufferLine(0))); // save it to new inserted buffer
+    it = _buffer.insert(it, (FString())); // save it to new inserted buffer
     if(_cursorPosition.x < (*(it-1)).size())
     {
         // new line request is pressed in the middle of line. Move all content right after cursor to new line
@@ -131,6 +131,22 @@ void Buffer::InsertNewLine(void)
     }
     _cursorPosition.x = 0;
     _cursorPosition.y += 1;
+}
+
+void Buffer::CleanLine(int lineId)
+{
+    if(lineId > _buffer.size() - 1){
+        return; // there is no such a line
+    }
+    _buffer.at(lineId).clear();
+}
+
+void Buffer::DeleteLine(int lineId)
+{
+    if(lineId > _buffer.size() - 1){
+        return; // there is no such a line
+    }
+    _buffer.erase(_buffer.begin()+lineId);
 }
 
 // This method moves cursor one step
@@ -229,8 +245,8 @@ void Buffer::MoveCursor(MoveCursorDirection direction)
 
 void Buffer::DeleteAtCursor(DeleteOperations operation)
 {
-    BufferLine* line;
-    BufferLine::iterator it;
+    FString* line;
+    FString::iterator it;
 
     if(_isOneLine){
         DeleteAtCursorOneLine(operation);
@@ -283,8 +299,8 @@ void Buffer::DeleteAtCursor(DeleteOperations operation)
 
 void Buffer::DeleteAtCursorOneLine(DeleteOperations operation)
 {
-    BufferLine* line;
-    BufferLine::iterator it;
+    FString* line;
+    FString::iterator it;
 
     line = &_buffer[0];
     if(operation == DeleteOperations::BeforeCursor)
@@ -330,7 +346,7 @@ void Buffer::SetCursorPosition(Vec2 position)
     }
 }
 
-BufferLine * Buffer::LineData(int lineNumber)
+FString * Buffer::LineData(int lineNumber)
 {
     return &_buffer[lineNumber];
 }
@@ -361,7 +377,7 @@ Vec2 Buffer::CursorPosition()
 
 std::string Buffer::FileName()
 {
-    return _filename;
+    return _filename.to_string();
 }
 
 // Logic of this request functions is written in header

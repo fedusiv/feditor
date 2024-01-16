@@ -1,19 +1,21 @@
 #include "executor.hpp"
-
+#include <utility>
 #include <iostream>
 Executor * Executor::_executorSingleton = nullptr;
 
 
 // Create and add executor element.
 // Here key value is keyMap. If other executor attached to given keyMap in specific editor state, other executor will be deleted and new one will be placed
-void Executor::AddExecutorElement(ExecutorMethod * execM, ExecutorOpCode opCode,
-                                    KeysMapList keyMap, std::vector<EditorState> states,
-                                    std::string name, std::string desc
-)
+void Executor::AddExecutorElement(ExecutorElementStorage * e)
 {
-    auto element = new ExecutorElement(execM, opCode, keyMap, states, name, desc); // create executor element
-    _executorList.insert({opCode,element}); // insert element to storage of all opcodes executors
-    if(!keyMap.empty())
+    auto element = new ExecutorElement(e); // create executor element
+    _executorList.insert({element->opCode,element}); // insert element to storage of all opcodes executors
+    if(e->userVisible){
+        // If element is Visible for User we will add it to exececutor trie.
+        // Executor trie stores all names and opcodes, which is available for user
+        _execAccess->eTrie->Insert(element->name,element->opCode);
+    }
+    if(!element->keyMap.empty())
     {   // insert only if not empty
         _executorKeyMapTree->AddNode(element);  // insert element into storage tree, based on keymap and execution state when this keymap can be executed
     }

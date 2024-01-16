@@ -15,7 +15,7 @@ WidgetLabel::WidgetLabel(Rect rect): Widget(rect)
     InitDefault();
 }
 
-WidgetLabel::WidgetLabel(Rect rect, std::string text): Widget(rect)
+WidgetLabel::WidgetLabel(Rect rect, FString text): Widget(rect)
 {
     _widgetType = WidgetType::WidgetTypeLabel;
     _textColor = ColorWhite;
@@ -24,7 +24,7 @@ WidgetLabel::WidgetLabel(Rect rect, std::string text): Widget(rect)
     InitDefault();
 }
 
-WidgetLabel::WidgetLabel(Rect rect, std::string text, ColorPurpose color, Vec2 glyphOffset): Widget(rect), _text(text), _textColor(color), _glyphOffset(glyphOffset)
+WidgetLabel::WidgetLabel(Rect rect, FString text, ColorPurpose color, Vec2 glyphOffset): Widget(rect), _text(text), _textColor(color), _glyphOffset(glyphOffset)
 {
     _widgetType = WidgetType::WidgetTypeLabel;
     _widgetType = WidgetTypeLabel;
@@ -90,7 +90,7 @@ void WidgetLabel::Resize(Rect newRect)
     Widget::Resize(newRect);
 }
 
-void WidgetLabel::SetText(std::string text)
+void WidgetLabel::SetText(FString  text)
 {
     _text = text;
 }
@@ -128,7 +128,7 @@ void WidgetLabel::SetTextColor(ColorPurpose color)
     _textColor = color;
 }
 
-std::string WidgetLabel::GetText()
+FString WidgetLabel::GetText()
 {
     return _text;
 }

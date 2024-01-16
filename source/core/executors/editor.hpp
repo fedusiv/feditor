@@ -10,11 +10,13 @@ class Editor
         static void Init(); // add all executor's functors to executor
         static EditorState GetEditorState(void);
 
+        static void ExecuteCmd(ExecutorAccess * execA, void * data);    // execute typed cmd (type as user typed)
+
         static void InsertText(ExecutorAccess * execA, void * data);    // insert text to active buffer
         static void InsertNewLine(ExecutorAccess * execA, void * data);    // insert new line
         static void DeleteBeforeCursor(ExecutorAccess * execA, void * data);    // Backspace delete, or delete before cursor
         static void DeleteAfterCursor(ExecutorAccess * execA, void * data);    // delete by pressing Delete key as default, or delete after cursor
-
+        static void TextHasEdited(ExecutorAccess * execA); // function is called when any text changes are done
 
         static void MoveCursorStepUp(ExecutorAccess * execA, void * data);      // moving cursor by one step to the up
         static void MoveCursorStepDown(ExecutorAccess * execA, void * data);    // moving cursor by one step to the down

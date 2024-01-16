@@ -2,8 +2,7 @@
 #define __WIDGET_STATUSLINE_HPP__
 
 #include "widget.hpp"
-#include <string>
-#include <vector>
+#include <fstring.hpp>
 
 class WidgetStatusLine: public Widget
 {
@@ -13,15 +12,15 @@ class WidgetStatusLine: public Widget
         void Render(void) override;
         void Resize(Rect newRect) override;
 
-        void UpdateFilename(std::string filename);
-        void UpdateTabName(std::string tabname);
+        void UpdateFilename(FString filename);
+        void UpdateTabName(FString tabname);
 
     private:
         void DrawInformation(void);
-        void DrawOneLine(Vec2& pos, std::string line, ColorPurpose color);
-        std::string _currentFileName;
-        std::string _currentTabName;
-        std::string _infoBorderString;
+        void DrawOneLine(Vec2& pos, FString line, ColorPurpose color);
+        FString _currentFileName;
+        FString _currentTabName;
+        FString _infoBorderString;
 
 };
 

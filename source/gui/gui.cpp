@@ -254,7 +254,7 @@ void Gui::StatusLineUpdate()
     if(_widgetTabList->GetActiveBuffer() != nullptr){
         _statusLine->UpdateFilename(_widgetTabList->GetActiveBuffer()->FileName());
     }else{
-        _statusLine->UpdateFilename("---");
+        _statusLine->UpdateFilename(FString("---"));
     }
     _statusLine->UpdateTabName(_widgetTabList->NameOfCurrentTab());
 }

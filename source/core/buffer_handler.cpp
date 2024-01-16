@@ -10,7 +10,7 @@ BufferHandler::BufferHandler()
     CreateNewTab();
 }
 
-Buffer * BufferHandler::CreateBuffer(std::string filepath)
+Buffer * BufferHandler::CreateBuffer(FString filepath)
 {
     auto buffer = new Buffer(filepath);
     _bufferList[_bufferTabId].push_back(buffer);
@@ -29,7 +29,7 @@ Buffer * BufferHandler::CreateBuffer(std::string filepath)
 // That's why on creating new empty tab we will create fake buffer and in the moment of creating real buffer we will delete fake buffer
 void BufferHandler::CreateFakeBuffer()
 {
-    auto buffer = new Buffer("fake.fake");
+    auto buffer = new Buffer(FString("fake.fake"));
     // bufferTabId is newest, because it was updated after CreateNewTab function call
     _activeBuffer[_bufferTabId] = buffer;
     buffer->MarkFake(); // marking fake
@@ -108,4 +108,35 @@ void BufferHandler::RemoveFloatBuffer()
 {
     delete _floatBuffer;
     _floatBuffer = nullptr;
+}
+
+FString* BufferHandler::GetLine(int lineId)
+{
+    return GetActiveBuffer()->LineData(lineId);
+}
+
+void BufferHandler::SetLine(int lineId, std::string lineData)
+{
+    Buffer* buf;
+
+    buf = GetActiveBuffer();
+    buf->CleanLine(lineId);
+    buf->Append(lineData, lineId);
+}
+
+Buffer* BufferHandler::GetActiveBuffer()
+{
+    Buffer* buf;
+
+    if(nullptr != _floatBuffer){
+        buf = _floatBuffer;
+    }else{
+        buf = _activeBuffer[_bufferTabId];
+    }
+    return buf;
+}
+
+void BufferHandler::DeleteLine(int lineId)
+{
+    GetActiveBuffer()->DeleteLine(lineId);
 }

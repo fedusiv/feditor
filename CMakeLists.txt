@@ -4,6 +4,7 @@ option(DEBUG_FLAG "Add debug configuration" OFF)
 
 if(DEBUG_FLAG)
     add_compile_options(-O0 -g)
+    add_compile_definitions(DEBUG_INFO)
 endif()
 
 if(APPLE)

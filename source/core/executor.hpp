@@ -1,14 +1,33 @@
 #ifndef __EXECUTOR_HPP__
 #define __EXECUTOR_HPP__
 
+#include <memory>
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
 
 #include "executoraccess.hpp"
 #include "executoroc.hpp"
+#include <executor_trie.hpp>
+#include <executor_description.hpp>
 #include "keymap.hpp"
 #include "editor_state.hpp"
+
+/*
+*  This struct is only used to simplify code reading.
+*  This is storage of data given by developer, to formulate it into real executor elements
+*  This struct is interlayer between developer's set of executor cmds and executor elements which participate in the code
+*/
+typedef struct{
+    ExecutorMethod * execM;
+    ExecutorOpCode opCode;
+    std::vector<KeyMap> keyMap;
+    std::vector<EditorState> states;
+    std::string name; 
+    const std::string* desc; // it will points to only one storage place.
+    bool userVisible; // is this cmd is visible for user
+}ExecutorElementStorage;
+
 
 /*
  Basis logic of editor.
@@ -28,18 +47,21 @@ class Executor
     class ExecutorElement
     {
         public:
-            ExecutorElement(ExecutorMethod * execM, ExecutorOpCode opCode, 
-                    std::vector<KeyMap> keyMap,
-                    std::vector<EditorState> states,
-                    std::string name, std::string desc, int id = 1)
-                : execM(execM), opCode(opCode),keyMap(keyMap), states(states), name(name), desc(desc)
-            {};
+            ExecutorElement(ExecutorElementStorage * E){
+                // copy data from storage container to executor element
+                execM = E->execM;
+                opCode = E->opCode;
+                keyMap = E->keyMap;
+                states = E->states;
+                name = E->name;
+                desc = E->desc;
+            };
             ExecutorMethod * execM;
             ExecutorOpCode opCode;
             std::vector<KeyMap> keyMap;
             std::vector<EditorState> states;
             std::string name;
-            std::string desc;
+            const std::string* desc;
     };
 
 
@@ -181,8 +203,10 @@ class Executor
                             // For this case, we are only care if this is last node
                             if(iK == execElement->keyMap.end() -1)
                             {
-                                // delete previous executor
-                                delete (*iN)->executor;
+                                if(nullptr != (*iN)->executor){
+                                    // delete previous executor
+                                    delete (*iN)->executor;
+                                }
                                 // Place new one
                                 (*iN)->executor = execElement;
                             }
@@ -220,17 +244,12 @@ class Executor
         void AttachAccess(ExecutorAccess * access)
         {
             _execAccess = access;
+            _execAccess->eTrie = new ExecutorTrie(); // creates tree
         }
 
         // Create and add executor element.
         // Here key value is keyMap. If other executor attached to given keyMap in specific editor state, other executor will be deleted and new one will be placed
-        void AddExecutorElement(
-            ExecutorMethod * execM,
-            ExecutorOpCode opCode,
-            KeysMapList keyMap,
-            std::vector<EditorState> states,
-            std::string name, std::string desc
-        );
+        void AddExecutorElement(ExecutorElementStorage * e);
 
         bool CallExecutor(EditorState state, KeysMapList& keys, void * data = nullptr); // Run executor by keymap list
         bool CallExecutor(ExecutorOpCode opCode, void * data = nullptr);    // run executor directly by opcode

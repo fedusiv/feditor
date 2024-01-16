@@ -4,13 +4,15 @@
 
 #include "executoraccess.hpp"
 #include "editor_state.hpp"
+#include "executoroc.hpp"
 #include "vec2.hpp"
 
 class FileManager
 {
     public:
         static void Init(); // add all executor's functors to executor
-        static void CreateBuffer(ExecutorAccess * execA, void * data); // create buffer in any conditions 
+        static void CreateBuffer(ExecutorAccess * execA, void * data, bool vertical); // just wrapper function to avoid doubling
+        static void CreateBufferVertical(ExecutorAccess * execA, void * data); // create buffer in any conditions 
         static void CreateBufferHorizontal(ExecutorAccess * execA, void * data); // create aspecially horizontal buffer in any conditions 
         // Next four funtions switching active widgets inside one tab
         static void SwitchBetweenEditorsInTabUp(ExecutorAccess * execA, void * data);
