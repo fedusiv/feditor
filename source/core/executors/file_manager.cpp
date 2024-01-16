@@ -5,36 +5,27 @@
 #include "keymap.hpp"
 #include <fstring.hpp>
 
-void FileManager::CreateBuffer(ExecutorAccess * execA, void * data)
+void FileManager::CreateBuffer(ExecutorAccess * execA, void * data, bool vertical)
 {
-    ExecDataTypeCreateBuffer * d;
-    FString filename;
-    bool verticalDirection;
-
-    verticalDirection = true;   // by default create vertical split
-    d = reinterpret_cast<ExecDataTypeCreateBuffer*>(data);
+    FString filename("");
     if(nullptr != data){
-        filename = d->filename;
-        verticalDirection = d->verticalDirection;
+        filename = reinterpret_cast<FStringVector*>(data)->at(0);
     }
-
     auto buffer = execA->bufferHandler->CreateBuffer(filename);
     if(nullptr != buffer)
     {
-        execA->gui->AttachWidgetEditor(buffer, verticalDirection);
+        execA->gui->AttachWidgetEditor(buffer, vertical);
     }
+}
+
+void FileManager::CreateBufferVertical(ExecutorAccess * execA, void * data)
+{
+    FileManager::CreateBuffer(execA,data,true);
 }
 
 void FileManager::CreateBufferHorizontal(ExecutorAccess * execA, void * data)
 {
-    ExecDataTypeCreateBuffer  d;
-    if(nullptr == data)
-    {
-        d.verticalDirection = false; // this is horizontal split
-        FileManager::CreateBuffer(execA, &d);
-    }else{
-        FileManager::CreateBuffer(execA, data);
-    }
+    FileManager::CreateBuffer(execA,data,false);
 }
 
 void FileManager::SwitchBetweenEditorsInTabUp(ExecutorAccess *execA, void *data)
@@ -87,7 +78,7 @@ void FileManager::Init()
 
         ExecutorElementStorage storage[]={
         {
-            FileManager::CreateBuffer,
+            FileManager::CreateBufferVertical,
             ExecutorOpCode::CreateBuffer,
             std::vector<KeyMap>({KeyMap::KeyAlt, KeyMap::KeyV}),
             std::vector<EditorState>(1, EditorState::InsertState),

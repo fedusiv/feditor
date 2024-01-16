@@ -7,7 +7,6 @@
 #include "executoroc.hpp"
 #include "keymap.hpp"
 #include <fstring.hpp>
-#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -20,7 +19,7 @@ EditorState Editor::GetEditorState(void)
 
 void Editor::ExecuteCmd(ExecutorAccess * execA, void * data)
 {
-    BufferData cmds;
+    FStringVector cmds;
     BufferHandler* bh;
     ExecutorTrie* trie;
     ExecutorOpCode opCode;
@@ -45,6 +44,12 @@ void Editor::ExecuteCmd(ExecutorAccess * execA, void * data)
     }
     exec = Executor::Instance();
     BufferDataDeleteLine(cmds,0);
+    /*
+        Need to leave important note here.
+        As you can see executeCmd sends vector of FString to other executors.
+        So, here, all executors function, which are in the user field of view,
+        should be aware of receiving vector of FStrings and parse them inside
+    */
     exec->CallExecutor(opCode, &cmds);
     exec->CallExecutor(ExecutorOpCode::ChangeEditorModeToInsert, &cmds);
     

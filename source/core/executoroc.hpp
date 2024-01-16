@@ -38,11 +38,5 @@ enum class ExecutorOpCode
     ExecutorOpCodeMax
 };
 
-struct ExecDataTypeCreateBuffer_t
-{
-    FString filename;
-    bool verticalDirection;
-};
-using ExecDataTypeCreateBuffer = ExecDataTypeCreateBuffer_t;
 
 #endif //__EXECUTOROC_HPP__

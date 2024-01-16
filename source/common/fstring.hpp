@@ -78,9 +78,10 @@ class FString{
     bool operator!=(const FString& other) const {
         return !(*this == other);
     }
+    // Returns -1 when no element if found.
     int find_last_of(int symbol){
         int pos = data.size() - 1;
-        while(pos){
+        while(pos >= 0){
           if(data[pos]==symbol){
             break;
           }
@@ -90,7 +91,10 @@ class FString{
     }
     FString substr(int pos){
       FString sub;
-      int endIndex = data.size() - 1;
+      int endIndex = data.size();
+      if(pos < 0){
+          pos = 0;      
+      }
       while(pos < endIndex){
         sub.push_back(data[pos]);
         pos++;
@@ -99,6 +103,9 @@ class FString{
     }
     std::string to_string(){
       return FString::Utf8ToString(*this);
+    }
+    std::vector<std::string> getPrint() const{
+        return {"FString", FString::Utf8ToString(*this)};
     }
   
   class iterator {
@@ -225,8 +232,8 @@ class FString{
 
 };
 
-// typedef typename std::vector<int> BufferLine;
 typedef typename std::vector<FString> BufferData;
+typedef typename std::vector<FString> FStringVector;
 
 void BufferLineSplit(FString *bline, BufferData& data);
 void BufferDataDeleteLine(BufferData& data, int lineId);

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <filesystem>
-#include <vector>
 
+#include <macros.h>
 #include <fstring.hpp>
 #include "editor_state.hpp"
 #include "executoroc.hpp"
@@ -43,9 +43,8 @@ void Core::Init(void)
     }else{
         // create buffer from a file only if file is mentioned
         if(_locationPoint != ""){
-            auto convertedLine = FString(_locationPoint);
-            ExecDataTypeCreateBuffer  d = {.filename = convertedLine , .verticalDirection = true};
-            _executor->CallExecutor(ExecutorOpCode::CreateBuffer, &d);
+            auto convertedLine = FStringVector{FString(_locationPoint)};
+            _executor->CallExecutor(ExecutorOpCode::CreateBuffer, &convertedLine);
         }
     }
 }
