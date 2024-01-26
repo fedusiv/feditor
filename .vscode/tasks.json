@@ -2,7 +2,7 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "build",
+            "label": "build-unix",
             "command": "./build.sh",
             "args": [ "-d"],
             "options": {
@@ -16,7 +16,24 @@
                 "isDefault": true
             },
             "detail": "Custom made"
-        }
+        },
+        {
+            "type": "cppbuild",
+            "label": "build-windows",
+            "command": "build.bat",
+            "args": ["-d"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Custom made"
+        },
     ],
     "version": "2.0.0"
 }
